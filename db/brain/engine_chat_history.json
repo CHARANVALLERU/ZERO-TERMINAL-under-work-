@@ -1,0 +1,12 @@
+[
+  {
+    "role": "user",
+    "content": "hey zero",
+    "timestamp": "2026-07-15T12:01:52.620906"
+  },
+  {
+    "role": "model",
+    "content": "⚠ **Rate Limit**: Free tier quota reached temporarily.\nWait 60 seconds and try again.",
+    "timestamp": "2026-07-15T12:01:52.875825"
+  }
+]

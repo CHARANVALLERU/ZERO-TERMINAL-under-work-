@@ -1,0 +1,33 @@
+# ── ZERO core (required) ─────────────────────────────────────────────
+# The engine, adaptive calibration layer, and backtester run on these alone.
+numpy
+pandas
+requests
+
+# ── UI ───────────────────────────────────────────────────────────────
+streamlit
+plotly
+
+# ── Live data ingestion ──────────────────────────────────────────────
+yfinance
+beautifulsoup4
+lxml
+feedparser
+vaderSentiment
+pytz
+
+# ── Persistence ──────────────────────────────────────────────────────
+SQLAlchemy
+pyarrow            # feature-store parquet (optional; degrades gracefully)
+
+# ── Optional ML accelerators ─────────────────────────────────────────
+# The calibration layer auto-detects and uses these when present, but
+# falls back to a built-in pure-numpy ridge model if they are absent.
+scikit-learn
+xgboost
+scipy
+joblib
+
+# ── ZERO ENGINE — Gemini AI ──────────────────────────────────────────
+# Free-tier Gemini API. Install: pip install google-generativeai
+google-generativeai>=0.7.0

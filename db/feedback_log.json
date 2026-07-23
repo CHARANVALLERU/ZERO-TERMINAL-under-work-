@@ -1,0 +1,2822 @@
+[
+    {
+        "id": "2026-06-15_NIFTY_50",
+        "date": "2026-06-15",
+        "timestamp": "2026-06-15T22:59:09.242012",
+        "index": "NIFTY 50",
+        "predicted": {
+            "pred_open": 23854.18,
+            "pred_high": 24257.92,
+            "pred_low": 23450.43
+        },
+        "actual": {
+            "open": 23984.85,
+            "high": 24011.4,
+            "low": 23817.8,
+            "close": 23853.9
+        },
+        "reason": "Automated Core Update: Market aligned cleanly with predictive envelopes amidst neutral global sentiment.",
+        "raw_inputs": {
+            "symbol": "NIFTY",
+            "prev_close": 23853.9,
+            "pred_open": 23854.18,
+            "pred_high": 24257.92,
+            "pred_low": 23450.43,
+            "pred_close": 23854.18,
+            "movement_side": "Neutral / Sentiment Driven",
+            "gift_nifty": null,
+            "vix": 16.06,
+            "adr_delta": 1.84,
+            "pcr": 1.0,
+            "sentiment_score": 0.0,
+            "latest_news": [
+                "Market analyzing geopolitical shifts...",
+                "USDINR tracking institutional loads..."
+            ]
+        },
+        "current_params": {
+            "ALPHA": 0.85,
+            "BETA": 0.15,
+            "GAMMA": 0.5
+        }
+    },
+    {
+        "id": "2026-06-15_BANKNIFTY",
+        "date": "2026-06-15",
+        "timestamp": "2026-06-15T22:59:09.242012",
+        "index": "BANKNIFTY",
+        "predicted": {
+            "pred_open": 57488.57,
+            "pred_high": 58461.59,
+            "pred_low": 56515.54
+        },
+        "actual": {
+            "open": 57679.65,
+            "high": 57804.5,
+            "low": 57119.2,
+            "close": 57198.8
+        },
+        "reason": "Automated Core Update: Market aligned cleanly with predictive envelopes amidst neutral global sentiment.",
+        "raw_inputs": {
+            "symbol": "NIFTY",
+            "prev_close": 23853.9,
+            "pred_open": 23854.18,
+            "pred_high": 24257.92,
+            "pred_low": 23450.43,
+            "pred_close": 23854.18,
+            "movement_side": "Neutral / Sentiment Driven",
+            "gift_nifty": null,
+            "vix": 16.06,
+            "adr_delta": 1.84,
+            "pcr": 1.0,
+            "sentiment_score": 0.0,
+            "latest_news": [
+                "Market analyzing geopolitical shifts...",
+                "USDINR tracking institutional loads..."
+            ]
+        },
+        "current_params": {
+            "ALPHA": 0.85,
+            "BETA": 0.15,
+            "GAMMA": 0.5
+        }
+    },
+    {
+        "id": "2026-06-15_SENSEX",
+        "date": "2026-06-15",
+        "timestamp": "2026-06-15T22:59:09.242012",
+        "index": "SENSEX",
+        "predicted": {
+            "pred_open": 76810.46,
+            "pred_high": 78110.5,
+            "pred_low": 75510.38
+        },
+        "actual": {
+            "open": 76725.27,
+            "high": 76821.07,
+            "low": 76140.44,
+            "close": 76264.33
+        },
+        "reason": "Automated Core Update: Market aligned cleanly with predictive envelopes amidst neutral global sentiment.",
+        "raw_inputs": {
+            "symbol": "NIFTY",
+            "prev_close": 23853.9,
+            "pred_open": 23854.18,
+            "pred_high": 24257.92,
+            "pred_low": 23450.43,
+            "pred_close": 23854.18,
+            "movement_side": "Neutral / Sentiment Driven",
+            "gift_nifty": null,
+            "vix": 16.06,
+            "adr_delta": 1.84,
+            "pcr": 1.0,
+            "sentiment_score": 0.0,
+            "latest_news": [
+                "Market analyzing geopolitical shifts...",
+                "USDINR tracking institutional loads..."
+            ]
+        },
+        "current_params": {
+            "ALPHA": 0.85,
+            "BETA": 0.15,
+            "GAMMA": 0.5
+        }
+    },
+    {
+        "id": "2026-06-16_NIFTY_50",
+        "date": "2026-06-16",
+        "timestamp": "2026-06-16T08:41:08.014540",
+        "index": "NIFTY 50",
+        "predicted": {
+            "pred_open": 23623.2,
+            "pred_high": 24021.79,
+            "pred_low": 23224.62
+        },
+        "actual": {
+            "open": 24044.5,
+            "high": 24108.2,
+            "low": 23969.7,
+            "close": 24085.7
+        },
+        "reason": "",
+        "raw_inputs": {
+            "symbol": "NIFTY",
+            "prev_close": 23622.9,
+            "pred_open": 23623.2,
+            "pred_high": 24021.79,
+            "pred_low": 23224.62,
+            "pred_close": 23623.2,
+            "movement_side": "Neutral / Sentiment Driven",
+            "gift_nifty": null,
+            "vix": 16.2,
+            "adr_delta": 0.61,
+            "pcr": 1.0,
+            "sentiment_score": 0.0,
+            "latest_news": [
+                "Market analyzing geopolitical shifts...",
+                "USDINR tracking institutional loads..."
+            ]
+        },
+        "current_params": {
+            "ALPHA": 0.5,
+            "BETA": 0.5,
+            "GAMMA": 0.5
+        }
+    },
+    {
+        "id": "2026-06-16_BANKNIFTY",
+        "date": "2026-06-16",
+        "timestamp": "2026-06-16T08:41:08.014540",
+        "index": "BANKNIFTY",
+        "predicted": {
+            "pred_open": 56931.91,
+            "pred_high": 57892.51,
+            "pred_low": 55971.33
+        },
+        "actual": {
+            "open": 57434.05,
+            "high": 57646.15,
+            "low": 57222.4,
+            "close": 57585.05
+        },
+        "reason": "",
+        "raw_inputs": {
+            "symbol": "NIFTY",
+            "prev_close": 23622.9,
+            "pred_open": 23623.2,
+            "pred_high": 24021.79,
+            "pred_low": 23224.62,
+            "pred_close": 23623.2,
+            "movement_side": "Neutral / Sentiment Driven",
+            "gift_nifty": null,
+            "vix": 16.2,
+            "adr_delta": 0.61,
+            "pcr": 1.0,
+            "sentiment_score": 0.0,
+            "latest_news": [
+                "Market analyzing geopolitical shifts...",
+                "USDINR tracking institutional loads..."
+            ]
+        },
+        "current_params": {
+            "ALPHA": 0.5,
+            "BETA": 0.5,
+            "GAMMA": 0.5
+        }
+    },
+    {
+        "id": "2026-06-16_SENSEX",
+        "date": "2026-06-16",
+        "timestamp": "2026-06-16T08:41:08.014540",
+        "index": "SENSEX",
+        "predicted": {
+            "pred_open": 76066.7,
+            "pred_high": 77350.16,
+            "pred_low": 74783.28
+        },
+        "actual": {
+            "open": 77080.09,
+            "high": 77218.99,
+            "low": 76768.49,
+            "close": 77155.62
+        },
+        "reason": "",
+        "raw_inputs": {
+            "symbol": "NIFTY",
+            "prev_close": 23622.9,
+            "pred_open": 23623.2,
+            "pred_high": 24021.79,
+            "pred_low": 23224.62,
+            "pred_close": 23623.2,
+            "movement_side": "Neutral / Sentiment Driven",
+            "gift_nifty": null,
+            "vix": 16.2,
+            "adr_delta": 0.61,
+            "pcr": 1.0,
+            "sentiment_score": 0.0,
+            "latest_news": [
+                "Market analyzing geopolitical shifts...",
+                "USDINR tracking institutional loads..."
+            ]
+        },
+        "current_params": {
+            "ALPHA": 0.5,
+            "BETA": 0.5,
+            "GAMMA": 0.5
+        }
+    },
+    {
+        "id": "2026-06-18_NIFTY_50",
+        "date": "2026-06-18",
+        "timestamp": "2026-06-18T08:27:10.112450",
+        "index": "NIFTY 50",
+        "predicted": {
+            "pred_open": 24084.83,
+            "pred_high": 24484.51,
+            "pred_low": 23685.16
+        },
+        "actual": {
+            "open": 24073.8,
+            "high": 24189.25,
+            "low": 24036.95,
+            "close": 24168.0
+        },
+        "reason": "",
+        "raw_inputs": {
+            "symbol": "NIFTY",
+            "prev_close": 24085.7,
+            "pred_open": 24084.83,
+            "pred_high": 24484.51,
+            "pred_low": 23685.16,
+            "pred_close": 24084.83,
+            "movement_side": "Neutral / Sentiment Driven",
+            "gift_nifty": null,
+            "vix": 18.44,
+            "adr_delta": -1.73,
+            "pcr": 1.0,
+            "sentiment_score": 0.0,
+            "latest_news": [
+                "Market analyzing geopolitical shifts...",
+                "USDINR tracking institutional loads..."
+            ]
+        },
+        "current_params": {
+            "ALPHA": 0.5,
+            "BETA": 0.5,
+            "GAMMA": 0.5
+        }
+    },
+    {
+        "id": "2026-06-18_BANKNIFTY",
+        "date": "2026-06-18",
+        "timestamp": "2026-06-18T08:27:10.112450",
+        "index": "BANKNIFTY",
+        "predicted": {
+            "pred_open": 58044.44,
+            "pred_high": 59007.67,
+            "pred_low": 57081.24
+        },
+        "actual": {
+            "open": 57596.45,
+            "high": 58021.25,
+            "low": 57583.2,
+            "close": 57963.8
+        },
+        "reason": "",
+        "raw_inputs": {
+            "symbol": "NIFTY",
+            "prev_close": 24085.7,
+            "pred_open": 24084.83,
+            "pred_high": 24484.51,
+            "pred_low": 23685.16,
+            "pred_close": 24084.83,
+            "movement_side": "Neutral / Sentiment Driven",
+            "gift_nifty": null,
+            "vix": 18.44,
+            "adr_delta": -1.73,
+            "pcr": 1.0,
+            "sentiment_score": 0.0,
+            "latest_news": [
+                "Market analyzing geopolitical shifts...",
+                "USDINR tracking institutional loads..."
+            ]
+        },
+        "current_params": {
+            "ALPHA": 0.5,
+            "BETA": 0.5,
+            "GAMMA": 0.5
+        }
+    },
+    {
+        "id": "2026-06-18_SENSEX",
+        "date": "2026-06-18",
+        "timestamp": "2026-06-18T08:27:10.112450",
+        "index": "SENSEX",
+        "predicted": {
+            "pred_open": 77553.15,
+            "pred_high": 78840.12,
+            "pred_low": 76266.22
+        },
+        "actual": {
+            "open": 77131.66,
+            "high": 77492.33,
+            "low": 76953.0,
+            "close": 77409.98
+        },
+        "reason": "",
+        "raw_inputs": {
+            "symbol": "NIFTY",
+            "prev_close": 24085.7,
+            "pred_open": 24084.83,
+            "pred_high": 24484.51,
+            "pred_low": 23685.16,
+            "pred_close": 24084.83,
+            "movement_side": "Neutral / Sentiment Driven",
+            "gift_nifty": null,
+            "vix": 18.44,
+            "adr_delta": -1.73,
+            "pcr": 1.0,
+            "sentiment_score": 0.0,
+            "latest_news": [
+                "Market analyzing geopolitical shifts...",
+                "USDINR tracking institutional loads..."
+            ]
+        },
+        "current_params": {
+            "ALPHA": 0.5,
+            "BETA": 0.5,
+            "GAMMA": 0.5
+        }
+    },
+    {
+        "id": "2026-06-19_NIFTY_50",
+        "date": "2026-06-19",
+        "timestamp": "2026-06-19T01:30:47.435050",
+        "index": "NIFTY 50",
+        "predicted": {
+            "pred_open": 24084.59,
+            "pred_high": 24484.26,
+            "pred_low": 23684.92
+        },
+        "actual": {
+            "open": 24073.8,
+            "high": 24189.25,
+            "low": 24036.95,
+            "close": 24168.0
+        },
+        "reason": "",
+        "raw_inputs": {
+            "symbol": "NIFTY",
+            "prev_close": 24085.7,
+            "pred_open": 24084.59,
+            "pred_high": 24484.26,
+            "pred_low": 23684.92,
+            "pred_close": 24084.59,
+            "movement_side": "Neutral / Sentiment Driven",
+            "gift_nifty": null,
+            "vix": 16.51,
+            "adr_delta": -2.22,
+            "pcr": 1.0,
+            "sentiment_score": 0.0,
+            "latest_news": [
+                "Market analyzing geopolitical shifts...",
+                "USDINR tracking institutional loads..."
+            ]
+        },
+        "current_params": {
+            "ALPHA": 0.5,
+            "BETA": 0.5,
+            "GAMMA": 0.5
+        }
+    },
+    {
+        "id": "2026-06-19_BANKNIFTY",
+        "date": "2026-06-19",
+        "timestamp": "2026-06-19T01:30:47.435050",
+        "index": "BANKNIFTY",
+        "predicted": {
+            "pred_open": 58043.86,
+            "pred_high": 59007.07,
+            "pred_low": 57080.66
+        },
+        "actual": {
+            "open": 57596.45,
+            "high": 58021.25,
+            "low": 57583.2,
+            "close": 57963.8
+        },
+        "reason": "",
+        "raw_inputs": {
+            "symbol": "NIFTY",
+            "prev_close": 24085.7,
+            "pred_open": 24084.59,
+            "pred_high": 24484.26,
+            "pred_low": 23684.92,
+            "pred_close": 24084.59,
+            "movement_side": "Neutral / Sentiment Driven",
+            "gift_nifty": null,
+            "vix": 16.51,
+            "adr_delta": -2.22,
+            "pcr": 1.0,
+            "sentiment_score": 0.0,
+            "latest_news": [
+                "Market analyzing geopolitical shifts...",
+                "USDINR tracking institutional loads..."
+            ]
+        },
+        "current_params": {
+            "ALPHA": 0.5,
+            "BETA": 0.5,
+            "GAMMA": 0.5
+        }
+    },
+    {
+        "id": "2026-06-19_SENSEX",
+        "date": "2026-06-19",
+        "timestamp": "2026-06-19T01:30:47.435050",
+        "index": "SENSEX",
+        "predicted": {
+            "pred_open": 77552.38,
+            "pred_high": 78839.32,
+            "pred_low": 76265.44
+        },
+        "actual": {
+            "open": 77131.66,
+            "high": 77492.33,
+            "low": 76953.0,
+            "close": 77409.98
+        },
+        "reason": "",
+        "raw_inputs": {
+            "symbol": "NIFTY",
+            "prev_close": 24085.7,
+            "pred_open": 24084.59,
+            "pred_high": 24484.26,
+            "pred_low": 23684.92,
+            "pred_close": 24084.59,
+            "movement_side": "Neutral / Sentiment Driven",
+            "gift_nifty": null,
+            "vix": 16.51,
+            "adr_delta": -2.22,
+            "pcr": 1.0,
+            "sentiment_score": 0.0,
+            "latest_news": [
+                "Market analyzing geopolitical shifts...",
+                "USDINR tracking institutional loads..."
+            ]
+        },
+        "current_params": {
+            "ALPHA": 0.5,
+            "BETA": 0.5,
+            "GAMMA": 0.5
+        }
+    },
+    {
+        "id": "2026-06-23_NIFTY_50",
+        "date": "2026-06-23",
+        "timestamp": "2026-06-23T07:04:40.048904",
+        "index": "NIFTY 50",
+        "predicted": {
+            "pred_open": 24103.52,
+            "pred_high": 24440.5,
+            "pred_low": 23766.55
+        },
+        "actual": {
+            "open": 23795.8,
+            "high": 24090.05,
+            "low": 23789.25,
+            "close": 24021.65
+        },
+        "reason": "",
+        "raw_inputs": {
+            "symbol": "NIFTY",
+            "prev_close": 24102.9,
+            "pred_open": 24103.52,
+            "pred_high": 24440.5,
+            "pred_low": 23766.55,
+            "pred_close": 24103.52,
+            "movement_side": "Neutral / Sentiment Driven",
+            "gift_nifty": null,
+            "vix": 15.0,
+            "adr_delta": 1.25,
+            "pcr": 1.0,
+            "sentiment_score": 0.0,
+            "latest_news": [
+                "Market analyzing geopolitical shifts...",
+                "USDINR tracking institutional loads..."
+            ]
+        },
+        "current_params": {
+            "ALPHA": 0.5,
+            "BETA": 0.5,
+            "GAMMA": 0.5
+        }
+    },
+    {
+        "id": "2026-06-23_BANKNIFTY",
+        "date": "2026-06-23",
+        "timestamp": "2026-06-23T07:04:40.048904",
+        "index": "BANKNIFTY",
+        "predicted": {
+            "pred_open": 58089.48,
+            "pred_high": 58901.61,
+            "pred_low": 57277.39
+        },
+        "actual": {
+            "open": 57074.9,
+            "high": 58256.35,
+            "low": 57074.9,
+            "close": 58150.35
+        },
+        "reason": "",
+        "raw_inputs": {
+            "symbol": "NIFTY",
+            "prev_close": 24102.9,
+            "pred_open": 24103.52,
+            "pred_high": 24440.5,
+            "pred_low": 23766.55,
+            "pred_close": 24103.52,
+            "movement_side": "Neutral / Sentiment Driven",
+            "gift_nifty": null,
+            "vix": 15.0,
+            "adr_delta": 1.25,
+            "pcr": 1.0,
+            "sentiment_score": 0.0,
+            "latest_news": [
+                "Market analyzing geopolitical shifts...",
+                "USDINR tracking institutional loads..."
+            ]
+        },
+        "current_params": {
+            "ALPHA": 0.5,
+            "BETA": 0.5,
+            "GAMMA": 0.5
+        }
+    },
+    {
+        "id": "2026-06-23_SENSEX",
+        "date": "2026-06-23",
+        "timestamp": "2026-06-23T07:04:40.048904",
+        "index": "SENSEX",
+        "predicted": {
+            "pred_open": 77613.33,
+            "pred_high": 78698.41,
+            "pred_low": 76528.29
+        },
+        "actual": {
+            "open": 76229.76,
+            "high": 77190.37,
+            "low": 76121.59,
+            "close": 76991.22
+        },
+        "reason": "",
+        "raw_inputs": {
+            "symbol": "NIFTY",
+            "prev_close": 24102.9,
+            "pred_open": 24103.52,
+            "pred_high": 24440.5,
+            "pred_low": 23766.55,
+            "pred_close": 24103.52,
+            "movement_side": "Neutral / Sentiment Driven",
+            "gift_nifty": null,
+            "vix": 15.0,
+            "adr_delta": 1.25,
+            "pcr": 1.0,
+            "sentiment_score": 0.0,
+            "latest_news": [
+                "Market analyzing geopolitical shifts...",
+                "USDINR tracking institutional loads..."
+            ]
+        },
+        "current_params": {
+            "ALPHA": 0.5,
+            "BETA": 0.5,
+            "GAMMA": 0.5
+        }
+    },
+    {
+        "id": "2026-06-24_NIFTY_50",
+        "date": "2026-06-24",
+        "timestamp": "2026-06-24T19:28:49.978782",
+        "index": "NIFTY 50",
+        "predicted": {
+            "pred_open": 24022.33,
+            "pred_high": 24369.1,
+            "pred_low": 23675.55
+        },
+        "actual": {
+            "open": 23795.8,
+            "high": 24090.05,
+            "low": 23789.25,
+            "close": 24021.65
+        },
+        "reason": "Automated Core Update: Market aligned cleanly with predictive envelopes amidst neutral global sentiment.",
+        "raw_inputs": {
+            "symbol": "NIFTY",
+            "prev_close": 24021.65,
+            "pred_open": 24022.33,
+            "pred_high": 24369.1,
+            "pred_low": 23675.55,
+            "pred_close": 24022.33,
+            "movement_side": "Neutral / Sentiment Driven",
+            "gift_nifty": null,
+            "vix": 19.45,
+            "adr_delta": 1.36,
+            "pcr": 1.0,
+            "sentiment_score": 0.0,
+            "latest_news": [
+                "Market analyzing geopolitical shifts...",
+                "USDINR tracking institutional loads..."
+            ]
+        },
+        "current_params": {
+            "ALPHA": 0.5,
+            "BETA": 0.5,
+            "GAMMA": 0.5
+        }
+    },
+    {
+        "id": "2026-06-24_BANKNIFTY",
+        "date": "2026-06-24",
+        "timestamp": "2026-06-24T19:28:49.978782",
+        "index": "BANKNIFTY",
+        "predicted": {
+            "pred_open": 57893.82,
+            "pred_high": 58729.53,
+            "pred_low": 57058.08
+        },
+        "actual": {
+            "open": 57074.9,
+            "high": 58256.35,
+            "low": 57074.9,
+            "close": 58150.35
+        },
+        "reason": "Automated Core Update: Market aligned cleanly with predictive envelopes amidst neutral global sentiment.",
+        "raw_inputs": {
+            "symbol": "NIFTY",
+            "prev_close": 24021.65,
+            "pred_open": 24022.33,
+            "pred_high": 24369.1,
+            "pred_low": 23675.55,
+            "pred_close": 24022.33,
+            "movement_side": "Neutral / Sentiment Driven",
+            "gift_nifty": null,
+            "vix": 19.45,
+            "adr_delta": 1.36,
+            "pcr": 1.0,
+            "sentiment_score": 0.0,
+            "latest_news": [
+                "Market analyzing geopolitical shifts...",
+                "USDINR tracking institutional loads..."
+            ]
+        },
+        "current_params": {
+            "ALPHA": 0.5,
+            "BETA": 0.5,
+            "GAMMA": 0.5
+        }
+    },
+    {
+        "id": "2026-06-24_SENSEX",
+        "date": "2026-06-24",
+        "timestamp": "2026-06-24T19:28:49.978782",
+        "index": "SENSEX",
+        "predicted": {
+            "pred_open": 77351.9,
+            "pred_high": 78468.5,
+            "pred_low": 76235.27
+        },
+        "actual": {
+            "open": 76229.76,
+            "high": 77190.37,
+            "low": 76121.59,
+            "close": 76991.22
+        },
+        "reason": "Automated Core Update: Market aligned cleanly with predictive envelopes amidst neutral global sentiment.",
+        "raw_inputs": {
+            "symbol": "NIFTY",
+            "prev_close": 24021.65,
+            "pred_open": 24022.33,
+            "pred_high": 24369.1,
+            "pred_low": 23675.55,
+            "pred_close": 24022.33,
+            "movement_side": "Neutral / Sentiment Driven",
+            "gift_nifty": null,
+            "vix": 19.45,
+            "adr_delta": 1.36,
+            "pcr": 1.0,
+            "sentiment_score": 0.0,
+            "latest_news": [
+                "Market analyzing geopolitical shifts...",
+                "USDINR tracking institutional loads..."
+            ]
+        },
+        "current_params": {
+            "ALPHA": 0.5,
+            "BETA": 0.5,
+            "GAMMA": 0.5
+        }
+    },
+    {
+        "id": "2026-06-25_NIFTY_50",
+        "date": "2026-06-25",
+        "timestamp": "2026-06-25T10:56:05.743961",
+        "index": "NIFTY 50",
+        "predicted": {
+            "pred_open": 24185.74,
+            "pred_high": 24527.21,
+            "pred_low": 23844.26
+        },
+        "actual": {
+            "open": 24306.85,
+            "high": 24458.65,
+            "low": 24287.1,
+            "close": 24404.75
+        },
+        "reason": "",
+        "raw_inputs": {
+            "symbol": "NIFTY",
+            "prev_close": 24184.75,
+            "pred_open": 24185.74,
+            "pred_high": 24527.21,
+            "pred_low": 23844.26,
+            "pred_close": 24185.74,
+            "movement_side": "Neutral / Sentiment Driven",
+            "gift_nifty": null,
+            "vix": 18.63,
+            "adr_delta": 1.97,
+            "pcr": 1.0,
+            "sentiment_score": 0.0,
+            "latest_news": [
+                "Market analyzing geopolitical shifts...",
+                "USDINR tracking institutional loads..."
+            ]
+        },
+        "current_params": {
+            "ALPHA": 0.5,
+            "BETA": 0.5,
+            "GAMMA": 0.5
+        }
+    },
+    {
+        "id": "2026-06-25_BANKNIFTY",
+        "date": "2026-06-25",
+        "timestamp": "2026-06-25T10:56:05.743961",
+        "index": "BANKNIFTY",
+        "predicted": {
+            "pred_open": 58287.63,
+            "pred_high": 59110.58,
+            "pred_low": 57464.67
+        },
+        "actual": {
+            "open": 57983.9,
+            "high": 58477.3,
+            "low": 57938.65,
+            "close": 58323.15
+        },
+        "reason": "",
+        "raw_inputs": {
+            "symbol": "NIFTY",
+            "prev_close": 24184.75,
+            "pred_open": 24185.74,
+            "pred_high": 24527.21,
+            "pred_low": 23844.26,
+            "pred_close": 24185.74,
+            "movement_side": "Neutral / Sentiment Driven",
+            "gift_nifty": null,
+            "vix": 18.63,
+            "adr_delta": 1.97,
+            "pcr": 1.0,
+            "sentiment_score": 0.0,
+            "latest_news": [
+                "Market analyzing geopolitical shifts...",
+                "USDINR tracking institutional loads..."
+            ]
+        },
+        "current_params": {
+            "ALPHA": 0.5,
+            "BETA": 0.5,
+            "GAMMA": 0.5
+        }
+    },
+    {
+        "id": "2026-06-25_SENSEX",
+        "date": "2026-06-25",
+        "timestamp": "2026-06-25T10:56:05.743961",
+        "index": "SENSEX",
+        "predicted": {
+            "pred_open": 77878.08,
+            "pred_high": 78977.62,
+            "pred_low": 76778.52
+        },
+        "actual": {
+            "open": 77940.9,
+            "high": 78398.06,
+            "low": 77879.7,
+            "close": 78213.18
+        },
+        "reason": "",
+        "raw_inputs": {
+            "symbol": "NIFTY",
+            "prev_close": 24184.75,
+            "pred_open": 24185.74,
+            "pred_high": 24527.21,
+            "pred_low": 23844.26,
+            "pred_close": 24185.74,
+            "movement_side": "Neutral / Sentiment Driven",
+            "gift_nifty": null,
+            "vix": 18.63,
+            "adr_delta": 1.97,
+            "pcr": 1.0,
+            "sentiment_score": 0.0,
+            "latest_news": [
+                "Market analyzing geopolitical shifts...",
+                "USDINR tracking institutional loads..."
+            ]
+        },
+        "current_params": {
+            "ALPHA": 0.5,
+            "BETA": 0.5,
+            "GAMMA": 0.5
+        }
+    },
+    {
+        "id": "2026-07-06_NIFTY_50",
+        "date": "2026-07-06",
+        "timestamp": "2026-07-06T14:30:18.556790",
+        "index": "NIFTY 50",
+        "predicted": {
+            "pred_open": 24407.81,
+            "pred_high": 24689.91,
+            "pred_low": 24125.71
+        },
+        "actual": {
+            "open": 24306.85,
+            "high": 24458.65,
+            "low": 24287.1,
+            "close": 24430.35
+        },
+        "reason": "Automated Core Update: Market aligned cleanly with predictive envelopes amidst neutral global sentiment.",
+        "raw_inputs": {
+            "symbol": "NIFTY",
+            "prev_close": 24406.65,
+            "pred_open": 24407.81,
+            "pred_high": 24689.91,
+            "pred_low": 24125.71,
+            "pred_close": 24407.81,
+            "movement_side": "Neutral / Sentiment Driven",
+            "gift_nifty": null,
+            "vix": 15.0,
+            "adr_delta": 2.32,
+            "pcr": 1.0,
+            "sentiment_score": 0.0,
+            "latest_news": [
+                "Market analyzing geopolitical shifts...",
+                "USDINR tracking institutional loads..."
+            ]
+        },
+        "current_params": {
+            "ALPHA": 0.5,
+            "BETA": 0.5,
+            "GAMMA": 0.5
+        }
+    },
+    {
+        "id": "2026-07-06_BANKNIFTY",
+        "date": "2026-07-06",
+        "timestamp": "2026-07-06T14:30:18.556790",
+        "index": "BANKNIFTY",
+        "predicted": {
+            "pred_open": 58822.82,
+            "pred_high": 59502.68,
+            "pred_low": 58142.96
+        },
+        "actual": {
+            "open": 57983.9,
+            "high": 58477.3,
+            "low": 57938.65,
+            "close": 58291.5
+        },
+        "reason": "Automated Core Update: Market aligned cleanly with predictive envelopes amidst neutral global sentiment.",
+        "raw_inputs": {
+            "symbol": "NIFTY",
+            "prev_close": 24406.65,
+            "pred_open": 24407.81,
+            "pred_high": 24689.91,
+            "pred_low": 24125.71,
+            "pred_close": 24407.81,
+            "movement_side": "Neutral / Sentiment Driven",
+            "gift_nifty": null,
+            "vix": 15.0,
+            "adr_delta": 2.32,
+            "pcr": 1.0,
+            "sentiment_score": 0.0,
+            "latest_news": [
+                "Market analyzing geopolitical shifts...",
+                "USDINR tracking institutional loads..."
+            ]
+        },
+        "current_params": {
+            "ALPHA": 0.5,
+            "BETA": 0.5,
+            "GAMMA": 0.5
+        }
+    },
+    {
+        "id": "2026-07-06_SENSEX",
+        "date": "2026-07-06",
+        "timestamp": "2026-07-06T14:30:18.556790",
+        "index": "SENSEX",
+        "predicted": {
+            "pred_open": 78593.15,
+            "pred_high": 79501.51,
+            "pred_low": 77684.79
+        },
+        "actual": {
+            "open": 77940.9,
+            "high": 78398.06,
+            "low": 77879.7,
+            "close": 78285.07
+        },
+        "reason": "Automated Core Update: Market aligned cleanly with predictive envelopes amidst neutral global sentiment.",
+        "raw_inputs": {
+            "symbol": "NIFTY",
+            "prev_close": 24406.65,
+            "pred_open": 24407.81,
+            "pred_high": 24689.91,
+            "pred_low": 24125.71,
+            "pred_close": 24407.81,
+            "movement_side": "Neutral / Sentiment Driven",
+            "gift_nifty": null,
+            "vix": 15.0,
+            "adr_delta": 2.32,
+            "pcr": 1.0,
+            "sentiment_score": 0.0,
+            "latest_news": [
+                "Market analyzing geopolitical shifts...",
+                "USDINR tracking institutional loads..."
+            ]
+        },
+        "current_params": {
+            "ALPHA": 0.5,
+            "BETA": 0.5,
+            "GAMMA": 0.5
+        }
+    },
+    {
+        "id": "2026-07-08_NIFTY_50",
+        "date": "2026-07-08",
+        "timestamp": "2026-07-08T16:47:28.138782",
+        "index": "NIFTY 50",
+        "predicted": {
+            "pred_open": 23886.83,
+            "pred_high": 24240.47,
+            "pred_low": 23569.67
+        },
+        "actual": {
+            "open": 24259.55,
+            "high": 24300.0,
+            "low": 23805.2,
+            "close": 23882.05
+        },
+        "reason": "Automated Core Update: Bullish macroeconomic tilt pushed order flow upwards against algorithmic base.",
+        "raw_inputs": {
+            "symbol": "NIFTY 50",
+            "prev_close": 23882.05,
+            "pred_open": 23886.83,
+            "pred_high": 24240.47,
+            "pred_low": 23569.67,
+            "pred_close": 23889.15,
+            "movement_side": "Neutral / Sentiment Driven",
+            "gift_nifty": null,
+            "vix": 18.17,
+            "adr_delta": 0.3,
+            "pcr": 1.0,
+            "sentiment_score": 0.1,
+            "sentiment_intensity": "bullish",
+            "sentiment_factors": [
+                "rally",
+                "peace",
+                "deal",
+                "up",
+                "high",
+                "jump",
+                "soar",
+                "soars",
+                "tensions",
+                "loss"
+            ]
+        },
+        "current_params": {
+            "ALPHA": 0.5,
+            "BETA": 0.5,
+            "GAMMA": 0.5
+        }
+    },
+    {
+        "id": "2026-07-08_BANKNIFTY",
+        "date": "2026-07-08",
+        "timestamp": "2026-07-08T16:47:28.138782",
+        "index": "BANKNIFTY",
+        "predicted": {
+            "pred_open": 56755.71,
+            "pred_high": 57745.48,
+            "pred_low": 55868.05
+        },
+        "actual": {
+            "open": 57918.25,
+            "high": 58075.6,
+            "low": 56549.4,
+            "close": 56742.6
+        },
+        "reason": "Automated Core Update: Bullish macroeconomic tilt pushed order flow upwards against algorithmic base.",
+        "raw_inputs": {
+            "symbol": "BANKNIFTY",
+            "prev_close": 56742.6,
+            "pred_open": 56755.71,
+            "pred_high": 57745.48,
+            "pred_low": 55868.05,
+            "pred_close": 56762.19,
+            "movement_side": "Neutral / Sentiment Driven",
+            "gift_nifty": null,
+            "vix": 18.17,
+            "adr_delta": 0.3,
+            "pcr": 1.0,
+            "sentiment_score": 0.1,
+            "sentiment_intensity": "bullish",
+            "sentiment_factors": [
+                "rally",
+                "peace",
+                "deal",
+                "up",
+                "high",
+                "jump",
+                "soar",
+                "soars",
+                "tensions",
+                "loss"
+            ]
+        },
+        "current_params": {
+            "ALPHA": 0.5,
+            "BETA": 0.5,
+            "GAMMA": 0.5
+        }
+    },
+    {
+        "id": "2026-07-08_SENSEX",
+        "date": "2026-07-08",
+        "timestamp": "2026-07-08T16:47:28.138782",
+        "index": "SENSEX",
+        "predicted": {
+            "pred_open": 76519.35,
+            "pred_high": 77710.31,
+            "pred_low": 75451.24
+        },
+        "actual": {
+            "open": 77816.45,
+            "high": 77851.18,
+            "low": 76259.03,
+            "close": 76503.6
+        },
+        "reason": "Automated Core Update: Bullish macroeconomic tilt pushed order flow upwards against algorithmic base.",
+        "raw_inputs": {
+            "symbol": "SENSEX",
+            "prev_close": 76503.6,
+            "pred_open": 76519.35,
+            "pred_high": 77710.31,
+            "pred_low": 75451.24,
+            "pred_close": 76527.15,
+            "movement_side": "Neutral / Sentiment Driven",
+            "gift_nifty": null,
+            "vix": 18.17,
+            "adr_delta": 0.3,
+            "pcr": 1.0,
+            "sentiment_score": 0.1,
+            "sentiment_intensity": "bullish",
+            "sentiment_factors": [
+                "rally",
+                "peace",
+                "deal",
+                "up",
+                "high",
+                "jump",
+                "soar",
+                "soars",
+                "tensions",
+                "loss"
+            ]
+        },
+        "current_params": {
+            "ALPHA": 0.5,
+            "BETA": 0.5,
+            "GAMMA": 0.5
+        }
+    },
+    {
+        "id": "2026-07-11_NIFTY_50",
+        "date": "2026-07-11",
+        "timestamp": "2026-07-11T20:28:28.792440",
+        "index": "NIFTY 50",
+        "predicted": {
+            "pred_open": 24212.2,
+            "pred_high": 24468.2,
+            "pred_low": 24071.9
+        },
+        "actual": {
+            "open": 24124.7,
+            "high": 24228.45,
+            "low": 24120.35,
+            "close": 24206.9
+        },
+        "reason": "Automated Core Update: Bullish macroeconomic tilt pushed order flow upwards against algorithmic base.",
+        "raw_inputs": {
+            "symbol": "NIFTY 50",
+            "prev_close": 24206.9,
+            "pred_open": 24212.2,
+            "pred_high": 24468.2,
+            "pred_low": 24071.9,
+            "pred_close": 24214.97,
+            "movement_side": "Neutral / Sentiment Driven",
+            "gift_nifty": null,
+            "vix": 15.03,
+            "adr_delta": -0.5,
+            "pcr": 1.0,
+            "sentiment_score": 0.11,
+            "sentiment_intensity": "bullish",
+            "sentiment_factors": [
+                "surge",
+                "rally",
+                "up",
+                "rise",
+                "jump"
+            ],
+            "open_lo": 23878.76,
+            "open_hi": 24545.64,
+            "high_lo": 24264.98,
+            "high_hi": 24671.42,
+            "low_lo": 23854.31,
+            "low_hi": 24289.49,
+            "confidence": 63.6,
+            "model": "calibrated",
+            "news_shift_points": 0.0
+        },
+        "current_params": {
+            "ALPHA": 0.5,
+            "BETA": 0.5,
+            "GAMMA": 0.5
+        }
+    },
+    {
+        "id": "2026-07-11_BANKNIFTY",
+        "date": "2026-07-11",
+        "timestamp": "2026-07-11T20:28:28.792440",
+        "index": "BANKNIFTY",
+        "predicted": {
+            "pred_open": 58061.97,
+            "pred_high": 58778.31,
+            "pred_low": 57342.94
+        },
+        "actual": {
+            "open": 57592.5,
+            "high": 58251.95,
+            "low": 57576.7,
+            "close": 58045.9
+        },
+        "reason": "Automated Core Update: Bullish macroeconomic tilt pushed order flow upwards against algorithmic base.",
+        "raw_inputs": {
+            "symbol": "BANKNIFTY",
+            "prev_close": 58045.9,
+            "pred_open": 58061.97,
+            "pred_high": 58778.31,
+            "pred_low": 57342.94,
+            "pred_close": 58070.13,
+            "movement_side": "Neutral / Sentiment Driven",
+            "gift_nifty": null,
+            "vix": 15.03,
+            "adr_delta": -0.5,
+            "pcr": 1.0,
+            "sentiment_score": 0.11,
+            "sentiment_intensity": "bullish",
+            "sentiment_factors": [
+                "surge",
+                "rally",
+                "up",
+                "rise",
+                "jump"
+            ],
+            "open_lo": 57153.55,
+            "open_hi": 58970.39,
+            "high_lo": 58100.54,
+            "high_hi": 59456.08,
+            "low_lo": 56852.65,
+            "low_hi": 57833.23,
+            "confidence": 65.9,
+            "model": "calibrated",
+            "news_shift_points": 0.0
+        },
+        "current_params": {
+            "ALPHA": 0.5,
+            "BETA": 0.5,
+            "GAMMA": 0.5
+        }
+    },
+    {
+        "id": "2026-07-11_SENSEX",
+        "date": "2026-07-11",
+        "timestamp": "2026-07-11T20:28:28.792440",
+        "index": "SENSEX",
+        "predicted": {
+            "pred_open": 77587.68,
+            "pred_high": 78241.06,
+            "pred_low": 76868.4
+        },
+        "actual": {
+            "open": 77395.63,
+            "high": 77642.23,
+            "low": 77320.56,
+            "close": 77569.39
+        },
+        "reason": "Automated Core Update: Bullish macroeconomic tilt pushed order flow upwards against algorithmic base.",
+        "raw_inputs": {
+            "symbol": "SENSEX",
+            "prev_close": 77569.39,
+            "pred_open": 77587.68,
+            "pred_high": 78241.06,
+            "pred_low": 76868.4,
+            "pred_close": 77596.95,
+            "movement_side": "Neutral / Sentiment Driven",
+            "gift_nifty": null,
+            "vix": 15.03,
+            "adr_delta": -0.5,
+            "pcr": 1.0,
+            "sentiment_score": 0.11,
+            "sentiment_intensity": "bullish",
+            "sentiment_factors": [
+                "surge",
+                "rally",
+                "up",
+                "rise",
+                "jump"
+            ],
+            "open_lo": 76396.32,
+            "open_hi": 78779.04,
+            "high_lo": 77425.98,
+            "high_hi": 79056.14,
+            "low_lo": 76067.24,
+            "low_hi": 77669.56,
+            "confidence": 59.4,
+            "model": "calibrated",
+            "news_shift_points": 0.0
+        },
+        "current_params": {
+            "ALPHA": 0.5,
+            "BETA": 0.5,
+            "GAMMA": 0.5
+        }
+    },
+    {
+        "id": "2026-07-12_NIFTY_50",
+        "date": "2026-07-12",
+        "timestamp": "2026-07-12T08:58:14.464076",
+        "index": "NIFTY 50",
+        "predicted": {
+            "pred_open": 24212.45,
+            "pred_high": 24468.45,
+            "pred_low": 24072.15
+        },
+        "actual": {
+            "open": 24124.7,
+            "high": 24228.45,
+            "low": 24120.35,
+            "close": 24206.9
+        },
+        "reason": "Automated Core Update: Bearish macro factors triggered systemic sell-offs/liquidations.",
+        "raw_inputs": {
+            "symbol": "NIFTY 50",
+            "prev_close": 24206.9,
+            "pred_open": 24212.45,
+            "pred_high": 24468.45,
+            "pred_low": 24072.15,
+            "pred_close": 24215.22,
+            "movement_side": "Neutral / Sentiment Driven",
+            "gift_nifty": null,
+            "vix": 15.0,
+            "adr_delta": 0.0,
+            "pcr": 1.0,
+            "sentiment_score": 0.11,
+            "sentiment_intensity": "bullish",
+            "sentiment_factors": [
+                "surge",
+                "rally",
+                "up",
+                "rise",
+                "jump"
+            ],
+            "open_lo": 23879.01,
+            "open_hi": 24545.89,
+            "high_lo": 24265.23,
+            "high_hi": 24671.67,
+            "low_lo": 23854.56,
+            "low_hi": 24289.74,
+            "confidence": 63.6,
+            "model": "calibrated",
+            "news_shift_points": 0.0
+        },
+        "current_params": {
+            "ALPHA": 0.5,
+            "BETA": 0.5,
+            "GAMMA": 0.5
+        }
+    },
+    {
+        "id": "2026-07-12_BANKNIFTY",
+        "date": "2026-07-12",
+        "timestamp": "2026-07-12T08:58:14.464076",
+        "index": "BANKNIFTY",
+        "predicted": {
+            "pred_open": 58062.22,
+            "pred_high": 58778.56,
+            "pred_low": 57343.19
+        },
+        "actual": {
+            "open": 57592.5,
+            "high": 58251.95,
+            "low": 57576.7,
+            "close": 58045.9
+        },
+        "reason": "Automated Core Update: Bearish macro factors triggered systemic sell-offs/liquidations.",
+        "raw_inputs": {
+            "symbol": "BANKNIFTY",
+            "prev_close": 58045.9,
+            "pred_open": 58062.22,
+            "pred_high": 58778.56,
+            "pred_low": 57343.19,
+            "pred_close": 58070.38,
+            "movement_side": "Neutral / Sentiment Driven",
+            "gift_nifty": null,
+            "vix": 15.0,
+            "adr_delta": 0.0,
+            "pcr": 1.0,
+            "sentiment_score": 0.11,
+            "sentiment_intensity": "bullish",
+            "sentiment_factors": [
+                "surge",
+                "rally",
+                "up",
+                "rise",
+                "jump"
+            ],
+            "open_lo": 57153.8,
+            "open_hi": 58970.64,
+            "high_lo": 58100.79,
+            "high_hi": 59456.33,
+            "low_lo": 56852.9,
+            "low_hi": 57833.48,
+            "confidence": 65.9,
+            "model": "calibrated",
+            "news_shift_points": 0.0
+        },
+        "current_params": {
+            "ALPHA": 0.5,
+            "BETA": 0.5,
+            "GAMMA": 0.5
+        }
+    },
+    {
+        "id": "2026-07-12_SENSEX",
+        "date": "2026-07-12",
+        "timestamp": "2026-07-12T08:58:14.464076",
+        "index": "SENSEX",
+        "predicted": {
+            "pred_open": 77587.93,
+            "pred_high": 78241.31,
+            "pred_low": 76868.65
+        },
+        "actual": {
+            "open": 77395.63,
+            "high": 77642.23,
+            "low": 77320.56,
+            "close": 77569.39
+        },
+        "reason": "Automated Core Update: Bearish macro factors triggered systemic sell-offs/liquidations.",
+        "raw_inputs": {
+            "symbol": "SENSEX",
+            "prev_close": 77569.39,
+            "pred_open": 77587.93,
+            "pred_high": 78241.31,
+            "pred_low": 76868.65,
+            "pred_close": 77597.2,
+            "movement_side": "Neutral / Sentiment Driven",
+            "gift_nifty": null,
+            "vix": 15.0,
+            "adr_delta": 0.0,
+            "pcr": 1.0,
+            "sentiment_score": 0.11,
+            "sentiment_intensity": "bullish",
+            "sentiment_factors": [
+                "surge",
+                "rally",
+                "up",
+                "rise",
+                "jump"
+            ],
+            "open_lo": 76396.57,
+            "open_hi": 78779.29,
+            "high_lo": 77426.23,
+            "high_hi": 79056.39,
+            "low_lo": 76067.49,
+            "low_hi": 77669.81,
+            "confidence": 59.4,
+            "model": "calibrated",
+            "news_shift_points": 0.0
+        },
+        "current_params": {
+            "ALPHA": 0.5,
+            "BETA": 0.5,
+            "GAMMA": 0.5
+        }
+    },
+    {
+        "id": "2026-07-15_NIFTY_50",
+        "date": "2026-07-15",
+        "timestamp": "2026-07-15T10:28:20.024031",
+        "index": "NIFTY 50",
+        "predicted": {
+            "pred_open": 24213.8,
+            "pred_high": 24459.98,
+            "pred_low": 24082.31
+        },
+        "actual": {
+            "open": 24085.85,
+            "high": 24220.35,
+            "low": 24069.05,
+            "close": 24207.25
+        },
+        "reason": "Automated Core Update: Bearish macro factors triggered systemic sell-offs/liquidations.",
+        "raw_inputs": {
+            "symbol": "NIFTY 50",
+            "prev_close": 24207.45,
+            "pred_open": 24213.8,
+            "pred_high": 24459.98,
+            "pred_low": 24082.31,
+            "pred_close": 24213.8,
+            "movement_side": "Live Session",
+            "gift_nifty": null,
+            "vix": 16.5,
+            "adr_delta": 0.0,
+            "pcr": 1.0,
+            "sentiment_score": 0.13,
+            "sentiment_intensity": "bullish",
+            "sentiment_factors": [
+                "easing",
+                "beat",
+                "up",
+                "high",
+                "strong",
+                "jump",
+                "soar",
+                "inflation"
+            ],
+            "open_lo": 23880.36,
+            "open_hi": 24547.24,
+            "high_lo": 24256.76,
+            "high_hi": 24663.2,
+            "low_lo": 23864.72,
+            "low_hi": 24299.9,
+            "confidence": 62.6,
+            "model": "calibrated",
+            "news_shift_points": 0.0
+        },
+        "current_params": {
+            "ALPHA": 0.5,
+            "BETA": 0.5,
+            "GAMMA": 0.5
+        }
+    },
+    {
+        "id": "2026-07-15_BANKNIFTY",
+        "date": "2026-07-15",
+        "timestamp": "2026-07-15T10:28:20.024044",
+        "index": "BANKNIFTY",
+        "predicted": {
+            "pred_open": 58126.48,
+            "pred_high": 58847.37,
+            "pred_low": 57403.36
+        },
+        "actual": {
+            "open": 57643.75,
+            "high": 58148.8,
+            "low": 57616.95,
+            "close": 58105.25
+        },
+        "reason": "Automated Core Update: Bearish macro factors triggered systemic sell-offs/liquidations.",
+        "raw_inputs": {
+            "symbol": "BANKNIFTY",
+            "prev_close": 58107.2,
+            "pred_open": 58126.48,
+            "pred_high": 58847.37,
+            "pred_low": 57403.36,
+            "pred_close": 58126.48,
+            "movement_side": "Live Session",
+            "gift_nifty": null,
+            "vix": 16.5,
+            "adr_delta": 0.0,
+            "pcr": 1.0,
+            "sentiment_score": 0.13,
+            "sentiment_intensity": "bullish",
+            "sentiment_factors": [
+                "easing",
+                "beat",
+                "up",
+                "high",
+                "strong",
+                "jump",
+                "soar",
+                "inflation"
+            ],
+            "open_lo": 57218.06,
+            "open_hi": 59034.9,
+            "high_lo": 58169.6,
+            "high_hi": 59525.14,
+            "low_lo": 56913.07,
+            "low_hi": 57893.65,
+            "confidence": 66.1,
+            "model": "calibrated",
+            "news_shift_points": 0.0
+        },
+        "current_params": {
+            "ALPHA": 0.5,
+            "BETA": 0.5,
+            "GAMMA": 0.5
+        }
+    },
+    {
+        "id": "2026-07-15_SENSEX",
+        "date": "2026-07-15",
+        "timestamp": "2026-07-15T10:28:20.024052",
+        "index": "SENSEX",
+        "predicted": {
+            "pred_open": 77596.49,
+            "pred_high": 78235.97,
+            "pred_low": 76889.67
+        },
+        "actual": {
+            "open": 77192.76,
+            "high": 77641.86,
+            "low": 77072.53,
+            "close": 77575.45
+        },
+        "reason": "Automated Core Update: Bearish macro factors triggered systemic sell-offs/liquidations.",
+        "raw_inputs": {
+            "symbol": "SENSEX",
+            "prev_close": 77574.94,
+            "pred_open": 77596.49,
+            "pred_high": 78235.97,
+            "pred_low": 76889.67,
+            "pred_close": 77596.49,
+            "movement_side": "Live Session",
+            "gift_nifty": null,
+            "vix": 16.5,
+            "adr_delta": 0.0,
+            "pcr": 1.0,
+            "sentiment_score": 0.13,
+            "sentiment_intensity": "bullish",
+            "sentiment_factors": [
+                "easing",
+                "beat",
+                "up",
+                "high",
+                "strong",
+                "jump",
+                "soar",
+                "inflation"
+            ],
+            "open_lo": 76405.13,
+            "open_hi": 78787.85,
+            "high_lo": 77420.89,
+            "high_hi": 79051.05,
+            "low_lo": 76088.51,
+            "low_hi": 77690.83,
+            "confidence": 59.0,
+            "model": "calibrated",
+            "news_shift_points": 0.0
+        },
+        "current_params": {
+            "ALPHA": 0.5,
+            "BETA": 0.5,
+            "GAMMA": 0.5
+        }
+    },
+    {
+        "id": "2026-07-16_NIFTY_50",
+        "date": "2026-07-16",
+        "timestamp": "2026-07-16T12:08:46.375451",
+        "index": "NIFTY 50",
+        "predicted": {
+            "pred_open": 24144.0,
+            "pred_high": 24144.0,
+            "pred_low": 23585.81
+        },
+        "actual": {
+            "open": 24127.6,
+            "high": 24367.3,
+            "low": 24099.05,
+            "close": 24334.3
+        },
+        "reason": "",
+        "raw_inputs": {
+            "symbol": "NIFTY 50",
+            "prev_close": 24141.55,
+            "pred_open": 24144.0,
+            "pred_high": 24144.0,
+            "pred_low": 23585.81,
+            "pred_close": 24144.0,
+            "movement_side": "Live Session",
+            "gift_nifty": null,
+            "vix": 15.67,
+            "adr_delta": 0.57,
+            "pcr": 1.0,
+            "sentiment_score": 0.05,
+            "sentiment_intensity": "neutral",
+            "sentiment_factors": [
+                "recovery",
+                "surge",
+                "boom",
+                "investment",
+                "rise",
+                "jump",
+                "war",
+                "inflation",
+                "crash",
+                "sell-off"
+            ],
+            "open_lo": 23853.0,
+            "open_hi": 24435.0,
+            "high_lo": 23705.17,
+            "high_hi": 24152.03,
+            "low_lo": 23351.37,
+            "low_hi": 23820.25,
+            "confidence": 60.0,
+            "model": "calibrated",
+            "news_shift_points": -387.7
+        },
+        "current_params": {
+            "ALPHA": 0.5,
+            "BETA": 0.5,
+            "GAMMA": 0.5
+        }
+    },
+    {
+        "id": "2026-07-16_BANKNIFTY",
+        "date": "2026-07-16",
+        "timestamp": "2026-07-16T12:08:46.375463",
+        "index": "BANKNIFTY",
+        "predicted": {
+            "pred_open": 57446.82,
+            "pred_high": 57446.82,
+            "pred_low": 55632.11
+        },
+        "actual": {
+            "open": 57662.0,
+            "high": 58596.85,
+            "low": 57542.15,
+            "close": 58521.4
+        },
+        "reason": "",
+        "raw_inputs": {
+            "symbol": "BANKNIFTY",
+            "prev_close": 57630.85,
+            "pred_open": 57446.82,
+            "pred_high": 57446.82,
+            "pred_low": 55632.11,
+            "pred_close": 57637.8,
+            "movement_side": "Live Session",
+            "gift_nifty": null,
+            "vix": 15.67,
+            "adr_delta": 0.57,
+            "pcr": 1.0,
+            "sentiment_score": 0.05,
+            "sentiment_intensity": "neutral",
+            "sentiment_factors": [
+                "recovery",
+                "surge",
+                "boom",
+                "investment",
+                "rise",
+                "jump",
+                "war",
+                "inflation",
+                "crash",
+                "sell-off"
+            ],
+            "open_lo": 56718.16,
+            "open_hi": 58175.48,
+            "high_lo": 56236.77,
+            "high_hi": 57631.01,
+            "low_lo": 55203.67,
+            "low_hi": 56060.55,
+            "confidence": 67.9,
+            "model": "calibrated",
+            "news_shift_points": -1249.4
+        },
+        "current_params": {
+            "ALPHA": 0.5,
+            "BETA": 0.5,
+            "GAMMA": 0.5
+        }
+    },
+    {
+        "id": "2026-07-16_SENSEX",
+        "date": "2026-07-16",
+        "timestamp": "2026-07-16T12:08:46.375471",
+        "index": "SENSEX",
+        "predicted": {
+            "pred_open": 77470.78,
+            "pred_high": 77470.78,
+            "pred_low": 75520.34
+        },
+        "actual": {
+            "open": 77370.77,
+            "high": 78282.55,
+            "low": 77308.0,
+            "close": 78151.45
+        },
+        "reason": "",
+        "raw_inputs": {
+            "symbol": "SENSEX",
+            "prev_close": 77463.26,
+            "pred_open": 77470.78,
+            "pred_high": 77470.78,
+            "pred_low": 75520.34,
+            "pred_close": 77470.78,
+            "movement_side": "Live Session",
+            "gift_nifty": null,
+            "vix": 15.67,
+            "adr_delta": 0.57,
+            "pcr": 1.0,
+            "sentiment_score": 0.05,
+            "sentiment_intensity": "neutral",
+            "sentiment_factors": [
+                "recovery",
+                "surge",
+                "boom",
+                "investment",
+                "rise",
+                "jump",
+                "war",
+                "inflation",
+                "crash",
+                "sell-off"
+            ],
+            "open_lo": 76371.04,
+            "open_hi": 78570.52,
+            "high_lo": 75801.04,
+            "high_hi": 77585.08,
+            "low_lo": 74702.86,
+            "low_hi": 76337.82,
+            "confidence": 55.2,
+            "model": "calibrated",
+            "news_shift_points": -1244.1
+        },
+        "current_params": {
+            "ALPHA": 0.5,
+            "BETA": 0.5,
+            "GAMMA": 0.5
+        }
+    },
+    {
+        "id": "2026-07-18_NIFTY_50",
+        "date": "2026-07-18",
+        "timestamp": "2026-07-18T12:20:58.327394",
+        "index": "NIFTY 50",
+        "predicted": {
+            "pred_open": 24335.96,
+            "pred_high": 24550.04,
+            "pred_low": 24210.65
+        },
+        "actual": {
+            "open": 24190.05,
+            "high": 24262.35,
+            "low": 24149.9,
+            "close": 24224.1
+        },
+        "reason": "",
+        "raw_inputs": {
+            "symbol": "NIFTY 50",
+            "prev_close": 24334.3,
+            "pred_open": 24335.96,
+            "pred_high": 24550.04,
+            "pred_low": 24210.65,
+            "pred_close": 24336.76,
+            "movement_side": "Neutral / Sentiment Driven",
+            "gift_nifty": null,
+            "vix": 18.77,
+            "adr_delta": 0.13,
+            "pcr": 1.0,
+            "sentiment_score": 0.03,
+            "sentiment_intensity": "neutral",
+            "sentiment_factors": [
+                "up",
+                "rise",
+                "gain",
+                "strong"
+            ],
+            "open_lo": 24044.96,
+            "open_hi": 24626.96,
+            "high_lo": 24326.61,
+            "high_hi": 24773.47,
+            "low_lo": 23976.21,
+            "low_hi": 24445.09,
+            "confidence": 61.5,
+            "model": "calibrated",
+            "news_shift_points": 0.0
+        },
+        "current_params": {
+            "ALPHA": 0.5,
+            "BETA": 0.5,
+            "GAMMA": 0.5
+        }
+    },
+    {
+        "id": "2026-07-18_BANKNIFTY",
+        "date": "2026-07-18",
+        "timestamp": "2026-07-18T12:20:58.327409",
+        "index": "BANKNIFTY",
+        "predicted": {
+            "pred_open": 58335.46,
+            "pred_high": 59195.0,
+            "pred_low": 57824.48
+        },
+        "actual": {
+            "open": 57738.25,
+            "high": 57963.55,
+            "low": 57557.3,
+            "close": 57801.6
+        },
+        "reason": "",
+        "raw_inputs": {
+            "symbol": "BANKNIFTY",
+            "prev_close": 58521.4,
+            "pred_open": 58335.46,
+            "pred_high": 59195.0,
+            "pred_low": 57824.48,
+            "pred_close": 58528.93,
+            "movement_side": "Neutral / Sentiment Driven",
+            "gift_nifty": null,
+            "vix": 18.77,
+            "adr_delta": 0.13,
+            "pcr": 1.0,
+            "sentiment_score": 0.03,
+            "sentiment_intensity": "neutral",
+            "sentiment_factors": [
+                "up",
+                "rise",
+                "gain",
+                "strong"
+            ],
+            "open_lo": 57606.8,
+            "open_hi": 59064.12,
+            "high_lo": 58497.88,
+            "high_hi": 59892.12,
+            "low_lo": 57396.04,
+            "low_hi": 58252.92,
+            "confidence": 69.5,
+            "model": "calibrated",
+            "news_shift_points": 0.0
+        },
+        "current_params": {
+            "ALPHA": 0.5,
+            "BETA": 0.5,
+            "GAMMA": 0.5
+        }
+    },
+    {
+        "id": "2026-07-18_SENSEX",
+        "date": "2026-07-18",
+        "timestamp": "2026-07-18T12:20:58.327417",
+        "index": "SENSEX",
+        "predicted": {
+            "pred_open": 78156.93,
+            "pred_high": 78707.59,
+            "pred_low": 77495.34
+        },
+        "actual": {
+            "open": 78151.45,
+            "high": 78151.45,
+            "low": 77444.79,
+            "close": 77666.73
+        },
+        "reason": "",
+        "raw_inputs": {
+            "symbol": "SENSEX",
+            "prev_close": 78151.45,
+            "pred_open": 78156.93,
+            "pred_high": 78707.59,
+            "pred_low": 77495.34,
+            "pred_close": 78159.63,
+            "movement_side": "Neutral / Sentiment Driven",
+            "gift_nifty": null,
+            "vix": 18.77,
+            "adr_delta": 0.13,
+            "pcr": 1.0,
+            "sentiment_score": 0.03,
+            "sentiment_intensity": "neutral",
+            "sentiment_factors": [
+                "up",
+                "rise",
+                "gain",
+                "strong"
+            ],
+            "open_lo": 77057.19,
+            "open_hi": 79256.67,
+            "high_lo": 77815.57,
+            "high_hi": 79599.61,
+            "low_lo": 76677.86,
+            "low_hi": 78312.82,
+            "confidence": 57.4,
+            "model": "calibrated",
+            "news_shift_points": 0.0
+        },
+        "current_params": {
+            "ALPHA": 0.5,
+            "BETA": 0.5,
+            "GAMMA": 0.5
+        }
+    },
+    {
+        "id": "2026-07-20_NIFTY_50",
+        "date": "2026-07-20",
+        "timestamp": "2026-07-20T10:27:24.122725",
+        "index": "NIFTY 50",
+        "predicted": {
+            "pred_open": 24223.27,
+            "pred_high": 24435.19,
+            "pred_low": 24100.23
+        },
+        "actual": {
+            "open": 24216.05,
+            "high": 24262.2,
+            "low": 24193.7,
+            "close": 24193.7
+        },
+        "reason": "",
+        "raw_inputs": {
+            "symbol": "NIFTY 50",
+            "prev_close": 24223.15,
+            "pred_open": 24223.27,
+            "pred_high": 24435.19,
+            "pred_low": 24100.23,
+            "pred_close": 24223.27,
+            "movement_side": "Live Session",
+            "gift_nifty": null,
+            "vix": 18.77,
+            "adr_delta": 0.13,
+            "pcr": 1.0,
+            "sentiment_score": 0.0,
+            "sentiment_intensity": "neutral",
+            "sentiment_factors": [
+                "rally",
+                "gain",
+                "strong",
+                "selloff",
+                "fall",
+                "drop",
+                "tumble"
+            ],
+            "open_lo": 23932.27,
+            "open_hi": 24514.27,
+            "high_lo": 24211.76,
+            "high_hi": 24658.62,
+            "low_lo": 23865.79,
+            "low_hi": 24334.67,
+            "confidence": 61.2,
+            "model": "calibrated",
+            "news_shift_points": 0.0
+        },
+        "current_params": {
+            "ALPHA": 0.5,
+            "BETA": 0.5,
+            "GAMMA": 0.5
+        }
+    },
+    {
+        "id": "2026-07-20_BANKNIFTY",
+        "date": "2026-07-20",
+        "timestamp": "2026-07-20T10:27:24.122741",
+        "index": "BANKNIFTY",
+        "predicted": {
+            "pred_open": 57608.95,
+            "pred_high": 58507.82,
+            "pred_low": 57058.47
+        },
+        "actual": {
+            "open": 57853.75,
+            "high": 58228.65,
+            "low": 57820.9,
+            "close": 57957.9
+        },
+        "reason": "",
+        "raw_inputs": {
+            "symbol": "BANKNIFTY",
+            "prev_close": 57799.7,
+            "pred_open": 57608.95,
+            "pred_high": 58507.82,
+            "pred_low": 57058.47,
+            "pred_close": 57799.94,
+            "movement_side": "Live Session",
+            "gift_nifty": null,
+            "vix": 18.77,
+            "adr_delta": 0.13,
+            "pcr": 1.0,
+            "sentiment_score": 0.0,
+            "sentiment_intensity": "neutral",
+            "sentiment_factors": [
+                "rally",
+                "gain",
+                "strong",
+                "selloff",
+                "fall",
+                "drop",
+                "tumble"
+            ],
+            "open_lo": 56880.29,
+            "open_hi": 58337.61,
+            "high_lo": 57810.7,
+            "high_hi": 59204.94,
+            "low_lo": 56630.03,
+            "low_hi": 57486.91,
+            "confidence": 70.6,
+            "model": "calibrated",
+            "news_shift_points": 0.0
+        },
+        "current_params": {
+            "ALPHA": 0.5,
+            "BETA": 0.5,
+            "GAMMA": 0.5
+        }
+    },
+    {
+        "id": "2026-07-20_SENSEX",
+        "date": "2026-07-20",
+        "timestamp": "2026-07-20T10:27:24.122750",
+        "index": "SENSEX",
+        "predicted": {
+            "pred_open": 77662.27,
+            "pred_high": 78212.39,
+            "pred_low": 77000.9
+        },
+        "actual": {
+            "open": 77649.63,
+            "high": 77753.18,
+            "low": 77541.68,
+            "close": 77621.26
+        },
+        "reason": "",
+        "raw_inputs": {
+            "symbol": "SENSEX",
+            "prev_close": 77662.02,
+            "pred_open": 77662.27,
+            "pred_high": 78212.39,
+            "pred_low": 77000.9,
+            "pred_close": 77662.27,
+            "movement_side": "Live Session",
+            "gift_nifty": null,
+            "vix": 18.77,
+            "adr_delta": 0.13,
+            "pcr": 1.0,
+            "sentiment_score": 0.0,
+            "sentiment_intensity": "neutral",
+            "sentiment_factors": [
+                "rally",
+                "gain",
+                "strong",
+                "selloff",
+                "fall",
+                "drop",
+                "tumble"
+            ],
+            "open_lo": 76562.53,
+            "open_hi": 78762.01,
+            "high_lo": 77320.37,
+            "high_hi": 79104.41,
+            "low_lo": 76183.42,
+            "low_hi": 77818.38,
+            "confidence": 57.4,
+            "model": "calibrated",
+            "news_shift_points": 0.0
+        },
+        "current_params": {
+            "ALPHA": 0.5,
+            "BETA": 0.5,
+            "GAMMA": 0.5
+        }
+    },
+    {
+        "id": "2026-07-21_NIFTY_50",
+        "date": "2026-07-21",
+        "timestamp": "2026-07-21T10:23:23.182230",
+        "index": "NIFTY 50",
+        "predicted": {
+            "pred_open": 24202.49,
+            "pred_high": 24393.9,
+            "pred_low": 24097.18
+        },
+        "actual": {
+            "open": 24216.05,
+            "high": 24262.2,
+            "low": 24135.65,
+            "close": 24187.7
+        },
+        "reason": "",
+        "raw_inputs": {
+            "symbol": "NIFTY 50",
+            "prev_close": 24194.1,
+            "pred_open": 24202.49,
+            "pred_high": 24393.9,
+            "pred_low": 24097.18,
+            "pred_close": 24202.49,
+            "movement_side": "Live Session",
+            "gift_nifty": null,
+            "vix": 18.65,
+            "adr_delta": -3.47,
+            "pcr": 1.0,
+            "sentiment_score": 0.22,
+            "sentiment_intensity": "bullish",
+            "sentiment_factors": [
+                "surge",
+                "rally",
+                "up",
+                "rise",
+                "gain",
+                "high",
+                "jump",
+                "selloff",
+                "down",
+                "loss"
+            ],
+            "open_lo": 23911.49,
+            "open_hi": 24493.49,
+            "high_lo": 24170.47,
+            "high_hi": 24617.33,
+            "low_lo": 23862.74,
+            "low_hi": 24331.62,
+            "confidence": 60.8,
+            "model": "calibrated",
+            "news_shift_points": 0.0
+        },
+        "current_params": {
+            "ALPHA": 0.5,
+            "BETA": 0.5,
+            "GAMMA": 0.5
+        }
+    },
+    {
+        "id": "2026-07-21_BANKNIFTY",
+        "date": "2026-07-21",
+        "timestamp": "2026-07-21T10:23:23.182244",
+        "index": "BANKNIFTY",
+        "predicted": {
+            "pred_open": 57792.7,
+            "pred_high": 58676.12,
+            "pred_low": 57416.61
+        },
+        "actual": {
+            "open": 57853.75,
+            "high": 58228.65,
+            "low": 57803.85,
+            "close": 57835.35
+        },
+        "reason": "",
+        "raw_inputs": {
+            "symbol": "BANKNIFTY",
+            "prev_close": 57952.0,
+            "pred_open": 57792.7,
+            "pred_high": 58676.12,
+            "pred_low": 57416.61,
+            "pred_close": 57983.69,
+            "movement_side": "Live Session",
+            "gift_nifty": null,
+            "vix": 18.65,
+            "adr_delta": -3.47,
+            "pcr": 1.0,
+            "sentiment_score": 0.22,
+            "sentiment_intensity": "bullish",
+            "sentiment_factors": [
+                "surge",
+                "rally",
+                "up",
+                "rise",
+                "gain",
+                "high",
+                "jump",
+                "selloff",
+                "down",
+                "loss"
+            ],
+            "open_lo": 57064.04,
+            "open_hi": 58521.36,
+            "high_lo": 57979.0,
+            "high_hi": 59373.24,
+            "low_lo": 56988.17,
+            "low_hi": 57845.05,
+            "confidence": 70.6,
+            "model": "calibrated",
+            "news_shift_points": 0.0
+        },
+        "current_params": {
+            "ALPHA": 0.5,
+            "BETA": 0.5,
+            "GAMMA": 0.5
+        }
+    },
+    {
+        "id": "2026-07-21_SENSEX",
+        "date": "2026-07-21",
+        "timestamp": "2026-07-21T10:23:23.182253",
+        "index": "SENSEX",
+        "predicted": {
+            "pred_open": 77631.6,
+            "pred_high": 78203.25,
+            "pred_low": 77128.23
+        },
+        "actual": {
+            "open": 77649.63,
+            "high": 77753.18,
+            "low": 77337.33,
+            "close": 77470.11
+        },
+        "reason": "",
+        "raw_inputs": {
+            "symbol": "SENSEX",
+            "prev_close": 77598.78,
+            "pred_open": 77631.6,
+            "pred_high": 78203.25,
+            "pred_low": 77128.23,
+            "pred_close": 77631.6,
+            "movement_side": "Live Session",
+            "gift_nifty": null,
+            "vix": 18.65,
+            "adr_delta": -3.47,
+            "pcr": 1.0,
+            "sentiment_score": 0.22,
+            "sentiment_intensity": "bullish",
+            "sentiment_factors": [
+                "surge",
+                "rally",
+                "up",
+                "rise",
+                "gain",
+                "high",
+                "jump",
+                "selloff",
+                "down",
+                "loss"
+            ],
+            "open_lo": 76531.86,
+            "open_hi": 78731.34,
+            "high_lo": 77311.23,
+            "high_hi": 79095.27,
+            "low_lo": 76310.75,
+            "low_hi": 77945.71,
+            "confidence": 56.9,
+            "model": "calibrated",
+            "news_shift_points": 0.0
+        },
+        "current_params": {
+            "ALPHA": 0.5,
+            "BETA": 0.5,
+            "GAMMA": 0.5
+        }
+    },
+    {
+        "id": "2026-07-22_NIFTY_50",
+        "date": "2026-07-22",
+        "timestamp": "2026-07-22T13:25:52.573448",
+        "index": "NIFTY 50",
+        "predicted": {
+            "pred_open": 23982.77,
+            "pred_high": 24201.73,
+            "pred_low": 23849.76
+        },
+        "actual": {
+            "open": 24150.45,
+            "high": 24166.3,
+            "low": 23961.4,
+            "close": 23996.25
+        },
+        "reason": "Automated Core Update: Bullish macroeconomic tilt pushed order flow upwards against algorithmic base.",
+        "raw_inputs": {
+            "symbol": "NIFTY 50",
+            "prev_close": 23977.25,
+            "pred_open": 23982.77,
+            "pred_high": 24201.73,
+            "pred_low": 23849.76,
+            "pred_close": 23982.77,
+            "movement_side": "Live Session",
+            "gift_nifty": null,
+            "vix": 17.59,
+            "adr_delta": -0.25,
+            "pcr": 1.0,
+            "sentiment_score": 0.12,
+            "sentiment_intensity": "bullish",
+            "sentiment_factors": [
+                "rally",
+                "up",
+                "gain",
+                "high",
+                "jump",
+                "loss"
+            ],
+            "open_lo": 23691.77,
+            "open_hi": 24273.77,
+            "high_lo": 23978.3,
+            "high_hi": 24425.16,
+            "low_lo": 23615.32,
+            "low_hi": 24084.2,
+            "confidence": 61.9,
+            "model": "calibrated",
+            "news_shift_points": 0.0
+        },
+        "current_params": {
+            "ALPHA": 0.5,
+            "BETA": 0.5,
+            "GAMMA": 0.5
+        }
+    },
+    {
+        "id": "2026-07-22_BANKNIFTY",
+        "date": "2026-07-22",
+        "timestamp": "2026-07-22T13:25:52.573467",
+        "index": "BANKNIFTY",
+        "predicted": {
+            "pred_open": 56908.34,
+            "pred_high": 57863.52,
+            "pred_low": 56360.53
+        },
+        "actual": {
+            "open": 57768.4,
+            "high": 57824.0,
+            "low": 56970.6,
+            "close": 57126.8
+        },
+        "reason": "Automated Core Update: Bullish macroeconomic tilt pushed order flow upwards against algorithmic base.",
+        "raw_inputs": {
+            "symbol": "BANKNIFTY",
+            "prev_close": 57080.7,
+            "pred_open": 56908.34,
+            "pred_high": 57863.52,
+            "pred_low": 56360.53,
+            "pred_close": 57099.32,
+            "movement_side": "Live Session",
+            "gift_nifty": null,
+            "vix": 17.59,
+            "adr_delta": -0.25,
+            "pcr": 1.0,
+            "sentiment_score": 0.12,
+            "sentiment_intensity": "bullish",
+            "sentiment_factors": [
+                "rally",
+                "up",
+                "gain",
+                "high",
+                "jump",
+                "loss"
+            ],
+            "open_lo": 56179.68,
+            "open_hi": 57637.0,
+            "high_lo": 57166.4,
+            "high_hi": 58560.64,
+            "low_lo": 55932.09,
+            "low_hi": 56788.97,
+            "confidence": 71.6,
+            "model": "calibrated",
+            "news_shift_points": 0.0
+        },
+        "current_params": {
+            "ALPHA": 0.5,
+            "BETA": 0.5,
+            "GAMMA": 0.5
+        }
+    },
+    {
+        "id": "2026-07-22_SENSEX",
+        "date": "2026-07-22",
+        "timestamp": "2026-07-22T13:25:52.573476",
+        "index": "SENSEX",
+        "predicted": {
+            "pred_open": 76764.14,
+            "pred_high": 77385.12,
+            "pred_low": 76115.76
+        },
+        "actual": {
+            "open": 77384.95,
+            "high": 77384.95,
+            "low": 76641.19,
+            "close": 76755.05
+        },
+        "reason": "Automated Core Update: Bullish macroeconomic tilt pushed order flow upwards against algorithmic base.",
+        "raw_inputs": {
+            "symbol": "SENSEX",
+            "prev_close": 76744.89,
+            "pred_open": 76764.14,
+            "pred_high": 77385.12,
+            "pred_low": 76115.76,
+            "pred_close": 76764.14,
+            "movement_side": "Live Session",
+            "gift_nifty": null,
+            "vix": 17.59,
+            "adr_delta": -0.25,
+            "pcr": 1.0,
+            "sentiment_score": 0.12,
+            "sentiment_intensity": "bullish",
+            "sentiment_factors": [
+                "rally",
+                "up",
+                "gain",
+                "high",
+                "jump",
+                "loss"
+            ],
+            "open_lo": 75664.4,
+            "open_hi": 77863.88,
+            "high_lo": 76493.1,
+            "high_hi": 78277.14,
+            "low_lo": 75298.28,
+            "low_hi": 76933.24,
+            "confidence": 58.3,
+            "model": "calibrated",
+            "news_shift_points": 0.0
+        },
+        "current_params": {
+            "ALPHA": 0.5,
+            "BETA": 0.5,
+            "GAMMA": 0.5
+        }
+    },
+    {
+        "id": "2026-07-23_NIFTY_50",
+        "date": "2026-07-23",
+        "timestamp": "2026-07-23T11:21:36.613721",
+        "index": "NIFTY 50",
+        "predicted": {
+            "pred_open": 23958.39,
+            "pred_high": 24121.89,
+            "pred_low": 23804.5
+        },
+        "actual": {
+            "open": "N/A",
+            "high": "N/A",
+            "low": "N/A",
+            "close": "N/A"
+        },
+        "reason": "",
+        "raw_inputs": {
+            "symbol": "NIFTY 50",
+            "prev_close": 23960.3,
+            "pred_open": 23958.39,
+            "pred_high": 24121.89,
+            "pred_low": 23804.5,
+            "pred_close": 23958.39,
+            "movement_side": "Live Session",
+            "gift_nifty": null,
+            "vix": 16.64,
+            "adr_delta": -1.71,
+            "pcr": 1.0,
+            "sentiment_score": -0.02,
+            "sentiment_intensity": "neutral",
+            "sentiment_factors": [
+                "surge",
+                "up",
+                "high",
+                "war",
+                "inflation",
+                "hawkish",
+                "oil surge",
+                "tumble"
+            ],
+            "open_lo": 23667.39,
+            "open_hi": 24249.39,
+            "high_lo": 23898.46,
+            "high_hi": 24345.32,
+            "low_lo": 23570.06,
+            "low_hi": 24038.94,
+            "confidence": 60.2,
+            "model": "calibrated",
+            "news_shift_points": 0.0,
+            "agent_consensus": {
+                "verdict": "NEUTRAL",
+                "consensus_score": -0.101,
+                "overall_confidence": 76.2,
+                "debate_summary": "Technical Analyst recommends NEUTRAL (70.1% conf). Fundamental Analyst suggests NEUTRAL (95.0% conf). Sentiment Expert reads NEUTRAL (92.6% conf). Risk Manager classifies market risk as LOW (VIX: 16.6).",
+                "agents": {
+                    "fundamental": {
+                        "agent": "Fundamental Analyst",
+                        "score": -0.314,
+                        "bias": "NEUTRAL",
+                        "confidence": 95.0,
+                        "reasoning": "Fundamental factors balanced between growth expansion and hawkish central bank policies.",
+                        "macro_events_counted": 5
+                    },
+                    "technical": {
+                        "agent": "Technical Analyst",
+                        "score": -0.003,
+                        "bias": "NEUTRAL",
+                        "confidence": 70.1,
+                        "reasoning": "Technical range bound near spot close with neutral Option PCR (1.00).",
+                        "pcr": 1.0,
+                        "expected_gap_pct": -0.01
+                    },
+                    "sentiment": {
+                        "agent": "Sentiment Expert",
+                        "score": -0.023,
+                        "bias": "NEUTRAL",
+                        "intensity": "neutral",
+                        "confidence": 92.6,
+                        "reasoning": "Market news sentiment balanced with neutral news flow."
+                    },
+                    "risk": {
+                        "agent": "Risk Manager",
+                        "risk_rating": "LOW",
+                        "max_leverage": "2.0x (Optimal Growth)",
+                        "ruin_probability": 1.0,
+                        "vix": 16.6,
+                        "reasoning": "Low volatility environment (VIX: 16.6). Favorable regime for trend follow strategies."
+                    }
+                }
+            },
+            "quant_strategy": {
+                "index": "NIFTY 50",
+                "regime": "NEUTRAL_CONSOLIDATION",
+                "regime_label": "Neutral Consolidation",
+                "strategy_name": "Mean Reversion Iron Condor",
+                "action": "RANGE STRADDLE / SPREAD",
+                "direction": "NEUTRAL",
+                "entry_price": 23960.3,
+                "stop_loss": 23711.91,
+                "take_profit_1": 24121.89,
+                "take_profit_2": 24237.63,
+                "risk_reward_ratio": "1:1.8",
+                "win_probability_pct": 62.5,
+                "position_size_pct": 4.0,
+                "risk_tier": "MODERATE (Standard Risk)",
+                "description": "Sell out-of-the-money options options outside predicted high/low boundaries."
+            }
+        },
+        "current_params": {
+            "ALPHA": 0.5,
+            "BETA": 0.5,
+            "GAMMA": 0.5
+        }
+    },
+    {
+        "id": "2026-07-23_BANKNIFTY",
+        "date": "2026-07-23",
+        "timestamp": "2026-07-23T11:21:36.613739",
+        "index": "BANKNIFTY",
+        "predicted": {
+            "pred_open": 56541.04,
+            "pred_high": 57357.62,
+            "pred_low": 55980.49
+        },
+        "actual": {
+            "open": "N/A",
+            "high": "N/A",
+            "low": "N/A",
+            "close": "N/A"
+        },
+        "reason": "",
+        "raw_inputs": {
+            "symbol": "BANKNIFTY",
+            "prev_close": 56736.45,
+            "pred_open": 56541.04,
+            "pred_high": 57357.62,
+            "pred_low": 55980.49,
+            "pred_close": 56732.02,
+            "movement_side": "Live Session",
+            "gift_nifty": null,
+            "vix": 16.64,
+            "adr_delta": -1.71,
+            "pcr": 1.0,
+            "sentiment_score": -0.02,
+            "sentiment_intensity": "neutral",
+            "sentiment_factors": [
+                "surge",
+                "up",
+                "high",
+                "war",
+                "inflation",
+                "hawkish",
+                "oil surge",
+                "tumble"
+            ],
+            "open_lo": 55812.38,
+            "open_hi": 57269.7,
+            "high_lo": 56660.5,
+            "high_hi": 58054.74,
+            "low_lo": 55552.05,
+            "low_hi": 56408.93,
+            "confidence": 70.9,
+            "model": "calibrated",
+            "news_shift_points": 0.0,
+            "agent_consensus": {
+                "verdict": "NEUTRAL",
+                "consensus_score": -0.148,
+                "overall_confidence": 77.3,
+                "debate_summary": "Technical Analyst recommends NEUTRAL (73.4% conf). Fundamental Analyst suggests NEUTRAL (95.0% conf). Sentiment Expert reads NEUTRAL (92.6% conf). Risk Manager classifies market risk as LOW (VIX: 16.6).",
+                "agents": {
+                    "fundamental": {
+                        "agent": "Fundamental Analyst",
+                        "score": -0.314,
+                        "bias": "NEUTRAL",
+                        "confidence": 95.0,
+                        "reasoning": "Fundamental factors balanced between growth expansion and hawkish central bank policies.",
+                        "macro_events_counted": 5
+                    },
+                    "technical": {
+                        "agent": "Technical Analyst",
+                        "score": -0.138,
+                        "bias": "NEUTRAL",
+                        "confidence": 73.4,
+                        "reasoning": "Technical range bound near spot close with neutral Option PCR (1.00).",
+                        "pcr": 1.0,
+                        "expected_gap_pct": -0.34
+                    },
+                    "sentiment": {
+                        "agent": "Sentiment Expert",
+                        "score": -0.023,
+                        "bias": "NEUTRAL",
+                        "intensity": "neutral",
+                        "confidence": 92.6,
+                        "reasoning": "Market news sentiment balanced with neutral news flow."
+                    },
+                    "risk": {
+                        "agent": "Risk Manager",
+                        "risk_rating": "LOW",
+                        "max_leverage": "2.0x (Optimal Growth)",
+                        "ruin_probability": 1.0,
+                        "vix": 16.6,
+                        "reasoning": "Low volatility environment (VIX: 16.6). Favorable regime for trend follow strategies."
+                    }
+                }
+            },
+            "quant_strategy": {
+                "index": "BANKNIFTY",
+                "regime": "VOLATILE_RANGEBOUND",
+                "regime_label": "Volatile Rangebound",
+                "strategy_name": "Mean Reversion Iron Condor",
+                "action": "RANGE STRADDLE / SPREAD",
+                "direction": "NEUTRAL",
+                "entry_price": 56736.45,
+                "stop_loss": 55667.11,
+                "take_profit_1": 57357.62,
+                "take_profit_2": 57749.34,
+                "risk_reward_ratio": "1:1.8",
+                "win_probability_pct": 62.5,
+                "position_size_pct": 4.0,
+                "risk_tier": "MODERATE (Standard Risk)",
+                "description": "Sell out-of-the-money options options outside predicted high/low boundaries."
+            }
+        },
+        "current_params": {
+            "ALPHA": 0.5,
+            "BETA": 0.5,
+            "GAMMA": 0.5
+        }
+    },
+    {
+        "id": "2026-07-23_SENSEX",
+        "date": "2026-07-23",
+        "timestamp": "2026-07-23T11:21:36.613748",
+        "index": "SENSEX",
+        "predicted": {
+            "pred_open": 76708.06,
+            "pred_high": 77201.67,
+            "pred_low": 76052.14
+        },
+        "actual": {
+            "open": "N/A",
+            "high": "N/A",
+            "low": "N/A",
+            "close": "N/A"
+        },
+        "reason": "",
+        "raw_inputs": {
+            "symbol": "SENSEX",
+            "prev_close": 76712.55,
+            "pred_open": 76708.06,
+            "pred_high": 77201.67,
+            "pred_low": 76052.14,
+            "pred_close": 76708.06,
+            "movement_side": "Live Session",
+            "gift_nifty": null,
+            "vix": 16.64,
+            "adr_delta": -1.71,
+            "pcr": 1.0,
+            "sentiment_score": -0.02,
+            "sentiment_intensity": "neutral",
+            "sentiment_factors": [
+                "surge",
+                "up",
+                "high",
+                "war",
+                "inflation",
+                "hawkish",
+                "oil surge",
+                "tumble"
+            ],
+            "open_lo": 75608.32,
+            "open_hi": 77807.8,
+            "high_lo": 76309.65,
+            "high_hi": 78093.69,
+            "low_lo": 75234.66,
+            "low_hi": 76869.62,
+            "confidence": 56.6,
+            "model": "calibrated",
+            "news_shift_points": 0.0,
+            "agent_consensus": {
+                "verdict": "NEUTRAL",
+                "consensus_score": -0.101,
+                "overall_confidence": 76.2,
+                "debate_summary": "Technical Analyst recommends NEUTRAL (70.1% conf). Fundamental Analyst suggests NEUTRAL (95.0% conf). Sentiment Expert reads NEUTRAL (92.6% conf). Risk Manager classifies market risk as LOW (VIX: 16.6).",
+                "agents": {
+                    "fundamental": {
+                        "agent": "Fundamental Analyst",
+                        "score": -0.314,
+                        "bias": "NEUTRAL",
+                        "confidence": 95.0,
+                        "reasoning": "Fundamental factors balanced between growth expansion and hawkish central bank policies.",
+                        "macro_events_counted": 5
+                    },
+                    "technical": {
+                        "agent": "Technical Analyst",
+                        "score": -0.002,
+                        "bias": "NEUTRAL",
+                        "confidence": 70.1,
+                        "reasoning": "Technical range bound near spot close with neutral Option PCR (1.00).",
+                        "pcr": 1.0,
+                        "expected_gap_pct": -0.01
+                    },
+                    "sentiment": {
+                        "agent": "Sentiment Expert",
+                        "score": -0.023,
+                        "bias": "NEUTRAL",
+                        "intensity": "neutral",
+                        "confidence": 92.6,
+                        "reasoning": "Market news sentiment balanced with neutral news flow."
+                    },
+                    "risk": {
+                        "agent": "Risk Manager",
+                        "risk_rating": "LOW",
+                        "max_leverage": "2.0x (Optimal Growth)",
+                        "ruin_probability": 1.0,
+                        "vix": 16.6,
+                        "reasoning": "Low volatility environment (VIX: 16.6). Favorable regime for trend follow strategies."
+                    }
+                }
+            },
+            "quant_strategy": {
+                "index": "SENSEX",
+                "regime": "NEUTRAL_CONSOLIDATION",
+                "regime_label": "Neutral Consolidation",
+                "strategy_name": "Mean Reversion Iron Condor",
+                "action": "RANGE STRADDLE / SPREAD",
+                "direction": "NEUTRAL",
+                "entry_price": 76712.55,
+                "stop_loss": 75733.55,
+                "take_profit_1": 77201.67,
+                "take_profit_2": 77599.91,
+                "risk_reward_ratio": "1:1.8",
+                "win_probability_pct": 62.5,
+                "position_size_pct": 4.0,
+                "risk_tier": "MODERATE (Standard Risk)",
+                "description": "Sell out-of-the-money options options outside predicted high/low boundaries."
+            }
+        },
+        "current_params": {
+            "ALPHA": 0.5,
+            "BETA": 0.5,
+            "GAMMA": 0.5
+        }
+    }
+]

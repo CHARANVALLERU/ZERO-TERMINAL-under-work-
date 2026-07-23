@@ -1,0 +1,29 @@
+{
+  "entries": [
+    {
+      "id": "e7b57301d3f6",
+      "content": "Logged a discipline entry today.",
+      "source": "user",
+      "type": "post_market",
+      "tags": [
+        "post_market"
+      ],
+      "biases": [],
+      "created": "2026-07-16T10:01:29",
+      "date": "2026-07-16"
+    }
+  ],
+  "hot": {
+    "updated": "2026-07-16T10:01:29",
+    "recent_facts": [
+      "Logged a discipline entry today."
+    ],
+    "recent_types": [
+      "post_market"
+    ],
+    "recent_biases": [],
+    "total_entries": 1,
+    "last_entry_type": "post_market"
+  },
+  "version": "1.0"
+}

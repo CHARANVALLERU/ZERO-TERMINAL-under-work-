@@ -1,0 +1,10 @@
+{
+  "legacyEditor": false,
+  "livePreview": true,
+  "showLineNumber": true,
+  "autoPairBrackets": true,
+  "autoPairMarkdown": true,
+  "useMarkdownLinks": false,
+  "newFileFolderPath": "01_Daily_Logs",
+  "attachmentFolderPath": "05_AI_Memory"
+}
