@@ -3,8 +3,8 @@
 # ⚡ ZERO V1.0 
 **Adaptive Market Intelligence & Quantum Trading Terminal**
 
-[![Status](https://img.shields.io/badge/Status-Operational-E50914?style=for-the-badge&logo=appveyor)](https://github.com/yourusername/ZERO)
-[![Version](https://img.shields.io/badge/Version-1.0-D4AF37?style=for-the-badge)](https://github.com/yourusername/ZERO)
+[![Status](https://img.shields.io/badge/Status-Operational-E50914?style=for-the-badge&logo=appveyor)](https://github.com/CHARANVALLERU/ZERO-TERMINAL-under-work-)
+[![Version](https://img.shields.io/badge/Version-1.0-D4AF37?style=for-the-badge)](https://github.com/CHARANVALLERU/ZERO-TERMINAL-under-work-)
 [![Python](https://img.shields.io/badge/Python-3.10+-white?style=for-the-badge&logo=python)](https://python.org)
 [![Core deps](https://img.shields.io/badge/Core-NumPy%20%7C%20Pandas-00ff88?style=for-the-badge)](https://numpy.org)
 [![License](https://img.shields.io/badge/License-MIT-blue?style=for-the-badge)](LICENSE)
@@ -18,15 +18,16 @@
 ## 📖 Table of Contents
 - [Overview](#-overview)
 - [What's New in V1.0](#-whats-new-in-v10)
-- [Core Architecture](#-core-architecture)
 - [The Quant Engines](#-the-quant-engines)
-  - [Nautilus Order Engine](#1-nautilus-order-engine)
-  - [Fincept Developer Platform](#2-fincept-developer-platform)
-  - [QuantDinger Strategy Engine](#3-quantdinger-strategy-engine)
-  - [Advanced Walk-Forward Backtester](#4-advanced-walk-forward-backtester)
-  - [ZERO AI Brain (Gemini Knowledge Core)](#5-zero-ai-brain)
-- [Getting Started](#-getting-started)
+  - [1. Nautilus Order Engine](#1-nautilus-order-engine)
+  - [2. Fincept Developer Platform](#2-fincept-developer-platform)
+  - [3. QuantDinger Strategy Engine](#3-quantdinger-strategy-engine)
+  - [4. Advanced Walk-Forward Backtester](#4-advanced-walk-forward-backtester)
+  - [5. ZERO AI Brain & Obsidian Vault](#5-zero-ai-brain--obsidian-vault)
+- [Core Architecture](#-core-architecture)
+- [Getting Started & Installation](#-getting-started--installation)
 - [CLI Operations](#-cli-operations)
+- [Obsidian Second Brain Integration](#-obsidian-second-brain-integration)
 - [Security & Privacy](#-security--privacy)
 - [Disclaimer](#-disclaimer)
 
@@ -47,6 +48,7 @@ The V1.0 release introduces a massive architectural expansion, providing an inst
 - **Quant Team Orchestrator:** Simulated multi-analyst desk (Strategist, Risk Analyst, Microstructure) providing a Unified Trade Thesis.
 - **Smart Money Flow Detection:** UnusualWhales-style options flow analysis based on Put-Call Ratio (PCR) and OI walls.
 - **Interactive AI Brain:** A Gemini-powered side console that dynamically reads your personal Obsidian notes and psychological biases to provide tailored trading advice.
+- **Obsidian Second Brain Architecture:** Native vault directory (`obsidian_vault/`) with Map of Content (MOC), Mental Models, Cognitive Biases, and automated daily log synchronization.
 
 ---
 
@@ -71,8 +73,8 @@ The V1.0 release introduces a massive architectural expansion, providing an inst
 * **Institutional Analytics:** Computes Sharpe, Sortino, Calmar, Max Drawdown, Profit Factor, and trade expectancy natively.
 * **Strategy Suite:** Evaluates multiple technical generators (EMA Crossover, RSI Mean Reversion, MACD Histogram) across simulated synthetic OHLCV bars.
 
-### 5. ZERO AI Brain
-* **Local RAG & Skill Ingestion:** Integrates the `zero_engine_kb.py` module to dynamically load human cognitive biases, market psychology, candlestick encyclopedias, and AI system capabilities.
+### 5. ZERO AI Brain & Obsidian Vault
+* **Local RAG & Skill Ingestion:** Integrates the `zero_engine_kb.py` module to dynamically load human cognitive biases, market psychology, candlestick encyclopedias, and AI system capabilities (MCP, RAG, LoRA, Quantization, Embeddings, RLHF).
 * **Conversational Console:** A built-in Streamlit side-panel acting as a live quantitative assistant. It cross-references the market state with your personal Obsidian Vault knowledge to provide psychological risk checks before you trade.
 
 ---
@@ -96,10 +98,20 @@ ZERO/
 │   ├── quant_dinge_engine.py  # ★ Regime classification & strategy setups
 │   ├── advanced_backtest.py   # ★ Walk-forward validation & analytics
 │   ├── zero_engine_kb.py      # ★ ZERO AI Brain Knowledge Base Orchestrator
+│   ├── obsidian_sync.py       # ★ Automated daily note sync with Obsidian Vault
 │   ├── multi_agent_consensus.py # Multi-agent LLM-style reasoning
 │   ├── prediction_matrix.py   # Master orchestrator fusing all engines
 │   ├── calibrator.py          # Adaptive calibration learning layer
 │   └── learning_service.py    # Daily autonomous feedback loop
+│
+├── obsidian_vault/            # 🧠 Native Obsidian Second Brain Vault
+│   ├── .obsidian/             #   Graph view & plugin configs
+│   ├── 00_Index_MOC.md        #   Master Map of Content
+│   ├── 01_Daily_Logs/         #   Auto-synced daily pre-market predictions
+│   ├── 02_Mental_Models/      #   First Principles, Probabilistic Thinking
+│   ├── 03_Cognitive_Biases/   #   FOMO, Loss Aversion, Psychology framework
+│   ├── 04_Quantitative_Strategies/ # Candlestick patterns, order types, regimes
+│   └── 05_AI_Memory/          #   Executable AI capabilities & skills
 │
 ├── ui/                        # Visual layer (Fincept/Bloomberg-style cards)
 └── db/                        # SQLite, feedback logs, ZERO Brain JSON stores
@@ -121,7 +133,7 @@ graph TD;
 
 ---
 
-## 🛠️ Getting Started
+## 🛠️ Getting Started & Installation
 
 ### 1. Prerequisites
 - **Python 3.10+**
@@ -129,10 +141,10 @@ graph TD;
 - **Gemini API Key** (Required for the ZERO AI Brain interface)
 
 ### 2. Installation
-Clone the repository and install the dependencies:
+Clone the repository from GitHub and install dependencies:
 ```bash
-git clone https://github.com/yourusername/ZERO.git
-cd ZERO
+git clone https://github.com/CHARANVALLERU/ZERO-TERMINAL-under-work-.git
+cd ZERO-TERMINAL-under-work-
 pip install -r requirements.txt
 ```
 
@@ -162,6 +174,17 @@ python cli.py backtest
 # Execute the full daily cycle: fetch actuals → log → retrain
 python cli.py update          
 ```
+
+---
+
+## 🧠 Obsidian Second Brain Integration
+
+You can open the built-in `obsidian_vault` directory directly inside the **Obsidian** app:
+1. Open **Obsidian** $\rightarrow$ Click **"Open folder as vault"**.
+2. Select the `obsidian_vault` directory inside `ZERO-TERMINAL-under-work-`.
+3. Open `00_Index_MOC.md` and press `Ctrl + G` (or `Cmd + G`) to view the interactive **Knowledge Graph**!
+
+For detailed setup steps, see [`OBSIDIAN_SECOND_BRAIN_GUIDE.md`](OBSIDIAN_SECOND_BRAIN_GUIDE.md).
 
 ---
 
