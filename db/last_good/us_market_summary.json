@@ -1,1 +1,5 @@
+<<<<<<< HEAD
 {"ts": "2026-07-27T19:47:41.226731", "value": {"SP500": {"price": 7431.71, "change_pct": 0.2662, "status": "Bullish"}, "NASDAQ": {"price": 28082.9785, "change_pct": -0.1613, "status": "Bearish"}, "VIX": {"price": 18.67, "change_pct": 0.4844, "status": "Bullish"}, "DXY": {"price": 101.44, "change_pct": -0.0296, "status": "Bearish"}, "BRENT": {"price": 90.3, "change_pct": -6.6956, "status": "Bearish"}, "USDINR": {"price": 95.9, "change_pct": -1.0084, "status": "Bearish"}, "INDIAVIX": {"price": 12.66, "change_pct": -9.7648, "status": "Bearish"}}}
+=======
+{"ts": "2026-07-23T14:32:19.376724", "value": {"SP500": {"price": 7498.96, "change_pct": -0.1364, "status": "Bearish"}, "NASDAQ": {"price": 28998.0996, "change_pct": -0.5388, "status": "Bearish"}, "VIX": {"price": 17.66, "change_pct": 6.1298, "status": "Bullish"}, "DXY": {"price": 101.149, "change_pct": 0.0089, "status": "Bullish"}, "BRENT": {"price": 86.3, "change_pct": -8.2598, "status": "Bearish"}, "USDINR": {"price": 96.5475, "change_pct": 0.2145, "status": "Bullish"}, "INDIAVIX": {"price": 13.5075, "change_pct": 1.6366, "status": "Bullish"}}}
+>>>>>>> fd6d17459e62a7ed12ee718996c66c43ce394490

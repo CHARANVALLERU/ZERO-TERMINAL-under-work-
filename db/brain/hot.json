@@ -1,4 +1,5 @@
 {
+<<<<<<< HEAD
   "updated": "2026-07-27T19:39:34",
   "recent_facts": [
     "exactly every step you need to take so\n[14:17] every day that goes by where you're not\n[14:19] taking those steps you ne",
@@ -17,4 +18,16 @@
   "recent_biases": [],
   "total_entries": 36,
   "last_entry_type": "youtube_knowledge"
+=======
+  "updated": "2026-07-16T10:01:29",
+  "recent_facts": [
+    "Logged a discipline entry today."
+  ],
+  "recent_types": [
+    "post_market"
+  ],
+  "recent_biases": [],
+  "total_entries": 1,
+  "last_entry_type": "post_market"
+>>>>>>> fd6d17459e62a7ed12ee718996c66c43ce394490
 }

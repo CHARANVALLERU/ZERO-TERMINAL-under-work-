@@ -1,6 +1,7 @@
 {
   "entries": [
     {
+<<<<<<< HEAD
       "id": "f95775346bd5",
       "content": "exactly every step you need to take so\n[14:17] every day that goes by where you're not\n[14:19] taking those steps you need to [\u00a0__\u00a0]\n[14:21] slap yourself in the face and wake up\n[14:23] because it's possible anyways now you\n[14:26] know our names uh Patrick Wa\n[14:29] uh we're PB trading and we're going to\n[14:31] make sure we change your [\u00a0__\u00a0] life\n[14:33] all right boys we'll see you guys for\n[14:35] the next video it's going to be on\n[14:36] introduction to Futures get your [\u00a0__\u00a0]\n[14:38] notebooks out it's going to be a good\n[14:40] one and uh yeah [\u00a0__\u00a0] yeah I\n[14:44] got wait wait wait a\n\n---",
       "source": "youtube:THE PB TRADING LORE (INTRO TO ICT FOR DUMMIES)",
@@ -421,6 +422,8 @@
       "date": "2026-07-27"
     },
     {
+=======
+>>>>>>> fd6d17459e62a7ed12ee718996c66c43ce394490
       "id": "e7b57301d3f6",
       "content": "Logged a discipline entry today.",
       "source": "user",
@@ -434,6 +437,7 @@
     }
   ],
   "hot": {
+<<<<<<< HEAD
     "updated": "2026-07-27T19:39:34",
     "recent_facts": [
       "exactly every step you need to take so\n[14:17] every day that goes by where you're not\n[14:19] taking those steps you ne",
@@ -452,6 +456,18 @@
     "recent_biases": [],
     "total_entries": 36,
     "last_entry_type": "youtube_knowledge"
+=======
+    "updated": "2026-07-16T10:01:29",
+    "recent_facts": [
+      "Logged a discipline entry today."
+    ],
+    "recent_types": [
+      "post_market"
+    ],
+    "recent_biases": [],
+    "total_entries": 1,
+    "last_entry_type": "post_market"
+>>>>>>> fd6d17459e62a7ed12ee718996c66c43ce394490
   },
   "version": "1.0"
 }

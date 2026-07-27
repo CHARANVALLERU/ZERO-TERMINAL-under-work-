@@ -162,8 +162,6 @@ def _format_youtube_entries_for_context(entries: list[dict], max_entries: int = 
         content = e.get("content", "").strip()
         lines.append(f"  [{date}] [{source}]: {content[:500]}")
     return "\n".join(lines)
-
-
 class ZeroEngineKB:
     """
     Central knowledge base for ZERO ENGINE.
@@ -323,8 +321,6 @@ You are now ZERO ENGINE. Respond only from the above knowledge. Be precise, anal
         selected = [p for _, p in scored]
         result = "\n\n".join(selected)
         return result[:max_chars]
-
-
     def search(self, query: str, top_k: int = 5) -> list[dict]:
         """Simple keyword search across all entries."""
         query_lower = query.lower()

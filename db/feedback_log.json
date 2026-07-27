@@ -2485,10 +2485,17 @@
             "pred_low": 23804.5
         },
         "actual": {
+<<<<<<< HEAD
             "open": 23904.8,
             "high": 23990.75,
             "low": 23807.2,
             "close": 23869.6
+=======
+            "open": "N/A",
+            "high": "N/A",
+            "low": "N/A",
+            "close": "N/A"
+>>>>>>> fd6d17459e62a7ed12ee718996c66c43ce394490
         },
         "reason": "",
         "raw_inputs": {
@@ -2600,10 +2607,17 @@
             "pred_low": 55980.49
         },
         "actual": {
+<<<<<<< HEAD
             "open": 56796.95,
             "high": 56930.15,
             "low": 56374.75,
             "close": 56592.0
+=======
+            "open": "N/A",
+            "high": "N/A",
+            "low": "N/A",
+            "close": "N/A"
+>>>>>>> fd6d17459e62a7ed12ee718996c66c43ce394490
         },
         "reason": "",
         "raw_inputs": {
@@ -2715,10 +2729,17 @@
             "pred_low": 76052.14
         },
         "actual": {
+<<<<<<< HEAD
             "open": 76515.1,
             "high": 76726.66,
             "low": 76151.98,
             "close": 76391.39
+=======
+            "open": "N/A",
+            "high": "N/A",
+            "low": "N/A",
+            "close": "N/A"
+>>>>>>> fd6d17459e62a7ed12ee718996c66c43ce394490
         },
         "reason": "",
         "raw_inputs": {
@@ -2818,6 +2839,7 @@
             "BETA": 0.5,
             "GAMMA": 0.5
         }
+<<<<<<< HEAD
     },
     {
         "id": "2026-07-28_NIFTY_50",
@@ -3391,5 +3413,7 @@
             "BETA": 0.5,
             "GAMMA": 0.5
         }
+=======
+>>>>>>> fd6d17459e62a7ed12ee718996c66c43ce394490
     }
 ]

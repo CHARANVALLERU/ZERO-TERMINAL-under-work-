@@ -620,9 +620,6 @@ def learning_stats_card(metrics):
     st.markdown("</div>", unsafe_allow_html=True)
 
 
-# ─────────────────────────────────────────────────────────────────────────────
-#  ZERO BRAIN — Sidebar Knowledge Base UI
-# ─────────────────────────────────────────────────────────────────────────────
 def render_youtube_knowledge_sidebar():
     """
     Renders the 'ADD YOUTUBE KNOWLEDGE' terminal button & interactive dialog in sidebar.
@@ -729,9 +726,7 @@ def render_youtube_knowledge_sidebar():
             pass
 
 
-
 def render_zero_brain_sidebar(brain, daily_log: dict):
-
     """
     Renders the ZERO Brain section in the Streamlit sidebar.
 

@@ -21,7 +21,6 @@ def ensure_vault_structure():
     ]
     for d in dirs:
         os.makedirs(d, exist_ok=True)
-
     # Ensure 04_YouTube_Knowledge/Index.md exists and links to core engine
     yt_index = os.path.join(OBSIDIAN_VAULT_PATH, "04_YouTube_Knowledge", "Index.md")
     if not os.path.exists(yt_index):
@@ -48,7 +47,6 @@ def ensure_vault_structure():
                     "* [[04_YouTube_Knowledge/Index]]\n"
                     "* [[05_AI_Memory/Index]]\n\n"
                     "## 🎥 Ingested YouTube Knowledge\n")
-
         
     # Create template daily note if not present
     template_path = os.path.join(OBSIDIAN_VAULT_PATH, "Templates", "daily_template.md")

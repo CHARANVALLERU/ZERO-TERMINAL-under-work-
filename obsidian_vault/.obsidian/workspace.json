@@ -4,11 +4,19 @@
     "type": "split",
     "children": [
       {
+<<<<<<< HEAD
         "id": "2571e7d03814b566",
         "type": "tabs",
         "children": [
           {
             "id": "479632e8066597fe",
+=======
+        "id": "907ef8d543098400",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "e0c60d6307064c60",
+>>>>>>> fd6d17459e62a7ed12ee718996c66c43ce394490
             "type": "leaf",
             "state": {
               "type": "graph",
@@ -74,8 +82,12 @@
       }
     ],
     "direction": "horizontal",
+<<<<<<< HEAD
     "width": 300,
     "collapsed": true
+=======
+    "width": 300
+>>>>>>> fd6d17459e62a7ed12ee718996c66c43ce394490
   },
   "right": {
     "id": "431ea7570a2b93cb",
@@ -175,6 +187,7 @@
       "bases:Create new base": false
     }
   },
+<<<<<<< HEAD
   "active": "479632e8066597fe",
   "lastOpenFiles": [
     "second zero.md",
@@ -184,6 +197,10 @@
     "04_YouTube_Knowledge/THE PB TRADING LORE (INTRO TO ICT FOR DUMMIES).md",
     "04_YouTube_Knowledge/YouTube_Knowledge_Import.md",
     "04_YouTube_Knowledge",
+=======
+  "active": "e0c60d6307064c60",
+  "lastOpenFiles": [
+>>>>>>> fd6d17459e62a7ed12ee718996c66c43ce394490
     "00_Index_MOC.md"
   ]
 }

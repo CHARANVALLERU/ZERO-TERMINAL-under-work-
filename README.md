@@ -9,7 +9,7 @@
 [![Core deps](https://img.shields.io/badge/Core-NumPy%20%7C%20Pandas-00ff88?style=for-the-badge)](https://numpy.org)
 [![License](https://img.shields.io/badge/License-MIT-blue?style=for-the-badge)](LICENSE)
 
-*An institutional-grade, pre-market OHLC prediction and quantitative execution engine for the Indian Indices (Nifty 50, Bank Nifty, Sensex).*
+*An institutional-grade, pre-market OHLC prediction, automated YouTube knowledge ingestion, and quantitative execution engine for Indian & Global Markets.*
 
 </div>
 
@@ -18,12 +18,10 @@
 ## 📖 Table of Contents
 - [Overview](#-overview)
 - [What's New in V1.0](#-whats-new-in-v10)
+- [Automated YouTube Knowledge Pipeline](#-automated-youtube-knowledge-pipeline)
+- [Dynamic RAG & Human-Like Memory](#-dynamic-rag--human-like-memory)
+- [Dual-Vault Architecture & Backup Protocol](#-dual-vault-architecture--backup-protocol)
 - [The Quant Engines](#-the-quant-engines)
-  - [1. Nautilus Order Engine](#1-nautilus-order-engine)
-  - [2. Fincept Developer Platform](#2-fincept-developer-platform)
-  - [3. QuantDinger Strategy Engine](#3-quantdinger-strategy-engine)
-  - [4. Advanced Walk-Forward Backtester](#4-advanced-walk-forward-backtester)
-  - [5. ZERO AI Brain & Obsidian Vault](#5-zero-ai-brain--obsidian-vault)
 - [Core Architecture](#-core-architecture)
 - [Getting Started & Installation](#-getting-started--installation)
 - [CLI Operations](#-cli-operations)
@@ -35,20 +33,48 @@
 
 ## 🚀 Overview
 
-**ZERO** fuses overnight global cues, NSE options chain data, and financial-news sentiment into highly accurate daily market predictions. Built entirely on top of optimized `numpy` and `pandas` routines, ZERO runs natively without requiring bloated third-party statistical frameworks (like PyTorch or TensorFlow). 
+**ZERO** fuses overnight global cues, NSE options chain data, financial-news sentiment, and automated video transcript knowledge into highly accurate daily market predictions. Built on top of optimized `numpy` and `pandas` routines, ZERO runs natively without requiring heavy deep-learning frameworks.
 
-In **V1.0**, ZERO has evolved from a pure forecasting tool into a complete **Quantum Trading Terminal**. It clones state-of-the-art logic from `NautilusTrader`, `Fincept Terminal`, and `QuantDinger` to provide walk-forward backtesting, multi-agent consensus, automated order generation, and a fully interactive AI reasoning core.
+In **V1.0**, ZERO features a complete **Quantum Trading Terminal** with walk-forward backtesting, multi-agent consensus, automated bracket order generation, live UI progress tracking, and a dynamic RAG AI reasoning core.
 
 ---
 
 ## 🔥 What's New in V1.0
 
-The V1.0 release introduces a massive architectural expansion, providing an institutional quant suite directly on your local machine:
-- **Advanced Order Execution:** Precise Entry, Take Profit, and Stop Loss generation using complex bracket orders (OCO, OTO).
-- **Quant Team Orchestrator:** Simulated multi-analyst desk (Strategist, Risk Analyst, Microstructure) providing a Unified Trade Thesis.
-- **Smart Money Flow Detection:** UnusualWhales-style options flow analysis based on Put-Call Ratio (PCR) and OI walls.
-- **Interactive AI Brain:** A Gemini-powered side console that dynamically reads your personal Obsidian notes and psychological biases to provide tailored trading advice.
-- **Obsidian Second Brain Architecture:** Native vault directory (`obsidian_vault/`) with Map of Content (MOC), Mental Models, Cognitive Biases, and automated daily log synchronization.
+- **Automated YouTube Knowledge Ingestion Pipeline:** Convert any YouTube playlist or video URL directly into structured Obsidian Markdown notes with timestamps and automated Obsidian Graph View connectivity.
+- **Dynamic RAG Context Retrieval:** Unlimited knowledge memory retrieval powered by semantic paragraph ranking across all ingested transcripts and mental models.
+- **Instant Cache-First Bootup & Fast Load:** Fast app bootup that displays the splash sequence instantly from memory cache while hydrating heavy knowledge bases asynchronously in background daemon threads.
+- **Dual-Vault & Backup Protocol (`ZERO.md` & `second zero.md`):** All updates land in `ZERO.md` first; verified changes auto-sync to `second zero.md` after 24 hours of issue-free execution.
+- **Live Background Progress Tracker:** Real-time UI progress updates (`Step 1/3` to `COMPLETED`) with auto-expiring status toasts.
+
+---
+
+## 📺 Automated YouTube Knowledge Pipeline
+
+ZERO automatically processes YouTube videos and playlists into structured notes:
+
+1. **CLI & Terminal Ingestion:**
+   ```bash
+   python convert_playlist.py --url "https://www.youtube.com/watch?v=YOUR_VIDEO_ID"
+   ```
+2. **Native Transcript Extraction:** Uses `youtube-transcript-api` to fetch 100% of video captions from start to finish (`[00:00]` through completion) with zero truncation.
+3. **Graph Connectivity:** Automatically links generated notes to `ZERO Brain Engine.md` and `04_YouTube_Knowledge/Index.md`.
+4. **Hot-Reload:** Emits a `.kb_reload.flag` signal to update the running AI engine live in Streamlit without requiring a server restart.
+
+---
+
+## 🧠 Dynamic RAG & Human-Like Memory
+
+- **Unlimited Storage:** Knowledge is stored permanently across `obsidian_vault/` and `db/brain/entries.json`.
+- **Query-Driven RAG:** `ZeroEngineKB.get_relevant_knowledge()` dynamically ranks matching sections across all transcripts and injects relevant context into the Gemini AI system prompt per query.
+- **Continuous Learning:** The AI engine learns from new YouTube content and mental model notes, providing answers grounded in actual ingested material.
+
+---
+
+## 🛡️ Dual-Vault Architecture & Backup Protocol
+
+- **`ZERO.md` (Active Master):** Primary entry point for all new updates, features, and knowledge graph links.
+- **`second zero.md` (Core Backup):** Renamed backup vault. Modifications made to `ZERO.md` automatically sync to `second zero.md` after **24 hours** of verified stability via `engine/zero_backup_service.py`.
 
 ---
 
@@ -71,11 +97,10 @@ The V1.0 release introduces a massive architectural expansion, providing an inst
 ### 4. Advanced Walk-Forward Backtester
 * **Zero Lookahead Bias:** Pure `numpy`-based backtesting engine ensuring strict walk-forward validation (train/test splits) to prevent overfitting.
 * **Institutional Analytics:** Computes Sharpe, Sortino, Calmar, Max Drawdown, Profit Factor, and trade expectancy natively.
-* **Strategy Suite:** Evaluates multiple technical generators (EMA Crossover, RSI Mean Reversion, MACD Histogram) across simulated synthetic OHLCV bars.
 
 ### 5. ZERO AI Brain & Obsidian Vault
-* **Local RAG & Skill Ingestion:** Integrates the `zero_engine_kb.py` module to dynamically load human cognitive biases, market psychology, candlestick encyclopedias, and AI system capabilities (MCP, RAG, LoRA, Quantization, Embeddings, RLHF).
-* **Conversational Console:** A built-in Streamlit side-panel acting as a live quantitative assistant. It cross-references the market state with your personal Obsidian Vault knowledge to provide psychological risk checks before you trade.
+* **Local RAG & Skill Ingestion:** Integrates the `zero_engine_kb.py` module to dynamically load human cognitive biases, market psychology, candlestick encyclopedias, and AI system capabilities.
+* **Conversational Console:** Built-in Streamlit side-panel acting as a live quantitative assistant, cross-referencing market state with personal Obsidian Vault knowledge.
 
 ---
 
@@ -83,8 +108,9 @@ The V1.0 release introduces a massive architectural expansion, providing an inst
 
 ```text
 ZERO/
-├── app.py                     # Streamlit Quantum Terminal (entry point)
+├── app.py                     # Streamlit Quantum Terminal (entry point & fast splash)
 ├── cli.py                     # Headless CLI: predict / train / backtest / update
+├── convert_playlist.py        # YouTube Video & Playlist Ingestion pipeline
 ├── config.py                  # Tickers, weights, ML + calibration parameters
 │
 ├── data/                      # Ingestion layer (network I/O, caches, feature store)
@@ -93,42 +119,29 @@ ZERO/
 │   └── historical.py          #   Prior OHLC, ATR, VWAP
 │
 ├── engine/                    # Quantitative Core (V1.0)
-│   ├── nautilus_order_engine.py # ★ Advanced TIF/Contingency order execution
-│   ├── fincept_platform.py    # ★ Quant team thesis, derivatives Greeks, inter-market
-│   ├── quant_dinge_engine.py  # ★ Regime classification & strategy setups
-│   ├── advanced_backtest.py   # ★ Walk-forward validation & analytics
-│   ├── zero_engine_kb.py      # ★ ZERO AI Brain Knowledge Base Orchestrator
-│   ├── obsidian_sync.py       # ★ Automated daily note sync with Obsidian Vault
-│   ├── multi_agent_consensus.py # Multi-agent LLM-style reasoning
-│   ├── prediction_matrix.py   # Master orchestrator fusing all engines
+│   ├── nautilus_order_engine.py # Advanced TIF/Contingency order execution
+│   ├── fincept_platform.py    # Quant team thesis, derivatives Greeks, inter-market
+│   ├── quant_dinge_engine.py  # Regime classification & strategy setups
+│   ├── advanced_backtest.py   # Walk-forward validation & analytics
+│   ├── zero_engine_kb.py      # Dynamic RAG Knowledge Base Orchestrator
+│   ├── zero_backup_service.py # Dual-vault sync manager (ZERO.md <-> second zero.md)
+│   ├── obsidian_sync.py       # Automated daily note sync with Obsidian Vault
+│   ├── brain_engine.py        # JSON knowledge chunking & SHA1 deduplication
 │   ├── calibrator.py          # Adaptive calibration learning layer
 │   └── learning_service.py    # Daily autonomous feedback loop
 │
 ├── obsidian_vault/            # 🧠 Native Obsidian Second Brain Vault
 │   ├── .obsidian/             #   Graph view & plugin configs
-│   ├── 00_Index_MOC.md        #   Master Map of Content
+│   ├── ZERO.md                #   Master Graph Root Node & Map of Content
+│   ├── second zero.md         #   Backup Graph Node (Synced after 24h)
 │   ├── 01_Daily_Logs/         #   Auto-synced daily pre-market predictions
 │   ├── 02_Mental_Models/      #   First Principles, Probabilistic Thinking
 │   ├── 03_Cognitive_Biases/   #   FOMO, Loss Aversion, Psychology framework
-│   ├── 04_Quantitative_Strategies/ # Candlestick patterns, order types, regimes
+│   ├── 04_YouTube_Knowledge/  #   YouTube Ingested Knowledge & Index
 │   └── 05_AI_Memory/          #   Executable AI capabilities & skills
 │
 ├── ui/                        # Visual layer (Fincept/Bloomberg-style cards)
 └── db/                        # SQLite, feedback logs, ZERO Brain JSON stores
-```
-
-### Prediction & Execution Flow
-```mermaid
-graph TD;
-    A[Global Cues + Options + News] --> B[Geometric Engine];
-    B --> C[Adaptive Calibrator];
-    C --> D[Probabilistic OHLC Bands];
-    D --> E[QuantDinger Regime Modeler];
-    D --> F[Fincept Quant Team];
-    E --> G[Multi-Agent Consensus];
-    F --> G;
-    G --> H[Nautilus Order Engine];
-    H --> I[Actionable OCO/OTO Execution];
 ```
 
 ---
@@ -137,7 +150,7 @@ graph TD;
 
 ### 1. Prerequisites
 - **Python 3.10+**
-- Internet access (for live scraping of market data)
+- Internet access (for live scraping of market data & YouTube transcript API)
 - **Gemini API Key** (Required for the ZERO AI Brain interface)
 
 ### 2. Installation
@@ -153,15 +166,16 @@ Launch the complete UI with Streamlit:
 ```bash
 streamlit run app.py
 ```
-*(On Windows, you can alternatively run the `run.bat` file).*
+*(On Windows, you can alternatively run `run.bat`).*
 
 ---
 
 ## 💻 CLI Operations
 
-ZERO includes a powerful headless CLI for automated environments:
-
 ```bash
+# Ingest YouTube Video or Playlist into Brain Engine & Obsidian Graph
+python convert_playlist.py --url "https://www.youtube.com/watch?v=YOUR_VIDEO_ID"
+
 # Print today's prediction matrix as JSON
 python cli.py predict         
 
@@ -171,7 +185,7 @@ python cli.py train
 # Run a walk-forward accuracy report on existing models
 python cli.py backtest        
 
-# Execute the full daily cycle: fetch actuals → log → retrain
+# Execute full daily cycle: fetch actuals -> log -> retrain
 python cli.py update          
 ```
 
@@ -179,21 +193,15 @@ python cli.py update
 
 ## 🧠 Obsidian Second Brain Integration
 
-You can open the built-in `obsidian_vault` directory directly inside the **Obsidian** app:
 1. Open **Obsidian** $\rightarrow$ Click **"Open folder as vault"**.
 2. Select the `obsidian_vault` directory inside `ZERO-TERMINAL-under-work-`.
-3. Open `00_Index_MOC.md` and press `Ctrl + G` (or `Cmd + G`) to view the interactive **Knowledge Graph**!
-
-For detailed setup steps, see [`OBSIDIAN_SECOND_BRAIN_GUIDE.md`](OBSIDIAN_SECOND_BRAIN_GUIDE.md).
+3. Open `ZERO.md` and press `Ctrl + G` (or `Cmd + G`) to view the interactive **Knowledge Graph**!
 
 ---
 
 ## 🔒 Security & Privacy
 
-ZERO is designed to be **local-first**. 
-- All data scraping, quantitative analysis, strategy prediction, and walk-forward backtesting run **entirely on your local machine**. 
-- No brokerage credentials or API keys are required to generate trading signals (the system relies strictly on public asymmetric data).
-- The Gemini API Key is only used for the side-panel LLM AI Brain and never interacts with your core execution layer.
+ZERO is designed to be **local-first**. All data scraping, quantitative analysis, strategy prediction, and walk-forward backtesting run **entirely on your local machine**.
 
 ---
 

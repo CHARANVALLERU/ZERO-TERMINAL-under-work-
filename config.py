@@ -169,9 +169,7 @@ def now_ist() -> datetime:
     return datetime.now(IST).replace(tzinfo=None)
 
 
-from typing import Union
-
-def is_trading_day(when: Union[datetime, datetime.date, None] = None) -> bool:
+def is_trading_day(when: datetime | datetime.date | None = None) -> bool:
     """True iff when is an official NSE trading day (Mon-Fri and not a national holiday)."""
     if when is None:
         when = now_ist()
@@ -183,7 +181,7 @@ def is_trading_day(when: Union[datetime, datetime.date, None] = None) -> bool:
     return True
 
 
-def get_next_trading_day(when: Union[datetime, None] = None) -> datetime.date:
+def get_next_trading_day(when: datetime | None = None) -> datetime.date:
     """Returns the date of the next active trading session.
 
     If current time is past market close (>= 15:30) or today is a non-trading
@@ -200,13 +198,13 @@ def get_next_trading_day(when: Union[datetime, None] = None) -> datetime.date:
     return dt
 
 
-def is_market_closed_post_4pm(when: Union[datetime, None] = None) -> bool:
+def is_market_closed_post_4pm(when: datetime | None = None) -> bool:
     """True iff today is a valid trading day AND the current IST time is >= 4:00 PM (16:00 IST)."""
     when = when or now_ist()
     return is_trading_day(when) and when.time() >= time(16, 0)
 
 
-def is_market_open(when: Union[datetime, None] = None) -> bool:
+def is_market_open(when: datetime | None = None) -> bool:
     """True iff the NSE cash session is currently open (Mon–Fri 09:15–15:30 IST,
     excluding national holidays).
     """
@@ -216,8 +214,7 @@ def is_market_open(when: Union[datetime, None] = None) -> bool:
     return MARKET_OPEN <= when.time() <= MARKET_CLOSE
 
 
-def market_state(when: Union[datetime, None] = None) -> str:
-
+def market_state(when: datetime | None = None) -> str:
     """'open', 'closed_pre', 'closed_post', 'closed_holiday', or 'closed_weekend'."""
     when = when or now_ist()
     if when.weekday() >= 5:

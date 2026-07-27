@@ -96,8 +96,6 @@ def _update_md_section(filepath: str, section_header: str, new_link: str):
             f.write(content)
     except Exception:
         pass
-
-
 def _detect_type(text: str) -> str:
     lower = text.lower()
     for etype, keywords in _ENTRY_TYPES.items():
@@ -287,9 +285,6 @@ class BrainEngine:
         yt_index = os.path.join(vault_path, "04_YouTube_Knowledge", "Index.md")
         idx_link = f"* [[{note_title}]]"
         _update_md_section(yt_index, "## 📚 Ingested Knowledge Notes", idx_link)
-
-
-
     def query(self, text: str, top_k: int = 5) -> list[dict]:
         """
         Search the brain for relevant knowledge.

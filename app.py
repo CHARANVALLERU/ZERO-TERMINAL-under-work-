@@ -100,8 +100,6 @@ _check_and_setup_venv()
 
 # ── Tiny on-disk session so the user only goes through DIG & DIVE once ──
 _SESSION_FLAG = os.path.join(os.path.dirname(__file__), "db", ".zero_session.json")
-
-
 def _load_session_flag():
     try:
         if os.path.exists(_SESSION_FLAG):
@@ -177,7 +175,8 @@ if _should_full and not _show_splash_this_session:
     else:
         st.session_state.matrix = generate_prediction_matrix()
 
-    # Background tasks trigger asynchronously without blocking UI render
+    # Log today's predictions & update unfulfilled logs in background
+    log_daily_feedback(st.session_state.matrix, {}, "")
     import threading
     threading.Thread(target=update_unfulfilled_feedback_logs, daemon=True).start()
 
@@ -409,8 +408,6 @@ def _get_zero_engine():
             pass
 
     return st.session_state.get('ze_engine')
-
-
 # ── ZERO ENGINE full-screen modal ─────────────────────────────────────────────
 if st.session_state.get('show_zero_engine', False):
     ze_engine = _get_zero_engine()
