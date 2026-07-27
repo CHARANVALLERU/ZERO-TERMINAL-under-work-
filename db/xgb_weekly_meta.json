@@ -1,0 +1,13 @@
+{
+  "timeframe": "weekly",
+  "feature_cols": [
+    "prev_close",
+    "gift_nifty",
+    "adr_delta",
+    "vix",
+    "pcr",
+    "sentiment_score",
+    "atr"
+  ],
+  "trained_at": "2026-07-18T12:22:46.567428"
+}

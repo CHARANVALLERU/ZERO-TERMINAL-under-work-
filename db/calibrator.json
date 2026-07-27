@@ -1,0 +1,225 @@
+{
+  "models": {
+    "NIFTY 50": {
+      "open": null,
+      "high": {
+        "type": "ridge",
+        "w": [
+          0.0,
+          9.167653476436733,
+          10.797170760440824,
+          1.690912484354513e-14,
+          1.101704164489306,
+          0.0,
+          -313.93281211100395
+        ],
+        "features": [
+          "gift_premium_norm",
+          "adr_delta",
+          "vix",
+          "pcr",
+          "sentiment_score",
+          "atr_norm"
+        ]
+      },
+      "low": {
+        "type": "ridge",
+        "w": [
+          0.0,
+          0.014980214616559469,
+          18.533836798918564,
+          8.104551660316336e-15,
+          -4.575220944139829,
+          0.0,
+          -148.94897798112794
+        ],
+        "features": [
+          "gift_premium_norm",
+          "adr_delta",
+          "vix",
+          "pcr",
+          "sentiment_score",
+          "atr_norm"
+        ]
+      }
+    },
+    "BANKNIFTY": {
+      "open": {
+        "type": "bias",
+        "b": -190.98388888888923
+      },
+      "high": {
+        "type": "ridge",
+        "w": [
+          0.0,
+          19.200669022126302,
+          26.287448315226754,
+          4.5600880535590695e-14,
+          7.124284155278522,
+          0.0,
+          -839.701349612261
+        ],
+        "features": [
+          "gift_premium_norm",
+          "adr_delta",
+          "vix",
+          "pcr",
+          "sentiment_score",
+          "atr_norm"
+        ]
+      },
+      "low": {
+        "type": "ridge",
+        "w": [
+          0.0,
+          -33.07325825431825,
+          28.97584576484096,
+          1.1885763093727437e-14,
+          -0.9887578187424456,
+          0.0,
+          -229.34668143636137
+        ],
+        "features": [
+          "gift_premium_norm",
+          "adr_delta",
+          "vix",
+          "pcr",
+          "sentiment_score",
+          "atr_norm"
+        ]
+      }
+    },
+    "SENSEX": {
+      "open": null,
+      "high": {
+        "type": "ridge",
+        "w": [
+          0.0,
+          7.072025348259452,
+          10.6764874383562,
+          3.9964201362830144e-14,
+          12.95620042028918,
+          0.0,
+          -750.1335176219674
+        ],
+        "features": [
+          "gift_premium_norm",
+          "adr_delta",
+          "vix",
+          "pcr",
+          "sentiment_score",
+          "atr_norm"
+        ]
+      },
+      "low": {
+        "type": "ridge",
+        "w": [
+          0.0,
+          -24.81406507868093,
+          28.50196429477917,
+          5.0023702308776835e-15,
+          -2.9182494446691507,
+          0.0,
+          -94.14456849891526
+        ],
+        "features": [
+          "gift_premium_norm",
+          "adr_delta",
+          "vix",
+          "pcr",
+          "sentiment_score",
+          "atr_norm"
+        ]
+      }
+    }
+  },
+  "band": {
+    "NIFTY 50": {
+      "open": 291.0,
+      "high": 223.43,
+      "low": 234.44
+    },
+    "BANKNIFTY": {
+      "open": 728.66,
+      "high": 697.12,
+      "low": 428.44
+    },
+    "SENSEX": {
+      "open": 1099.74,
+      "high": 892.02,
+      "low": 817.48
+    }
+  },
+  "trained_at": "2026-07-15T10:28:20.497948",
+  "metrics": {
+    "NIFTY 50": {
+      "open": {
+        "n": 12,
+        "baseline_mae": 167.17,
+        "model_mae": 167.17,
+        "committed": false
+      },
+      "high": {
+        "n": 12,
+        "baseline_mae": 219.29,
+        "model_mae": 151.03,
+        "committed": true
+      },
+      "low": {
+        "n": 12,
+        "baseline_mae": 241.86,
+        "model_mae": 191.42,
+        "committed": true
+      }
+    },
+    "BANKNIFTY": {
+      "open": {
+        "n": 12,
+        "baseline_mae": 595.77,
+        "model_mae": 527.7,
+        "committed": true
+      },
+      "high": {
+        "n": 12,
+        "baseline_mae": 644.54,
+        "model_mae": 374.05,
+        "committed": true
+      },
+      "low": {
+        "n": 12,
+        "baseline_mae": 426.59,
+        "model_mae": 322.81,
+        "committed": true
+      }
+    },
+    "SENSEX": {
+      "open": {
+        "n": 12,
+        "baseline_mae": 603.9,
+        "model_mae": 603.9,
+        "committed": false
+      },
+      "high": {
+        "n": 12,
+        "baseline_mae": 876.45,
+        "model_mae": 538.14,
+        "committed": true
+      },
+      "low": {
+        "n": 12,
+        "baseline_mae": 641.73,
+        "model_mae": 494.98,
+        "committed": true
+      }
+    }
+  },
+  "features": [
+    "gift_premium_norm",
+    "adr_delta",
+    "vix",
+    "pcr",
+    "sentiment_score",
+    "atr_norm"
+  ],
+  "has_xgb": true
+}

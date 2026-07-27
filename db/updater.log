@@ -1,0 +1,108 @@
+2026-07-06 14:49:26,987 [INFO] ============================================================
+2026-07-06 14:49:26,988 [INFO] ZERO DAILY UPDATER — CYCLE START
+2026-07-06 14:49:26,988 [INFO] Timestamp: 2026-07-06T14:49:26.988668
+2026-07-06 14:49:26,988 [INFO] ============================================================
+2026-07-06 14:49:26,989 [INFO] Step 1: Fetching daily actuals from yfinance...
+2026-07-06 14:49:35,577 [INFO]   NIFTY 50: {'open': 24306.85, 'high': 24458.65, 'low': 24287.1, 'close': 24386.6}
+2026-07-06 14:49:35,578 [INFO]   BANKNIFTY: {'open': 57983.9, 'high': 58477.3, 'low': 57938.65, 'close': 58255.65}
+2026-07-06 14:49:35,578 [INFO]   SENSEX: {'open': 77940.9, 'high': 78398.06, 'low': 77879.7, 'close': 78227.27}
+2026-07-06 14:49:35,600 [INFO] Step 2: Updating unfulfilled feedback logs...
+2026-07-06 14:49:35,603 [INFO]   Updated actuals for 2026-07-06 — NIFTY 50
+2026-07-06 14:49:35,603 [INFO]   Updated actuals for 2026-07-06 — BANKNIFTY
+2026-07-06 14:49:35,604 [INFO]   Updated actuals for 2026-07-06 — SENSEX
+2026-07-06 14:49:35,610 [INFO]   Feedback logs saved.
+2026-07-06 14:49:35,611 [INFO] Step 3: Generating prediction matrix...
+2026-07-06 14:49:45,501 [INFO]   NIFTY 50: Open=24387.31, High=24669.41, Low=24105.21
+2026-07-06 14:49:45,501 [INFO]   BANKNIFTY: Open=58252.06, High=59040.76, Low=57463.35
+2026-07-06 14:49:45,501 [INFO]   SENSEX: Open=78230.82, High=79192.61, Low=77269.03
+2026-07-06 14:49:45,501 [INFO] Step 4: Logging daily predictions...
+2026-07-06 14:49:45,534 [INFO]   Predictions logged to feedback database.
+2026-07-06 14:49:45,534 [INFO] Step 5: Running auto-training cycle...
+2026-07-06 14:49:46,502 [INFO]   Training result: holding
+2026-07-06 14:49:46,503 [INFO]   Details: {'current': {'ALPHA': 0.5, 'BETA': 0.5}, 'suggested': {'ALPHA': 0.5, 'BETA': 0.5}, 'reduction_potential': '40860.92 pts avg error'}
+2026-07-06 14:49:46,503 [INFO] Step 6: Checking prediction range config freshness...
+2026-07-06 14:49:46,504 [INFO]   Range config last updated: 2026-07-06T14:49:42.659222
+2026-07-06 14:49:46,504 [INFO]   NIFTY 50: Center=24386.4, Range=[22386.4, 26386.4]
+2026-07-06 14:49:46,504 [INFO]   BANKNIFTY: Center=58254.55, Range=[56254.55, 60254.55]
+2026-07-06 14:49:46,504 [INFO]   SENSEX: Center=78233.7, Range=[73233.7, 83233.7]
+2026-07-06 14:49:46,504 [INFO] ZERO DAILY UPDATER — CYCLE COMPLETE
+2026-07-06 14:49:46,504 [INFO] ============================================================
+2026-07-06 16:00:02,704 [INFO] ============================================================
+2026-07-06 16:00:02,704 [INFO] ZERO DAILY UPDATER — CYCLE START
+2026-07-06 16:00:02,706 [INFO] Timestamp: 2026-07-06T16:00:02.706210
+2026-07-06 16:00:02,707 [INFO] ============================================================
+2026-07-06 16:00:02,707 [INFO] Step 1: Fetching daily actuals from yfinance...
+2026-07-06 16:00:04,026 [INFO]   NIFTY 50: {'open': 24306.85, 'high': 24458.65, 'low': 24287.1, 'close': 24430.35}
+2026-07-06 16:00:04,026 [INFO]   BANKNIFTY: {'open': 57983.9, 'high': 58477.3, 'low': 57938.65, 'close': 58291.5}
+2026-07-06 16:00:04,027 [INFO]   SENSEX: {'open': 77940.9, 'high': 78398.06, 'low': 77879.7, 'close': 78285.07}
+2026-07-06 16:00:04,027 [INFO] Step 2: Updating unfulfilled feedback logs...
+2026-07-06 16:00:04,031 [INFO]   No unfulfilled logs to update.
+2026-07-06 16:00:04,032 [INFO] Step 3: Generating prediction matrix...
+2026-07-06 16:00:14,789 [INFO]   NIFTY 50: Open=24431.51, High=24713.61, Low=24149.41
+2026-07-06 16:00:14,789 [INFO]   BANKNIFTY: Open=58292.66, High=59081.37, Low=57503.95
+2026-07-06 16:00:14,789 [INFO]   SENSEX: Open=78286.23, High=79248.02, Low=77324.44
+2026-07-06 16:00:14,790 [INFO] Step 4: Logging daily predictions...
+2026-07-06 16:00:14,797 [INFO]   Predictions logged to feedback database.
+2026-07-06 16:00:14,797 [INFO] Step 5: Running auto-training cycle...
+2026-07-06 16:00:15,996 [INFO]   Training result: holding
+2026-07-06 16:00:15,996 [INFO]   Details: {'current': {'ALPHA': 0.5, 'BETA': 0.5}, 'suggested': {'ALPHA': 0.5, 'BETA': 0.5}, 'reduction_potential': '40860.92 pts avg error'}
+2026-07-06 16:00:15,997 [INFO] Step 6: Checking prediction range config freshness...
+2026-07-06 16:00:15,998 [INFO]   Range config last updated: 2026-07-06T14:49:42.659222
+2026-07-06 16:00:15,999 [INFO]   NIFTY 50: Center=24386.4, Range=[22386.4, 26386.4]
+2026-07-06 16:00:15,999 [INFO]   BANKNIFTY: Center=58254.55, Range=[56254.55, 60254.55]
+2026-07-06 16:00:15,999 [INFO]   SENSEX: Center=78233.7, Range=[73233.7, 83233.7]
+2026-07-06 16:00:15,999 [INFO] ZERO DAILY UPDATER — CYCLE COMPLETE
+2026-07-06 16:00:16,000 [INFO] ============================================================
+2026-07-08 16:35:56,567 [INFO] ============================================================
+2026-07-08 16:35:56,568 [INFO] ZERO DAILY UPDATER — CYCLE START
+2026-07-08 16:35:56,569 [INFO] Timestamp: 2026-07-08T16:35:56.569530
+2026-07-08 16:35:56,570 [INFO] ============================================================
+2026-07-08 16:35:56,570 [INFO] Step 1: Fetching daily actuals from yfinance...
+2026-07-08 16:36:02,020 [INFO]   NIFTY 50: {'open': 24259.55, 'high': 24300.0, 'low': 23805.2, 'close': 23882.05}
+2026-07-08 16:36:02,020 [INFO]   BANKNIFTY: {'open': 57918.25, 'high': 58075.6, 'low': 56549.4, 'close': 56742.6}
+2026-07-08 16:36:02,021 [INFO]   SENSEX: {'open': 77816.45, 'high': 77851.18, 'low': 76259.03, 'close': 76503.6}
+2026-07-08 16:36:02,021 [INFO] Step 2: Updating unfulfilled feedback logs...
+2026-07-08 16:36:02,051 [INFO]   No unfulfilled logs to update.
+2026-07-08 16:36:02,052 [INFO] Step 3: Generating prediction matrix...
+2026-07-08 16:36:26,735 [INFO]   NIFTY 50: Open=None, High=None, Low=None
+2026-07-08 16:36:26,735 [INFO]   BANKNIFTY: Open=None, High=None, Low=None
+2026-07-08 16:36:26,736 [INFO]   SENSEX: Open=None, High=None, Low=None
+2026-07-08 16:36:26,736 [INFO] Step 4: Logging daily predictions...
+2026-07-08 16:36:26,746 [INFO]   Predictions logged to feedback database.
+2026-07-08 16:36:26,747 [INFO] Step 5: Running auto-training cycle...
+2026-07-08 16:36:27,290 [ERROR] Auto-train failed: sequence item 0: expected str instance, dict found
+2026-07-08 16:36:27,290 [INFO] Step 6: Checking prediction range config freshness...
+2026-07-08 16:36:27,292 [INFO]   Range config last updated: 2026-07-06T14:49:42.659222
+2026-07-08 16:36:27,292 [INFO]   NIFTY 50: Center=24386.4, Range=[22386.4, 26386.4]
+2026-07-08 16:36:27,292 [INFO]   BANKNIFTY: Center=58254.55, Range=[56254.55, 60254.55]
+2026-07-08 16:36:27,292 [INFO]   SENSEX: Center=78233.7, Range=[73233.7, 83233.7]
+2026-07-08 16:36:27,292 [INFO] ZERO DAILY UPDATER — CYCLE COMPLETE
+2026-07-08 16:36:27,293 [INFO] ============================================================
+2026-07-15 10:28:13,635 [INFO] ============================================================
+2026-07-15 10:28:13,646 [INFO] ZERO DAILY UPDATER — CYCLE START
+2026-07-15 10:28:13,646 [INFO] Timestamp: 2026-07-15T10:28:13.646592
+2026-07-15 10:28:13,646 [INFO] ============================================================
+2026-07-15 10:28:13,646 [INFO] Step 1: Fetching daily actuals from yfinance...
+2026-07-15 10:28:14,823 [INFO]   NIFTY 50: {'open': 24085.85, 'high': 24220.35, 'low': 24069.05, 'close': 24207.7}
+2026-07-15 10:28:14,824 [INFO]   BANKNIFTY: {'open': 57643.75, 'high': 58148.8, 'low': 57616.95, 'close': 58106.0}
+2026-07-15 10:28:14,824 [INFO]   SENSEX: {'open': 77192.76, 'high': 77641.86, 'low': 77072.53, 'close': 77576.12}
+2026-07-15 10:28:14,824 [INFO] Step 2: Updating unfulfilled feedback logs...
+2026-07-15 10:28:14,824 [INFO]   No unfulfilled logs to update.
+2026-07-15 10:28:14,824 [INFO] Step 3: Generating prediction matrix...
+2026-07-15 10:28:20,023 [INFO]   NIFTY 50: Open=24213.8, High=24459.98, Low=24082.31
+2026-07-15 10:28:20,023 [INFO]   BANKNIFTY: Open=58126.48, High=58847.37, Low=57403.36
+2026-07-15 10:28:20,023 [INFO]   SENSEX: Open=77596.49, High=78235.97, Low=76889.67
+2026-07-15 10:28:20,023 [INFO] Step 4: Logging daily predictions...
+2026-07-15 10:28:20,029 [INFO]   Predictions logged to feedback database.
+2026-07-15 10:28:20,029 [INFO] Step 5: Running auto-training cycle...
+2026-07-15 10:28:20,477 [INFO]   Training result: holding
+2026-07-15 10:28:20,478 [INFO]   Details: {'current': {'ALPHA': 0.5, 'BETA': 0.5}, 'suggested': {'ALPHA': 0.5, 'BETA': 0.5}, 'reduction_potential': '36096.49 pts avg error'}
+2026-07-15 10:28:20,478 [INFO] Step 5b: Retraining adaptive calibration layer...
+2026-07-15 10:28:20,500 [INFO]   Calibrator retrained. Committed corrections: 7 (trained_at=2026-07-15T10:28:20.497948)
+2026-07-15 10:28:20,500 [INFO] Step 6: Checking prediction range config freshness...
+2026-07-15 10:28:20,500 [INFO]   Range config last updated: 2026-07-06T14:49:42.659222
+2026-07-15 10:28:20,500 [INFO]   NIFTY 50: Center=24386.4, Range=[22386.4, 26386.4]
+2026-07-15 10:28:20,500 [INFO]   BANKNIFTY: Center=58254.55, Range=[56254.55, 60254.55]
+2026-07-15 10:28:20,500 [INFO]   SENSEX: Center=78233.7, Range=[73233.7, 83233.7]
+2026-07-15 10:28:20,500 [INFO] ZERO DAILY UPDATER — CYCLE COMPLETE
+2026-07-15 10:28:20,500 [INFO] ============================================================
