@@ -1,5 +1,4 @@
 @echo off
-<<<<<<< HEAD
 cd /d "%~dp0"
 
 if exist .venv goto ACTIVATED
@@ -19,10 +18,5 @@ echo Launching ZERO Prediction Engine...
 if exist "setup_scheduler.bat" (
     start "" "setup_scheduler.bat"
 )
-=======
-cd /d %~dp0
-echo Launching ZERO Prediction Engine...
-start "" "setup_scheduler.bat"
->>>>>>> fd6d17459e62a7ed12ee718996c66c43ce394490
 streamlit run app.py
 pause

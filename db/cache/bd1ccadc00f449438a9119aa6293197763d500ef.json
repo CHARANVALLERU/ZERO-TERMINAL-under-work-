@@ -1,5 +1,1 @@
-<<<<<<< HEAD
-{"ts": 1785161868.5166762, "value": {"individual": {"HDFC": -0.0646, "ICICI": 1.1522, "INFOSYS": 2.7453, "TCS": 5.9878}, "weighted_avg": 2.1525, "usdinr": 95.9}}
-=======
-{"ts": 1784797342.1711338, "value": {"individual": {"HDFC": -2.3177, "ICICI": -1.9967, "INFOSYS": -2.0609, "TCS": 0.0175}, "weighted_avg": -1.7062, "usdinr": 96.5475}}
->>>>>>> fd6d17459e62a7ed12ee718996c66c43ce394490
+{"ts": 1785173495.7881775, "value": {"individual": {"HDFC": -0.0861, "ICICI": 1.3724, "INFOSYS": 3.7804, "TCS": 7.1976}, "weighted_avg": 2.7019, "usdinr": 95.9}}

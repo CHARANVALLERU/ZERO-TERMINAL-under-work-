@@ -100,21 +100,20 @@ class GeminiChat:
             self._available = False
             return
         try:
-            from google import genai
-            from google.genai import types
-            self._client = genai.Client(api_key=self._api_key)
-            self._genai_types = types
+            import google.generativeai as _old_genai
+            _old_genai.configure(api_key=self._api_key)
+            self._old_model = _old_genai.GenerativeModel(
+                model_name="gemini-2.0-flash",
+                system_instruction=self.kb.get_system_prompt(),
+            )
+            self._use_old_sdk = True
             self._available = True
         except ImportError:
-            # Fallback: try old sdk
             try:
-                import google.generativeai as _old_genai
-                _old_genai.configure(api_key=self._api_key)
-                self._old_model = _old_genai.GenerativeModel(
-                    model_name="gemini-2.0-flash",
-                    system_instruction=self.kb.get_system_prompt(),
-                )
-                self._use_old_sdk = True
+                from google import genai
+                from google.genai import types
+                self._client = genai.Client(api_key=self._api_key)
+                self._genai_types = types
                 self._available = True
             except Exception:
                 self._available = False

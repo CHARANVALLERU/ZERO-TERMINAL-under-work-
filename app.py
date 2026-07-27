@@ -4,6 +4,7 @@ import time
 import random
 import os
 import json
+import base64
 from engine.prediction_matrix import generate_prediction_matrix, rederive_with_overlay
 from ui.components import apply_digital_core_theme, digital_clock_component, predicted_info_card, sidebar_news_section, show_zero_digital_splash, order_flow_table, automated_training_dashboard, learning_stats_card, render_zero_engine_modal, render_zero_brain_sidebar, render_youtube_knowledge_sidebar, render_trading_strategy_bubbles, render_forexfactory_priority_card, render_trading_agents_panel, render_quantdinge_strategy_card, render_fincept_thesis_card, render_nautilus_order_card, render_intermarket_card, render_options_greeks_card
 from engine.learning_service import log_daily_feedback, get_feedback_logs, calculate_engine_accuracy, fetch_daily_actuals, update_feedback_logs, update_unfulfilled_feedback_logs, auto_train_engine
@@ -214,32 +215,108 @@ m = st.session_state.matrix
 
 # Phase 2: Splash Entry Screen (only when the user hasn't entered yet)
 if not st.session_state.entered:
-    # Aggressive Scroll Lock for Splash ONLY
     st.markdown("""
         <style>
         [data-testid="stAppViewContainer"], .main, body {
             overflow: hidden !important;
-            height: 100vh !important;
+            background-color: #050505 !important;
         }
         [data-testid="stSidebar"] { display: none !important; }
+        
+        .splash-wrapper {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 80vh;
+            text-align: center;
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            padding: 20px;
+        }
+        .splash-logo {
+            width: 90px;
+            height: 90px;
+            border-radius: 50%;
+            margin-bottom: 24px;
+            box-shadow: 0 0 35px rgba(229, 9, 20, 0.4);
+            border: 2px solid rgba(229, 9, 20, 0.6);
+            animation: pulse-glow 3s ease-in-out infinite alternate;
+        }
+        @keyframes pulse-glow {
+            0% { transform: scale(0.98); box-shadow: 0 0 25px rgba(229, 9, 20, 0.3); }
+            100% { transform: scale(1.03); box-shadow: 0 0 45px rgba(229, 9, 20, 0.6); }
+        }
+        .splash-title {
+            font-family: 'Orbitron', 'Inter', sans-serif;
+            font-size: 2.8rem;
+            font-weight: 900;
+            letter-spacing: 4px;
+            color: #FFFFFF;
+            margin: 0 0 6px 0;
+            text-transform: uppercase;
+            background: linear-gradient(180deg, #FFFFFF 0%, #A0A0A0 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .splash-subtitle {
+            font-size: 0.95rem;
+            color: #888888;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            margin-bottom: 30px;
+            font-weight: 500;
+        }
+        .splash-status-badge {
+            display: inline-block;
+            color: #E50914;
+            font-size: 0.75rem;
+            font-weight: 700;
+            letter-spacing: 2.5px;
+            text-transform: uppercase;
+            border: 1px solid rgba(229, 9, 20, 0.4);
+            background: rgba(229, 9, 20, 0.05);
+            padding: 8px 20px;
+            border-radius: 4px;
+            margin-bottom: 40px;
+        }
+        div.stButton > button {
+            background: linear-gradient(135deg, #E50914 0%, #B20710 100%) !important;
+            color: #FFFFFF !important;
+            font-weight: 800 !important;
+            font-size: 1rem !important;
+            letter-spacing: 3px !important;
+            padding: 14px 45px !important;
+            border-radius: 4px !important;
+            border: 1px solid #FF1E27 !important;
+            box-shadow: 0 4px 20px rgba(229, 9, 20, 0.4) !important;
+            transition: all 0.25s ease-in-out !important;
+            cursor: pointer !important;
+            width: 100% !important;
+            max-width: 320px !important;
+        }
+        div.stButton > button:hover {
+            transform: translateY(-2px) scale(1.02) !important;
+            box-shadow: 0 6px 28px rgba(229, 9, 20, 0.7) !important;
+            border-color: #FFFFFF !important;
+        }
         </style>
     """, unsafe_allow_html=True)
     
     with open("ui/assets/logo.png", "rb") as image_file:
         logo_b64 = base64.b64encode(image_file.read()).decode()
 
-    st.markdown("<div style='height: 25vh;'></div>", unsafe_allow_html=True)
-    col_logo, col_title = st.columns([0.15, 0.85])
-    with col_logo:
-        st.markdown(f"<img src='data:image/png;base64,{logo_b64}' style='width:50px; margin-top:20px;'/>", unsafe_allow_html=True)
-    with col_title:
-        st.markdown("<h1 class='main-title'>ZERO V1.0</h1>", unsafe_allow_html=True)
-        st.markdown("<p class='sub-title' style='margin-top: -15px;'>Adaptive Market Intelligence Terminal</p>", unsafe_allow_html=True)
-    st.markdown("<p class='terminal-core-txt' style='margin-bottom: 60px;'>Quantum Cores Synchronized</p>", unsafe_allow_html=True)
+    st.markdown(f"""
+        <div class="splash-wrapper">
+            <img class="splash-logo" src="data:image/png;base64,{logo_b64}" alt="ZERO Core" />
+            <h1 class="splash-title">ZERO V1.0</h1>
+            <p class="splash-subtitle">Adaptive Market Intelligence Terminal</p>
+            <div class="splash-status-badge">⚡ QUANTUM CORES SYNCHRONIZED</div>
+        </div>
+    """, unsafe_allow_html=True)
 
-    col_l, col_m, col_r = st.columns([1.2, 1, 1.2])
+    col_l, col_m, col_r = st.columns([1, 1, 1])
     with col_m:
-        if st.button("DIG & DIVE", width='stretch'):
+        if st.button("DIG & DIVE", use_container_width=True):
             st.session_state.entered = True
             _save_session_flag({
                 'entered': True,

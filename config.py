@@ -1,5 +1,8 @@
+from __future__ import annotations
 import os
+import datetime as _dt_module
 from datetime import time, datetime, timedelta, timezone
+from typing import Optional, Union
 
 # Project Name
 PROJECT_NAME = "ZERO"
@@ -169,7 +172,7 @@ def now_ist() -> datetime:
     return datetime.now(IST).replace(tzinfo=None)
 
 
-def is_trading_day(when: datetime | datetime.date | None = None) -> bool:
+def is_trading_day(when: Optional[Union[datetime, _dt_module.date]] = None) -> bool:
     """True iff when is an official NSE trading day (Mon-Fri and not a national holiday)."""
     if when is None:
         when = now_ist()
@@ -181,7 +184,7 @@ def is_trading_day(when: datetime | datetime.date | None = None) -> bool:
     return True
 
 
-def get_next_trading_day(when: datetime | None = None) -> datetime.date:
+def get_next_trading_day(when: Optional[datetime] = None) -> _dt_module.date:
     """Returns the date of the next active trading session.
 
     If current time is past market close (>= 15:30) or today is a non-trading
