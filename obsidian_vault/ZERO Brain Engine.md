@@ -17,4 +17,6 @@ The central intelligence hub for ZERO Market Intelligence Terminal.
 * **AI System Capabilities:** [[05_AI_Memory/Index]]
 
 ## 🎥 Ingested YouTube Knowledge
+* [[04_YouTube_Knowledge/MASTER Liquidity Concepts in 93 Minutes (Full Trading Course)]]
+* [[04_YouTube_Knowledge/MASTER Candlestick Patterns in 125 Minutes (YES, IT'S FREE)]]
 * [[04_YouTube_Knowledge/THE PB TRADING LORE (INTRO TO ICT FOR DUMMIES)]]

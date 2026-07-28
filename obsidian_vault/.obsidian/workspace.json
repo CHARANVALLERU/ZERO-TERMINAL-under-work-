@@ -1,22 +1,14 @@
 {
   "main": {
-    "id": "9a9b562ff6c9bc09",
+    "id": "2b95561232cd8433",
     "type": "split",
     "children": [
       {
-<<<<<<< HEAD
-        "id": "2571e7d03814b566",
+        "id": "0520704aff22e951",
         "type": "tabs",
         "children": [
           {
-            "id": "479632e8066597fe",
-=======
-        "id": "907ef8d543098400",
-        "type": "tabs",
-        "children": [
-          {
-            "id": "e0c60d6307064c60",
->>>>>>> fd6d17459e62a7ed12ee718996c66c43ce394490
+            "id": "cca03cf2371b755d",
             "type": "leaf",
             "state": {
               "type": "graph",
@@ -31,15 +23,15 @@
     "direction": "vertical"
   },
   "left": {
-    "id": "c43654bbb409660d",
+    "id": "85927990ae12174a",
     "type": "split",
     "children": [
       {
-        "id": "9781c8b67bc99b2d",
+        "id": "4492f164eb9fee59",
         "type": "tabs",
         "children": [
           {
-            "id": "e24aa4d1efbed141",
+            "id": "a1094e6f07a08cd9",
             "type": "leaf",
             "state": {
               "type": "file-explorer",
@@ -52,7 +44,7 @@
             }
           },
           {
-            "id": "ac65bc6d34b8c5a8",
+            "id": "5b6b9876e91caa52",
             "type": "leaf",
             "state": {
               "type": "search",
@@ -69,7 +61,7 @@
             }
           },
           {
-            "id": "63cb9468f86405c4",
+            "id": "d8c7518fda266b62",
             "type": "leaf",
             "state": {
               "type": "bookmarks",
@@ -82,23 +74,19 @@
       }
     ],
     "direction": "horizontal",
-<<<<<<< HEAD
     "width": 300,
     "collapsed": true
-=======
-    "width": 300
->>>>>>> fd6d17459e62a7ed12ee718996c66c43ce394490
   },
   "right": {
-    "id": "431ea7570a2b93cb",
+    "id": "cfd159b9702912c7",
     "type": "split",
     "children": [
       {
-        "id": "4370e99e352d77a8",
+        "id": "7774acaa0f9fcf97",
         "type": "tabs",
         "children": [
           {
-            "id": "fe453a904b504902",
+            "id": "fbefc0e20687d1a6",
             "type": "leaf",
             "state": {
               "type": "backlink",
@@ -116,7 +104,7 @@
             }
           },
           {
-            "id": "67a5fac3629184ec",
+            "id": "54ee28f352f7c6e8",
             "type": "leaf",
             "state": {
               "type": "outgoing-link",
@@ -129,7 +117,7 @@
             }
           },
           {
-            "id": "34fe3364ef660306",
+            "id": "f42a153fb1387bea",
             "type": "leaf",
             "state": {
               "type": "tag",
@@ -144,7 +132,7 @@
             }
           },
           {
-            "id": "a7d38f463e116af4",
+            "id": "358567258a3d1b73",
             "type": "leaf",
             "state": {
               "type": "all-properties",
@@ -158,7 +146,7 @@
             }
           },
           {
-            "id": "39ddc1a7e0dee583",
+            "id": "973106c9a57e4543",
             "type": "leaf",
             "state": {
               "type": "outline",
@@ -187,20 +175,19 @@
       "bases:Create new base": false
     }
   },
-<<<<<<< HEAD
-  "active": "479632e8066597fe",
+  "active": "cca03cf2371b755d",
   "lastOpenFiles": [
+    "04_YouTube_Knowledge/MASTER Liquidity Concepts in 93 Minutes (Full Trading Course).md",
+    "04_YouTube_Knowledge/MASTER Candlestick Patterns in 125 Minutes (YES, IT'S FREE).md",
     "second zero.md",
     "ZERO.md",
-    "04_YouTube_Knowledge/Index.md",
     "ZERO Brain Engine.md",
-    "04_YouTube_Knowledge/THE PB TRADING LORE (INTRO TO ICT FOR DUMMIES).md",
     "04_YouTube_Knowledge/YouTube_Knowledge_Import.md",
-    "04_YouTube_Knowledge",
-=======
-  "active": "e0c60d6307064c60",
-  "lastOpenFiles": [
->>>>>>> fd6d17459e62a7ed12ee718996c66c43ce394490
-    "00_Index_MOC.md"
+    "04_YouTube_Knowledge/THE PB TRADING LORE (INTRO TO ICT FOR DUMMIES).md",
+    "04_YouTube_Knowledge/Index.md",
+    "01_Daily_Logs/2026-07-28.md",
+    "04_YouTube_Knowledge/SMC Simplified  The Only Beginner to Pro Guide You'll Ever Need.md",
+    "04_YouTube_Knowledge/ICT For Dummies.md",
+    "04_YouTube_Knowledge/Every Trading Strategy Explained in 12 Minutes.md"
   ]
 }

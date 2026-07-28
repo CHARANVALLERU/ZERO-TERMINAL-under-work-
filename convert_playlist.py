@@ -384,37 +384,52 @@ def fetch_transcript(video_id):
         import tempfile
         print(f"  [*] Tier 4: downloading audio for local Whisper transcription ({video_id})...")
         tmp_dir = tempfile.mkdtemp()
-        audio_out = os.path.join(tmp_dir, f"{video_id}.%(ext)s")
-        ydl_audio_opts = {
-            'format': 'bestaudio[ext=m4a]/bestaudio/best',
-            'outtmpl': audio_out,
-            'quiet': True,
-            'no_warnings': True,
-        }
-        if proxy_url:
-            ydl_audio_opts['proxy'] = proxy_url
-        # Try with browser cookies first for audio download too
-        for browser_tuple in [('chrome',), ('edge',), ('firefox',), None]:
-            try:
-                opts = dict(ydl_audio_opts)
-                if browser_tuple:
-                    opts['cookiesfrombrowser'] = browser_tuple
-                with yt_dlp.YoutubeDL(opts) as ydl:
-                    ydl.download([video_url])
-                # Find the downloaded mp3
-                for f in os.listdir(tmp_dir):
-                    if f.endswith('.mp3') or f.endswith('.m4a') or f.endswith('.webm'):
-                        audio_path = os.path.join(tmp_dir, f)
+        
+        # Formats to try in sequence
+        format_strategies = [
+            'bestaudio/best',
+            'm4a/webm/mp3/bestaudio',
+            'worst[ext=m4a]/worst',
+        ]
+        
+        for fmt in format_strategies:
+            if audio_path and os.path.exists(audio_path):
+                break
+            audio_out = os.path.join(tmp_dir, f"{video_id}.%(ext)s")
+            ydl_audio_opts = {
+                'format': fmt,
+                'outtmpl': audio_out,
+                'quiet': True,
+                'no_warnings': True,
+                'nocheckcertificate': True,
+                'ignoreerrors': True,
+            }
+            if proxy_url:
+                ydl_audio_opts['proxy'] = proxy_url
+
+            # Try with browser cookies first, then without cookies
+            for browser_tuple in [('chrome',), ('edge',), ('firefox',), ('brave',), None]:
+                try:
+                    opts = dict(ydl_audio_opts)
+                    if browser_tuple:
+                        opts['cookiesfrombrowser'] = browser_tuple
+                    with yt_dlp.YoutubeDL(opts) as ydl:
+                        ydl.download([video_url])
+                    for f in os.listdir(tmp_dir):
+                        full_f = os.path.join(tmp_dir, f)
+                        if os.path.isfile(full_f) and os.path.getsize(full_f) > 1000:
+                            audio_path = full_f
+                            break
+                    if audio_path and os.path.exists(audio_path):
                         break
-                if audio_path and os.path.exists(audio_path):
-                    break
-            except Exception:
-                continue
+                except Exception:
+                    continue
 
         if audio_path and os.path.exists(audio_path):
             try:
                 from faster_whisper import WhisperModel
                 print(f"  [*] Tier 4: transcribing with faster-whisper (tiny model)...")
+                # Load model (cached in user directory)
                 model = WhisperModel("tiny", device="cpu", compute_type="int8")
                 segments, _ = model.transcribe(audio_path, beam_size=1)
                 lines, raw = [], []
@@ -437,7 +452,7 @@ def fetch_transcript(video_id):
     except Exception as e4:
         print(f"  [!] Tier 4 audio/whisper notice: {e4}")
     finally:
-        # Clean up temp audio file
+        # Clean up temp audio directory
         if audio_path and os.path.exists(audio_path):
             try:
                 os.remove(audio_path)
