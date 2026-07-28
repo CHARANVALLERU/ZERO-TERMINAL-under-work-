@@ -14,6 +14,13 @@ GEMINI_API_KEY = os.getenv("GEMINI_API_KEY", "AQ.Ab8RN6JC3OoEaudUvN2ZIlUHXpwxuOS
 ZERO_ENGINE_MODEL = "gemini-2.0-flash"      # Latest available free-tier model
 ZERO_ENGINE_MAX_HISTORY = 20                # Max message pairs to retain in context
 
+# ── YouTube & Ingestion Proxy Configuration ──────────────────────────────
+# Webshare or Generic Proxy credentials to bypass YouTube IP blocks (RequestBlocked/IpBlocked)
+YOUTUBE_PROXY_USERNAME = os.getenv("YOUTUBE_PROXY_USERNAME", os.getenv("WEBSHARE_PROXY_USERNAME", ""))
+YOUTUBE_PROXY_PASSWORD = os.getenv("YOUTUBE_PROXY_PASSWORD", os.getenv("WEBSHARE_PROXY_PASSWORD", ""))
+YOUTUBE_PROXY_HTTP = os.getenv("YOUTUBE_PROXY_HTTP", os.getenv("HTTP_PROXY", ""))
+YOUTUBE_PROXY_HTTPS = os.getenv("YOUTUBE_PROXY_HTTPS", os.getenv("HTTPS_PROXY", ""))
+
 # ── Obsidian Vault Configuration ──────────────────────────────────────────
 # Path to your Obsidian Vault directory.
 PROJECT_ROOT = os.path.dirname(os.path.abspath(__file__))

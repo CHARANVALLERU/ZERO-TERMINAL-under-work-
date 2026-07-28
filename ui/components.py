@@ -622,7 +622,7 @@ def learning_stats_card(metrics):
 
 def render_youtube_knowledge_sidebar():
     """
-    Renders the 'ADD YOUTUBE KNOWLEDGE' terminal button & interactive dialog in sidebar.
+    Renders the 'ADD YOUTUBE KNOWLEDGE' terminal button, proxy configuration, and interactive dialog in sidebar.
     """
     st.markdown("""
     <div style="margin-bottom:4px;">
@@ -634,6 +634,90 @@ def render_youtube_knowledge_sidebar():
     <p style="font-size:0.5rem;color:#555;letter-spacing:2px;margin:-2px 0 8px 0;
               text-transform:uppercase;">AUTOMATED CONTEXT INGESTION</p>
     """, unsafe_allow_html=True)
+
+    # ── Proxy Configuration for IP Ban Bypass ────────────────────────────────
+    with st.expander("⚙ PROXY SETTINGS (IP Ban Bypass)", expanded=False):
+        st.markdown(
+            "<p style='font-size:0.55rem;color:#888;margin:0 0 8px 0;'>"
+            "Configure a proxy to bypass YouTube IP blocks (IpBlocked / RequestBlocked / HTTP 429). "
+            "Webshare rotating residential proxies work best. Leave blank if not needed.</p>",
+            unsafe_allow_html=True
+        )
+        try:
+            from config import (
+                YOUTUBE_PROXY_USERNAME, YOUTUBE_PROXY_PASSWORD,
+                YOUTUBE_PROXY_HTTP, YOUTUBE_PROXY_HTTPS
+            )
+        except ImportError:
+            YOUTUBE_PROXY_USERNAME = os.environ.get("YOUTUBE_PROXY_USERNAME", "")
+            YOUTUBE_PROXY_PASSWORD = os.environ.get("YOUTUBE_PROXY_PASSWORD", "")
+            YOUTUBE_PROXY_HTTP = os.environ.get("YOUTUBE_PROXY_HTTP", "")
+            YOUTUBE_PROXY_HTTPS = os.environ.get("YOUTUBE_PROXY_HTTPS", "")
+
+        proxy_mode = st.radio(
+            "Proxy Mode",
+            ["None", "Webshare (Rotating Residential)", "Generic HTTP/HTTPS Proxy"],
+            index=(
+                1 if YOUTUBE_PROXY_USERNAME and YOUTUBE_PROXY_PASSWORD else
+                2 if YOUTUBE_PROXY_HTTP else
+                0
+            ),
+            key="yt_proxy_mode_radio"
+        )
+
+        if proxy_mode == "Webshare (Rotating Residential)":
+            st.caption("Get credentials: https://proxy.webshare.io → Proxy Settings")
+            _ws_user = st.text_input(
+                "Webshare Proxy Username",
+                value=os.environ.get("YOUTUBE_PROXY_USERNAME", YOUTUBE_PROXY_USERNAME),
+                key="yt_ws_username_input"
+            )
+            _ws_pass = st.text_input(
+                "Webshare Proxy Password",
+                value="",
+                type="password",
+                key="yt_ws_password_input",
+                placeholder="Enter Webshare password"
+            )
+            if st.button("Apply Webshare Proxy", key="apply_ws_proxy_btn"):
+                if _ws_user and _ws_pass:
+                    os.environ["YOUTUBE_PROXY_USERNAME"] = _ws_user
+                    os.environ["YOUTUBE_PROXY_PASSWORD"] = _ws_pass
+                    os.environ.pop("YOUTUBE_PROXY_HTTP", None)
+                    os.environ.pop("YOUTUBE_PROXY_HTTPS", None)
+                    st.success("Webshare proxy applied for this session.")
+                else:
+                    st.error("Please enter both username and password.")
+
+        elif proxy_mode == "Generic HTTP/HTTPS Proxy":
+            st.caption("Format: http://user:pass@host:port or socks5://host:port")
+            _http_url = st.text_input(
+                "HTTP Proxy URL",
+                value=os.environ.get("YOUTUBE_PROXY_HTTP", YOUTUBE_PROXY_HTTP),
+                key="yt_http_proxy_input",
+                placeholder="http://user:pass@proxy.example.com:3128"
+            )
+            _https_url = st.text_input(
+                "HTTPS Proxy URL (leave blank to reuse HTTP)",
+                value=os.environ.get("YOUTUBE_PROXY_HTTPS", YOUTUBE_PROXY_HTTPS),
+                key="yt_https_proxy_input",
+                placeholder="(optional)"
+            )
+            if st.button("Apply Generic Proxy", key="apply_generic_proxy_btn"):
+                if _http_url:
+                    os.environ["YOUTUBE_PROXY_HTTP"] = _http_url
+                    os.environ["YOUTUBE_PROXY_HTTPS"] = _https_url or _http_url
+                    os.environ.pop("YOUTUBE_PROXY_USERNAME", None)
+                    os.environ.pop("YOUTUBE_PROXY_PASSWORD", None)
+                    st.success("Generic proxy applied for this session.")
+                else:
+                    st.error("Please enter the HTTP Proxy URL.")
+
+        elif proxy_mode == "None":
+            if st.button("Clear Proxy", key="clear_proxy_btn"):
+                for _k in ("YOUTUBE_PROXY_USERNAME", "YOUTUBE_PROXY_PASSWORD", "YOUTUBE_PROXY_HTTP", "YOUTUBE_PROXY_HTTPS"):
+                    os.environ.pop(_k, None)
+                st.success("Proxy cleared.")
 
     if st.button("🔴 ADD YOUTUBE KNOWLEDGE", key="add_yt_knowledge_btn", use_container_width=True):
         st.session_state['show_yt_prompt'] = not st.session_state.get('show_yt_prompt', False)
@@ -664,10 +748,11 @@ def render_youtube_knowledge_sidebar():
                     with open(status_file, "w", encoding="utf-8") as f:
                         f.write("Initializing YouTube Conversion...")
 
+                    # Forward proxy environment variables to convert_playlist.py subprocess
+                    env = os.environ.copy()
                     cmd = [sys.executable, "convert_playlist.py", "--url", yt_url_input.strip()]
                     try:
-                        # Run script in background process
-                        proc = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+                        proc = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True, env=env)
                         st.session_state['yt_process'] = proc.pid
                         st.session_state['show_yt_prompt'] = False
                         st.rerun()
@@ -681,8 +766,6 @@ def render_youtube_knowledge_sidebar():
                 st.session_state['show_yt_prompt'] = False
                 st.rerun()
 
-
-    # Read live status from status file
     status_file = os.path.join(os.path.dirname(__file__), "..", "db", ".yt_status.txt")
     if os.path.exists(status_file):
         try:
@@ -691,12 +774,10 @@ def render_youtube_knowledge_sidebar():
             
             if current_status:
                 if current_status.startswith("COMPLETED"):
-                    # Check timestamp/flag to auto-clear popup after 5 seconds
                     stat_mtime = os.path.getmtime(status_file)
                     time_diff = time.time() - stat_mtime
                     if time_diff <= 5.0:
                         st.success(f"✓ {current_status}")
-                        # Auto rerun in 5 seconds to clear completed toast
                         st.markdown("""
                         <script>
                             setTimeout(function(){
@@ -705,7 +786,6 @@ def render_youtube_knowledge_sidebar():
                         </script>
                         """, unsafe_allow_html=True)
                     else:
-                        # Clear old completed status after 5 seconds
                         try:
                             os.remove(status_file)
                         except Exception:
@@ -714,7 +794,6 @@ def render_youtube_knowledge_sidebar():
                     st.error(f"✕ {current_status}")
                 else:
                     st.info(f"⏳ {current_status}")
-                    # Auto refresh UI every 2 seconds while background conversion is in progress
                     try:
                         from streamlit_autorefresh import st_autorefresh
                         st_autorefresh(interval=2000, key="yt_conversion_autorefresh")
