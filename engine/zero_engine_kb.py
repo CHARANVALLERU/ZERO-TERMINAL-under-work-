@@ -220,6 +220,93 @@ class ZeroEngineKB:
     def get_entry_count(self) -> int:
         return len(self._entries)
 
+    def get_dynamic_knowledge_strategies(self) -> dict[str, str]:
+        """
+        Dynamically scans and compiles knowledge strategies from:
+          1. obsidian_vault/04_YouTube_Knowledge/ (*.md)
+          2. obsidian_vault/02_Mental_Models/ (*.md)
+          3. db/brain/entries.json (recent user training)
+          4. Core preset strategies
+
+        Returns a dict: { "Display Dropdown Label": "Full Strategy Prompt & Directive" }
+        Updates dynamically whenever the user imports new YouTube videos or notes!
+        """
+        from config import OBSIDIAN_VAULT_PATH
+
+        strategies: dict[str, str] = {
+            "-- Select Strategy from Ingested Knowledge Base --": ""
+        }
+
+        # 1. Scan 04_YouTube_Knowledge folder
+        yt_dir = os.path.join(OBSIDIAN_VAULT_PATH, "04_YouTube_Knowledge")
+        if os.path.exists(yt_dir) and os.path.isdir(yt_dir):
+            try:
+                for file in sorted(os.listdir(yt_dir)):
+                    if file.endswith(".md") and file != "Index.md" and file != "YouTube_Knowledge_Import.md":
+                        file_title = file[:-3].strip()
+                        full_path = os.path.join(yt_dir, file)
+                        content = _safe_read(full_path, max_chars=3000)
+                        if content.strip():
+                            # Remove YAML frontmatter
+                            clean = re.sub(r"^---.*?---", "", content, flags=re.DOTALL).strip()
+                            first_p = clean[:600].replace("\n", " ").strip()
+                            label = f"▶ [YouTube] {file_title[:55]}"
+                            directive = (
+                                f"Strategy Directive from YouTube Knowledge [{file_title}]:\n"
+                                f"Apply the core trading concepts, structure, and rules from {file_title}:\n"
+                                f"{first_p}\n\n"
+                                f"Identify current market structure, key order blocks/FVGs, entry zone, SL, TP1, and TP2 targets."
+                            )
+                            strategies[label] = directive
+            except Exception:
+                pass
+
+        # 2. Scan 02_Mental_Models folder
+        mm_dir = os.path.join(OBSIDIAN_VAULT_PATH, "02_Mental_Models")
+        if os.path.exists(mm_dir) and os.path.isdir(mm_dir):
+            try:
+                for file in sorted(os.listdir(mm_dir)):
+                    if file.endswith(".md"):
+                        file_title = file[:-3].strip()
+                        full_path = os.path.join(mm_dir, file)
+                        content = _safe_read(full_path, max_chars=1500)
+                        if content.strip():
+                            clean = re.sub(r"^---.*?---", "", content, flags=re.DOTALL).strip()
+                            label = f"🧠 [Mental Model] {file_title[:55]}"
+                            directive = (
+                                f"Strategy Directive from Mental Model [{file_title}]:\n"
+                                f"{clean[:500]}\n\n"
+                                f"Enforce strict risk management, conservative entry, tight SL, and TP1/TP2 targets."
+                            )
+                            strategies[label] = directive
+            except Exception:
+                pass
+
+        # 3. Add Core Default Presets if not already present
+        defaults = {
+            "⚡ ICT Order Block & Fair Value Gap (FVG)": (
+                "Strategy Directive: Apply ICT Bullish/Bearish Order Blocks, Fair Value Gaps (FVG), and liquidity pools. "
+                "Identify high probability entry, SL, TP1, and TP2 targets."
+            ),
+            "🎯 Smart Money Concepts (SMC)": (
+                "Strategy Directive: Apply Smart Money Concepts (SMC): Market Structure Shift (MSS), Change of Character (CHoCH), "
+                "Premium vs Discount zones, and target liquidity sweeps."
+            ),
+            "🚀 High Probability Breakout & Retest": (
+                "Strategy Directive: Apply key horizontal support/resistance breakout and retest levels. "
+                "Provide entry on retest confirmation with tight SL and 1:3 R:R targets."
+            ),
+            "🕯 Master Candlestick Patterns Reversal": (
+                "Strategy Directive: Apply Master Candlestick Patterns rules (Hammer, Shooting Star, Engulfing). "
+                "Confirm reversal at key levels and output Entry, SL, TP1, and TP2."
+            )
+        }
+        for k, v in defaults.items():
+            if k not in strategies:
+                strategies[k] = v
+
+        return strategies
+
     def get_system_prompt(self, user_query: str = "") -> str:
         """
         Build the full system prompt context to inject into Gemini.

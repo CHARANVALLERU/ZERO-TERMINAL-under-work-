@@ -548,7 +548,31 @@ def predicted_info_card(title, data):
     </div>
     """, unsafe_allow_html=True)
 
+
+def render_live_price_ticker(symbol: str, live_quote: dict = None):
+    """
+    Live price ticker for an index page.
+
+    Loads http://127.0.0.1:7701/ticker?symbol=<SYM> in a stable iframe.
+
+    Key design decision — WHY a URL and not inline srcdoc HTML:
+      Streamlit reruns the entire Python script frequently. Every rerun
+      re-generates the srcdoc HTML string. Even a tiny change in that string
+      (e.g. a different seed price) causes the browser to tear down and recreate
+      the iframe element, killing the running JS poll loop. By pointing st.iframe
+      at a stable localhost URL instead, the iframe's `src` attribute never
+      changes between reruns, so the browser keeps the same iframe alive and the
+      JS poll loop runs uninterrupted at 100ms for the lifetime of the tab.
+
+    The HTML page is generated once by _build_ticker_html() inside
+    engine/live_price_server.py and served at /ticker. The page JS fetches
+    /api/price every 100ms from the same server for live price data.
+    """
+    from engine.live_price_server import PRICE_SERVER_PORT
+    url = f"http://127.0.0.1:{int(PRICE_SERVER_PORT)}/ticker?symbol={symbol.replace(' ', '+')}"
+    st.iframe(url, height=190)
 def order_flow_table(data):
+
     """Scrip-zone flow table.
 
     The user's request: replace the "resistance zone" / "support zone"
@@ -719,7 +743,7 @@ def render_youtube_knowledge_sidebar():
                     os.environ.pop(_k, None)
                 st.success("Proxy cleared.")
 
-    if st.button("🔴 ADD YOUTUBE KNOWLEDGE", key="add_yt_knowledge_btn", use_container_width=True):
+    if st.button("🔴 ADD YOUTUBE KNOWLEDGE", key="add_yt_knowledge_btn"):
         st.session_state['show_yt_prompt'] = not st.session_state.get('show_yt_prompt', False)
 
     if st.session_state.get('show_yt_prompt', False):
@@ -741,7 +765,7 @@ def render_youtube_knowledge_sidebar():
 
         col_run, col_close = st.columns([2, 1])
         with col_run:
-            if st.button("⚡ CONVERT & INGEST", key="run_yt_convert_btn", use_container_width=True):
+            if st.button("⚡ CONVERT & INGEST", key="run_yt_convert_btn"):
                 if yt_url_input and yt_url_input.strip():
                     status_file = os.path.join(os.path.dirname(__file__), "..", "db", ".yt_status.txt")
                     os.makedirs(os.path.dirname(status_file), exist_ok=True)
@@ -762,7 +786,7 @@ def render_youtube_knowledge_sidebar():
                     st.error("Please paste a valid YouTube URL.")
 
         with col_close:
-            if st.button("✕ CLOSE", key="close_yt_prompt_btn", use_container_width=True):
+            if st.button("✕ CLOSE", key="close_yt_prompt_btn"):
                 st.session_state['show_yt_prompt'] = False
                 st.rerun()
 
@@ -861,7 +885,7 @@ def render_zero_brain_sidebar(brain, daily_log: dict):
 
     col_btn, col_clear = st.columns([2, 1])
     with col_btn:
-        if st.button("⚡ TRAIN", key="brain_train_btn", use_container_width=True):
+        if st.button("⚡ TRAIN", key="brain_train_btn"):
             if train_text and train_text.strip():
                 entry = brain.ingest(train_text.strip(), source="user")
                 biases = entry.get("biases", [])
@@ -873,7 +897,7 @@ def render_zero_brain_sidebar(brain, daily_log: dict):
             else:
                 st.error("Type something first.")
     with col_clear:
-        if st.button("✕ CLR", key="brain_clear_btn", use_container_width=True):
+        if st.button("✕ CLR", key="brain_clear_btn"):
             st.session_state["brain_train_input"] = ""
             st.rerun()
 
@@ -1154,7 +1178,7 @@ def render_zero_engine_modal(chat_engine, api_key_state: dict):
     # ── Close button ─────────────────────────────────────────────────────────
     cl_col, _, hdr_col = st.columns([1, 0.2, 6])
     with cl_col:
-        if st.button("✕ CLOSE", key="zero_engine_close", use_container_width=True):
+        if st.button("✕ CLOSE", key="zero_engine_close"):
             st.session_state['show_zero_engine'] = False
             st.rerun()
 
@@ -1213,7 +1237,7 @@ def render_zero_engine_modal(chat_engine, api_key_state: dict):
         )
         kcol1, kcol2 = st.columns([2, 1])
         with kcol1:
-            if st.button("⚡ APPLY KEY", key="ze_apply_key", use_container_width=True):
+            if st.button("⚡ APPLY KEY", key="ze_apply_key"):
                 api_key_state["key"] = new_key.strip()
                 api_key_state["changed"] = True
                 st.session_state["ze_api_key_override"] = new_key.strip()
@@ -1283,9 +1307,9 @@ def render_zero_engine_modal(chat_engine, api_key_state: dict):
             key="ze_chat_input",
         )
     with send_col:
-        send_clicked = st.button("▶ SEND", key="ze_send_btn", use_container_width=True)
+        send_clicked = st.button("▶ SEND", key="ze_send_btn")
     with clear_col:
-        if st.button("✕ CLR", key="ze_clear_btn", use_container_width=True):
+        if st.button("✕ CLR", key="ze_clear_btn"):
             if chat_engine:
                 chat_engine.clear_history()
             st.rerun()
@@ -2133,4 +2157,357 @@ def render_options_greeks_card(greeks: dict | None = None):
   </div>
 </div>"""
     st.markdown(html, unsafe_allow_html=True)
+
+
+# ==============================================================================
+# 🤖 ZERO AGI — Live Chart Reading & Strategy Analysis Components
+# ==============================================================================
+
+def render_zero_agi_sidebar():
+    """
+    Renders the 'ZERO AGI' button in the left sidebar.
+    """
+    st.markdown("""
+    <div style="margin-bottom:4px;">
+      <span style="font-family:'Orbitron',sans-serif;font-weight:900;font-size:1.0rem;
+                   color:#fff;letter-spacing:2px;">🤖 ZERO</span>
+      <span style="font-family:'Orbitron',sans-serif;font-weight:900;font-size:1.0rem;
+                   color:#00ff88;letter-spacing:2px;"> AGI</span>
+    </div>
+    <p style="font-size:0.5rem;color:#555;letter-spacing:2px;margin:-2px 0 8px 0;
+              text-transform:uppercase;">LIVE CHART VISION · STRATEGY ANALYZER</p>
+    """, unsafe_allow_html=True)
+
+    if st.button("🤖 ZERO AGI", key="open_zero_agi_btn"):
+        st.session_state['show_zero_agi'] = True
+        st.rerun()
+
+
+def render_zero_agi_modal():
+    """
+    Renders the ZERO AGI Chart Analyzer dialog/modal.
+    Captures or reads live chart screenshots, receives strategy inputs from the user,
+    queries ZERO Brain RAG + Gemini Vision API, and outputs structured trade setups
+    (Entry, SL, TP1, TP2, R:R ratio, technical thesis).
+    """
+    if not st.session_state.get('show_zero_agi', False):
+        return
+
+    from engine.zero_agi_engine import ZeroAGIEngine
+    from PIL import Image
+    import io
+
+    # Streamlit modal container
+    st.markdown("""
+    <style>
+      .zero-agi-card {
+        background: linear-gradient(135deg, rgba(12,12,18,0.98) 0%, rgba(18,16,28,0.98) 100%);
+        border: 1px solid rgba(0, 255, 136, 0.25);
+        border-radius: 12px;
+        padding: 20px;
+        margin-bottom: 20px;
+        box-shadow: 0 8px 32px rgba(0, 255, 136, 0.08);
+      }
+      .zero-agi-title {
+        font-family: 'Orbitron', sans-serif;
+        font-weight: 900;
+        font-size: 1.4rem;
+        letter-spacing: 2.5px;
+        color: #FFFFFF;
+        margin-bottom: 4px;
+      }
+      .zero-agi-sub {
+        font-size: 0.65rem;
+        color: #888888;
+        letter-spacing: 2px;
+        text-transform: uppercase;
+        margin-bottom: 16px;
+      }
+    </style>
+    """, unsafe_allow_html=True)
+
+    with st.sidebar:
+        st.markdown("<div style='height:10px;'></div>", unsafe_allow_html=True)
+
+    # Container for modal view
+    st.markdown("---")
+    st.markdown("""
+    <div class="zero-agi-card">
+      <div style="display:flex; justify-content:space-between; align-items:center;">
+        <div>
+          <div class="zero-agi-title">🤖 ZERO AGI <span style="color:#00ff88;">// LIVE CHART VISION</span></div>
+          <div class="zero-agi-sub">INSTITUTIONAL STRATEGY ANALYZER & PREDICTIVE SETUP ENGINE</div>
+        </div>
+      </div>
+    </div>
+    """, unsafe_allow_html=True)
+
+    col_close_a, col_close_b = st.columns([0.85, 0.15])
+    with col_close_b:
+        if st.button("❌ CLOSE", key="close_agi_modal"):
+            st.session_state['show_zero_agi'] = False
+            st.rerun()
+
+    # Main Grid: Left Column = Input & Screen Capture, Right Column = Results & Strategy Output
+    col_input, col_output = st.columns([1.1, 1.2])
+
+    with col_input:
+        st.markdown("<h4 style='color:#00ff88; font-family:\"Orbitron\",sans-serif; font-size:0.95rem;'>1. LIVE CHART CAPTURE</h4>", unsafe_allow_html=True)
+
+        capture_tab1, capture_tab2, capture_tab3 = st.tabs(["📁 UPLOAD SCREENSHOT", "📸 DESKTOP SNAPSHOT", "🌐 BROWSER CAPTURE"])
+
+        captured_image = None
+
+        with capture_tab1:
+            uploaded_file = st.file_uploader(
+                "Upload Live Chart Screenshot (PNG, JPG, WebP)",
+                type=["png", "jpg", "jpeg", "webp"],
+                key="agi_chart_upload"
+            )
+            if uploaded_file is not None:
+                try:
+                    captured_image = Image.open(uploaded_file)
+                    st.image(captured_image, caption="Uploaded Chart Image")
+                except Exception as e:
+                    st.error(f"Error loading image: {e}")
+
+        with capture_tab2:
+            st.markdown("<p style='font-size:0.75rem; color:#888;'>Capture primary monitor or active trading window automatically.</p>", unsafe_allow_html=True)
+            if st.button("📸 SNAPSHOT PRIMARY DISPLAY", key="agi_snap_display_btn"):
+                try:
+                    import mss
+                    with mss.mss() as sct:
+                        mon = sct.monitors[1] if len(sct.monitors) > 1 else sct.monitors[0]
+                        sct_img = sct.grab(mon)
+                        captured_image = Image.frombytes("RGB", sct_img.size, sct_img.bgra, "raw", "BGRX")
+                        st.session_state["agi_captured_img"] = captured_image
+                        st.success("Primary display captured successfully!")
+                except Exception as exc:
+                    try:
+                        from PIL import ImageGrab
+                        captured_image = ImageGrab.grab()
+                        st.session_state["agi_captured_img"] = captured_image
+                        st.success("Desktop snapshot captured!")
+                    except Exception as exc2:
+                        st.error(f"Screen capture requires display session: {exc2}. Please use Screenshot Upload or Browser Capture.")
+
+            if "agi_captured_img" in st.session_state and captured_image is None:
+                captured_image = st.session_state["agi_captured_img"]
+                st.image(captured_image, caption="Captured Desktop Screen")
+
+        with capture_tab3:
+            st.markdown("<p style='font-size:0.75rem; color:#888;'>Use native browser picker to select any window or tab (TradingView, Zerodha, etc.).</p>", unsafe_allow_html=True)
+            # Browser native screen capture widget
+            html_screen_grabber = """
+            <div style="background:rgba(0,255,136,0.05); border:1px dashed rgba(0,255,136,0.3); border-radius:8px; padding:12px; text-align:center;">
+                <button id="grab-btn" style="background:#00ff88; color:#000; font-family:'Orbitron',sans-serif; font-weight:900; font-size:0.8rem; border:none; border-radius:4px; padding:8px 16px; cursor:pointer; letter-spacing:1px;">
+                    🎯 SELECT CHART WINDOW / TAB
+                </button>
+                <p id="grab-status" style="font-size:0.65rem; color:#888; margin-top:8px;">Click to pick a live chart window from your screen</p>
+                <canvas id="grab-canvas" style="display:none; width:100%; margin-top:8px; border-radius:4px;"></canvas>
+            </div>
+            <script>
+            document.getElementById('grab-btn').addEventListener('click', async () => {
+                const status = document.getElementById('grab-status');
+                const canvas = document.getElementById('grab-canvas');
+                try {
+                    status.innerText = "Opening browser screen selector...";
+                    const stream = await navigator.mediaDevices.getDisplayMedia({ video: { cursor: "always" }, audio: false });
+                    const video = document.createElement("video");
+                    video.srcObject = stream;
+                    video.play();
+                    video.onloadedmetadata = () => {
+                        setTimeout(() => {
+                            canvas.width = video.videoWidth;
+                            canvas.height = video.videoHeight;
+                            const ctx = canvas.getContext("2d");
+                            ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+                            stream.getTracks().forEach(track => track.stop());
+                            canvas.style.display = "block";
+                            status.innerText = "✅ Chart captured! Copy or save the image, or upload above.";
+                        }, 500);
+                    };
+                } catch (err) {
+                    status.innerText = "Screen selection canceled or unavailable: " + err;
+                }
+            });
+            </script>
+            """
+            st.html(html_screen_grabber, unsafe_allow_javascript=True)
+
+        st.markdown("<h4 style='color:#00ff88; font-family:\"Orbitron\",sans-serif; font-size:0.95rem; margin-top:20px;'>2. STRATEGY & DIALOGUE INPUT</h4>", unsafe_allow_html=True)
+
+        symbol_ctx = st.selectbox("Market Index / Symbol", ["NIFTY 50", "BANKNIFTY", "SENSEX", "CUSTOM CHART"], key="agi_symbol_select")
+
+        # Ingested Knowledge Base Strategy Dropdown (Dynamically scanned from YouTube notes & ZERO Brain)
+        try:
+            from engine.zero_engine_kb import ZeroEngineKB
+            kb = ZeroEngineKB()
+            kb_strategies = kb.get_dynamic_knowledge_strategies()
+        except Exception:
+            kb_strategies = {
+                "-- Select Strategy from Ingested Knowledge Base --": "",
+                "⚡ ICT Order Block & Fair Value Gap (FVG)": "Apply ICT Order Blocks & FVG strategy.",
+                "🎯 Smart Money Concepts (SMC)": "Apply Smart Money Concepts strategy.",
+                "🚀 Breakout & Retest": "Apply Breakout and Retest strategy."
+            }
+
+        selected_kb_strat = st.selectbox(
+            "📚 SELECT STRATEGY FROM INGESTED KNOWLEDGE BASE (Auto-Scanned)",
+            list(kb_strategies.keys()),
+            key="agi_kb_strategy_select"
+        )
+
+        if selected_kb_strat and kb_strategies.get(selected_kb_strat):
+            st.session_state["agi_strategy_input"] = kb_strategies[selected_kb_strat]
+
+        # Quick Strategy Presets
+        st.markdown("<p style='font-size:0.7rem; color:#aaa; margin-bottom:4px;'>QUICK STRATEGY PRESETS:</p>", unsafe_allow_html=True)
+
+        col_p1, col_p2, col_p3 = st.columns(3)
+        with col_p1:
+            if st.button("⚡ ICT Order Block & FVG", key="preset_ict"):
+                st.session_state["agi_strategy_input"] = "Analyze using ICT Bullish/Bearish Order Blocks, Fair Value Gaps (FVG), and liquidity pools. Identify high probability entry, SL, TP1, and TP2."
+        with col_p2:
+            if st.button("🎯 Smart Money Concepts", key="preset_smc"):
+                st.session_state["agi_strategy_input"] = "Apply Smart Money Concepts (SMC): Market Structure Shift (MSS), Change of Character (CHoCH), Premium vs Discount zones, and target liquidity sweeps."
+        with col_p3:
+            if st.button("🚀 Breakout & Retest", key="preset_breakout"):
+                st.session_state["agi_strategy_input"] = "Analyze key horizontal support/resistance breakout and retest levels. Provide entry on retest confirmation with tight SL and 1:3 R:R targets."
+
+        default_prompt = st.session_state.get(
+            "agi_strategy_input",
+            "Analyze this live chart for NIFTY/index. Identify current market structure, key order blocks, liquidity gaps, entry zone, stop loss, TP1, and TP2 targets."
+        )
+
+        user_strategy_prompt = st.text_area(
+            "Dialogue Box — Input Your Strategy & Directives for ZERO AGI",
+            value=default_prompt,
+            height=110,
+            key="agi_strategy_text_area"
+        )
+
+        with st.expander("⚙ GEMINI API KEY SETTINGS", expanded=False):
+            st.markdown(
+                "<p style='font-size:0.7rem; color:#888; margin:0 0 6px 0;'>"
+                "To run live chart vision analysis, enter your free Google AI Studio API key (starts with <code>AIzaSy...</code>). "
+                "<a href='https://aistudio.google.com/apikey' target='_blank' style='color:#00ff88;'>Get Free Key (30s)</a></p>",
+                unsafe_allow_html=True
+            )
+            key_input = st.text_input(
+                "Gemini API Key",
+                value=st.session_state.get('ze_api_key_override', os.getenv('GEMINI_API_KEY', '')),
+                type="password",
+                key="agi_modal_api_key_input"
+            )
+            if st.button("💾 SAVE API KEY", key="save_agi_api_key_btn"):
+                st.session_state['ze_api_key_override'] = key_input.strip()
+                os.environ['GEMINI_API_KEY'] = key_input.strip()
+                st.success("API Key saved for ZERO AGI!")
+
+        run_agi = st.button("🤖 RUN ZERO AGI ANALYSIS", key="run_zero_agi_analysis_btn")
+
+    # Right Column = Results & Trade Setup Outputs
+    with col_output:
+        st.markdown("<h4 style='color:#00ff88; font-family:\"Orbitron\",sans-serif; font-size:0.95rem;'>3. PREDICTIVE TRADE SETUP & ANALYSIS</h4>", unsafe_allow_html=True)
+
+        if run_agi:
+            if captured_image is None:
+                st.warning("⚠️ Please upload or capture a live chart image first in Column 1!")
+            else:
+                with st.spinner("🧠 ZERO AGI analyzing chart structure, order flow, and ZERO Brain knowledge..."):
+                    effective_key = st.session_state.get('ze_api_key_override') or os.getenv('GEMINI_API_KEY', '')
+                    engine = ZeroAGIEngine(api_key=effective_key)
+                    result = engine.analyze_chart_image(
+                        image_input=captured_image,
+                        user_strategy=user_strategy_prompt,
+                        symbol_context=symbol_ctx
+                    )
+                    st.session_state["agi_last_result"] = result
+
+        if "agi_last_result" in st.session_state:
+            res = st.session_state["agi_last_result"]
+
+            if "error" in res and res.get("error"):
+                st.error(f"ZERO AGI Notice: {res['error']}")
+
+            if res.get("notice"):
+                st.info(res["notice"])
+
+            bias = str(res.get("bias", "NEUTRAL")).upper()
+            conf = res.get("confidence", 80)
+            bias_color = "#00ff88" if bias == "LONG" else ("#E50914" if bias == "SHORT" else "#D4AF37")
+            bias_badge = f"<span style='background:{bias_color}22; color:{bias_color}; border:1px solid {bias_color}; padding:4px 14px; border-radius:6px; font-weight:900; font-family:\"Orbitron\",sans-serif; font-size:1.1rem;'>{bias} VECTOR</span>"
+
+            st.markdown(f"""
+            <div style="background:rgba(15,15,22,0.9); border:1px solid rgba(255,255,255,0.08); border-radius:10px; padding:16px; margin-bottom:14px;">
+              <div style="display:flex; justify-content:space-between; align-items:center;">
+                <div>{bias_badge}</div>
+                <div style="text-align:right;">
+                  <div style="color:#888; font-size:0.6rem; letter-spacing:1px;">CONFIDENCE</div>
+                  <div style="color:#FFF; font-weight:900; font-size:1.1rem;">{conf}%</div>
+                </div>
+              </div>
+              <div style="margin-top:10px; font-size:0.75rem; color:#aaa;">
+                <strong>Applied Strategy:</strong> {res.get('strategy_applied', 'Custom Strategy')}
+              </div>
+            </div>
+            """, unsafe_allow_html=True)
+
+            # Quantitative Trade Setup 4-Grid Card
+            st.markdown(f"""
+            <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px; margin-bottom:16px;">
+              <div style="background:rgba(0,255,136,0.06); border:1px solid rgba(0,255,136,0.25); border-radius:8px; padding:12px;">
+                <div style="font-size:0.6rem; color:#00ff88; font-weight:800; letter-spacing:1.5px;">🟢 ENTRY ZONE</div>
+                <div style="font-size:1.1rem; font-weight:900; color:#FFF; margin-top:2px;">{res.get('entry_zone', '--')}</div>
+              </div>
+              <div style="background:rgba(229,9,20,0.06); border:1px solid rgba(229,9,20,0.25); border-radius:8px; padding:12px;">
+                <div style="font-size:0.6rem; color:#E50914; font-weight:800; letter-spacing:1.5px;">🛑 STOP LOSS (SL)</div>
+                <div style="font-size:1.1rem; font-weight:900; color:#FFF; margin-top:2px;">{res.get('stop_loss', '--')}</div>
+              </div>
+              <div style="background:rgba(212,175,55,0.06); border:1px solid rgba(212,175,55,0.25); border-radius:8px; padding:12px;">
+                <div style="font-size:0.6rem; color:#D4AF37; font-weight:800; letter-spacing:1.5px;">🎯 TAKE PROFIT 1 (TP1)</div>
+                <div style="font-size:1.1rem; font-weight:900; color:#FFF; margin-top:2px;">{res.get('tp1', '--')}</div>
+              </div>
+              <div style="background:rgba(0,176,255,0.06); border:1px solid rgba(0,176,255,0.25); border-radius:8px; padding:12px;">
+                <div style="font-size:0.6rem; color:#00B0FF; font-weight:800; letter-spacing:1.5px;">🚀 TAKE PROFIT 2 (TP2)</div>
+                <div style="font-size:1.1rem; font-weight:900; color:#FFF; margin-top:2px;">{res.get('tp2', '--')}</div>
+              </div>
+            </div>
+            """, unsafe_allow_html=True)
+
+            # Key Structural Features Found
+            structures = res.get("key_structures", [])
+            if structures and isinstance(structures, list):
+                st.markdown("<p style='font-size:0.7rem; font-weight:800; color:#D4AF37; letter-spacing:1px; margin-bottom:4px;'>KEY STRUCTURES & LIQUIDITY POOLS IDENTIFIED:</p>", unsafe_allow_html=True)
+                for item in structures:
+                    st.markdown(f"<div style='font-size:0.75rem; color:#CCC; margin-left:6px; margin-bottom:2px;'>• {item}</div>", unsafe_allow_html=True)
+
+            # Invalidation Condition
+            inv = res.get("invalidation_condition")
+            if inv and inv != "--":
+                st.warning(f"⚠️ **Invalidation Criteria**: {inv}")
+
+            # Technical Analysis Breakdown
+            st.markdown("<h5 style='color:#FFF; font-size:0.85rem; margin-top:12px;'>STRATEGY ANALYSIS & THESIS:</h5>", unsafe_allow_html=True)
+            st.markdown(f"<div style='background:rgba(0,0,0,0.4); border-left:3px solid #00ff88; padding:10px 14px; font-size:0.78rem; color:#DDD; line-height:1.5;'>{res.get('analysis_summary', '')}</div>", unsafe_allow_html=True)
+
+            # Log setup to ZERO Brain button
+            st.markdown("<div style='height:10px;'></div>", unsafe_allow_html=True)
+            if st.button("🧠 LOG SETUP TO ZERO BRAIN", key="log_agi_to_brain_btn"):
+                try:
+                    from engine.brain_engine import get_brain
+                    brain = get_brain()
+                    brain_log_entry = (
+                        f"ZERO AGI Live Chart Trade Setup [{symbol_ctx}] ({bias}): "
+                        f"Entry: {res.get('entry_zone')} | SL: {res.get('stop_loss')} | "
+                        f"TP1: {res.get('tp1')} | TP2: {res.get('tp2')} | Strategy: {res.get('strategy_applied')}"
+                    )
+                    brain.add_entry(brain_log_entry, entry_type="trade_setup", biases=[])
+                    st.success("Logged trade setup to ZERO Brain memory!")
+                except Exception as ex:
+                    st.error(f"Error logging to ZERO Brain: {ex}")
+        else:
+            st.info("👈 Upload or capture a chart image on the left, pick or enter your strategy, and click **RUN ZERO AGI ANALYSIS**.")
+
 

@@ -10,7 +10,7 @@ PROJECT_NAME = "ZERO"
 # ── ZERO ENGINE — Gemini AI Configuration ────────────────────────────────
 # Free tier key from https://aistudio.google.com
 # Override via environment variable GEMINI_API_KEY if preferred.
-GEMINI_API_KEY = os.getenv("GEMINI_API_KEY", "AQ.Ab8RN6JC3OoEaudUvN2ZIlUHXpwxuOSgE-ddkNAz-eH3fsLAlA")
+GEMINI_API_KEY = os.getenv("GEMINI_API_KEY", "").strip()
 ZERO_ENGINE_MODEL = "gemini-2.0-flash"      # Latest available free-tier model
 ZERO_ENGINE_MAX_HISTORY = 20                # Max message pairs to retain in context
 

@@ -6,7 +6,7 @@ import os
 import json
 import base64
 from engine.prediction_matrix import generate_prediction_matrix, rederive_with_overlay
-from ui.components import apply_digital_core_theme, digital_clock_component, predicted_info_card, sidebar_news_section, show_zero_digital_splash, order_flow_table, automated_training_dashboard, learning_stats_card, render_zero_engine_modal, render_zero_brain_sidebar, render_youtube_knowledge_sidebar, render_trading_strategy_bubbles, render_forexfactory_priority_card, render_trading_agents_panel, render_quantdinge_strategy_card, render_fincept_thesis_card, render_nautilus_order_card, render_intermarket_card, render_options_greeks_card
+from ui.components import apply_digital_core_theme, digital_clock_component, predicted_info_card, sidebar_news_section, show_zero_digital_splash, order_flow_table, automated_training_dashboard, learning_stats_card, render_zero_engine_modal, render_zero_brain_sidebar, render_youtube_knowledge_sidebar, render_trading_strategy_bubbles, render_forexfactory_priority_card, render_trading_agents_panel, render_quantdinge_strategy_card, render_fincept_thesis_card, render_nautilus_order_card, render_intermarket_card, render_options_greeks_card, render_live_price_ticker, render_zero_agi_sidebar, render_zero_agi_modal
 from engine.learning_service import log_daily_feedback, get_feedback_logs, calculate_engine_accuracy, fetch_daily_actuals, update_feedback_logs, update_unfulfilled_feedback_logs, auto_train_engine
 from ui.charts import ohlc_range_chart, sentiment_gauge_chart
 from ui.news_feed import (
@@ -26,6 +26,26 @@ from engine.monte_carlo import MonteCarloRiskEngine
 from engine.paper_brokerage import PaperBrokerage
 from data.mtf_features import build_mtf_features
 
+# ── ZERO Live Price Server ─────────────────────────────────────────────────────
+# Start the background HTTP price proxy (localhost:7701) on the very first
+# Streamlit process boot. It is a daemon thread so it dies with the process.
+# st.session_state is NOT used here because the server must survive reruns.
+import threading as _threading
+_price_server_started = False
+
+def _ensure_price_server():
+    global _price_server_started
+    if _price_server_started:
+        return
+    try:
+        from engine.live_price_server import start_price_server
+        start_price_server()
+        _price_server_started = True
+    except Exception as _e:
+        pass  # non-critical — ticker will show seed values until server starts
+
+_threading.Thread(target=_ensure_price_server, daemon=True).start()
+# ──────────────────────────────────────────────────────────────────────────────
 
 def render_quant_toast():
     """Small, translucent, non-clickable toast that drops from the top and
@@ -316,7 +336,7 @@ if not st.session_state.entered:
 
     col_l, col_m, col_r = st.columns([1, 1, 1])
     with col_m:
-        if st.button("DIG & DIVE", use_container_width=True):
+        if st.button("DIG & DIVE"):
             st.session_state.entered = True
             _save_session_flag({
                 'entered': True,
@@ -410,9 +430,14 @@ with st.sidebar:
               text-transform:uppercase;">AI INTELLIGENCE CORE · GEMINI</p>
     """, unsafe_allow_html=True)
 
-    if st.button("⚡ OPEN ZERO ENGINE", key="open_zero_engine_btn", use_container_width=True):
+    if st.button("⚡ OPEN ZERO ENGINE", key="open_zero_engine_btn"):
         st.session_state['show_zero_engine'] = True
         st.rerun()
+
+    st.markdown("---")
+
+    # ── ZERO AGI Section ──────────────────────────────────────────────────────
+    render_zero_agi_sidebar()
 
     st.markdown("---")
 
@@ -496,6 +521,11 @@ if st.session_state.get('show_zero_engine', False):
     render_zero_engine_modal(ze_engine, _api_key_state)
     st.stop()
 
+# ── ZERO AGI Modal ────────────────────────────────────────────────────────────
+if st.session_state.get('show_zero_agi', False):
+    render_zero_agi_modal()
+
+
 
 # --- MAIN TERMINAL HEADER ---
 st.markdown("<h1 class='main-title'>ZERO</h1>", unsafe_allow_html=True)
@@ -557,13 +587,22 @@ def render_market_page(symbol, data, key_prefix):
     if not data or 'error' in data:
         st.error(f"Unable to load predictions for {symbol}. Engine error.")
         return
-    
+
+    # ── Live price ticker (above prediction + order block section) ────────────
+    try:
+        from data.live_index_service import get_live_index_quote
+        _live_q = get_live_index_quote(symbol)
+    except Exception:
+        _live_q = None
+
     st.markdown(f"<p class='gold-title'>01 // {symbol} PREDICTION VECTOR</p>", unsafe_allow_html=True)
     col1, col2 = st.columns([1.8, 1.2])
     with col1:
         predicted_info_card(symbol, data)
     with col2:
-        st.markdown("<div class='digital-card' style='height: 100%;'>", unsafe_allow_html=True)
+        # Live price widget sits above Order Block Depth
+        render_live_price_ticker(symbol, live_quote=_live_q)
+        st.markdown("<div class='digital-card' style='margin-top:10px;'>", unsafe_allow_html=True)
         st.markdown("<p class='label-grey'>Order Block Depth</p>", unsafe_allow_html=True)
         order_flow_table(data)
         st.markdown("</div>", unsafe_allow_html=True)
@@ -642,7 +681,7 @@ with tab_trading:
             
             spot_input = st.number_input("Current Spot Price", min_value=1.0, value=float(idx_spot), step=10.0, key="xgb_spot")
             
-            if st.button("Generate XGBoost Predictions", key="run_xgb_predict", use_container_width=True):
+            if st.button("Generate XGBoost Predictions", key="run_xgb_predict"):
                 # Load models
                 xgb_intra = MultiTimeframePredictor("intraday")
                 xgb_week = MultiTimeframePredictor("weekly")
@@ -683,7 +722,7 @@ with tab_trading:
             st.markdown("<div class='digital-card' style='height: 100%;'>", unsafe_allow_html=True)
             st.markdown("<p class='label-grey'>Model Status & Control</p>", unsafe_allow_html=True)
             
-            if st.button("Trigger XGBoost Training Cycle", key="train_xgb_models", use_container_width=True):
+            if st.button("Trigger XGBoost Training Cycle", key="train_xgb_models"):
                 with st.spinner("Assembling features & training models..."):
                     # Intraday
                     df_intra = MultiTimeframePredictor.assemble_training_data("intraday")
@@ -734,7 +773,7 @@ with tab_trading:
             else:
                 st.info("No strategies generated yet. Generate a random pool below.")
                 
-            if st.button("Generate Fresh Strategy Pool", key="gen_fresh_strat", use_container_width=True):
+            if st.button("Generate Fresh Strategy Pool", key="gen_fresh_strat"):
                 fresh_pop = [gen_engine.generate_strategy() for _ in range(4)]
                 fresh_scores = [round(random.uniform(0.1, 1.8), 4) for _ in fresh_pop]
                 gen_engine.save_strategies(fresh_pop, fresh_scores)
@@ -750,7 +789,7 @@ with tab_trading:
                 target_to_mutate = st.selectbox("Select Strategy to Mutate", [f"Strategy #{i+1}" for i in range(len(strategies))], key="mut_select")
                 strat_index = int(target_to_mutate.split("#")[-1]) - 1
                 
-                if st.button("Mutate Selected Strategy", key="mutate_strat_btn", use_container_width=True):
+                if st.button("Mutate Selected Strategy", key="mutate_strat_btn"):
                     mutated = gen_engine.mutate_strategy(strategies[strat_index])
                     new_score = round(strategies[strat_index][0].get('threshold', 50.0)/100.0 + random.uniform(-0.2, 0.4), 4)
                     
@@ -788,7 +827,7 @@ with tab_trading:
             st.markdown("<div class='digital-card' style='height: 100%;'>", unsafe_allow_html=True)
             st.markdown("<p class='label-grey'>Risk Engine Output</p>", unsafe_allow_html=True)
             
-            if st.button("Run Monte Carlo Assessment", key="run_mc_btn", use_container_width=True):
+            if st.button("Run Monte Carlo Assessment", key="run_mc_btn"):
                 mc_engine = MonteCarloRiskEngine(simulations=mc_sims)
                 risk_res = mc_engine.evaluate_strategy_risk(
                     win_rate=mc_win_rate,
@@ -836,7 +875,7 @@ with tab_trading:
             
             ord_price_input = st.number_input("Limit/Market Price", min_value=0.1, value=float(ord_price), step=10.0, key="pb_price")
             
-            if st.button("Submit Order", key="pb_submit", use_container_width=True):
+            if st.button("Submit Order", key="pb_submit"):
                 res = pb_broker.execute_order(
                     symbol=ord_symbol,
                     side=ord_side,
@@ -878,7 +917,7 @@ with tab_trading:
                     {"Symbol": k, "Qty": v["quantity"], "Avg Cost": v["avg_cost"], "Mkt Price": v["market_price"], "Unrealized P&L": v["unrealized_pnl"]}
                     for k, v in pb_sum['positions'].items()
                 ])
-                st.dataframe(pos_df, hide_index=True, use_container_width=True)
+                st.dataframe(pos_df, hide_index=True)
             else:
                 st.info("No open positions.")
                 
@@ -886,7 +925,7 @@ with tab_trading:
             st.markdown("<p class='label-grey' style='margin-top: 15px;'>Execution History</p>", unsafe_allow_html=True)
             if pb_broker.trade_log:
                 log_df = pd.DataFrame(pb_broker.trade_log[::-1])
-                st.dataframe(log_df[["timestamp", "side", "symbol", "quantity", "fill_price", "status"]], hide_index=True, use_container_width=True)
+                st.dataframe(log_df[["timestamp", "side", "symbol", "quantity", "fill_price", "status"]], hide_index=True)
             else:
                 st.info("No past trades.")
             st.markdown("</div>", unsafe_allow_html=True)
@@ -905,7 +944,7 @@ with tab_trading:
             bt_capital = st.number_input("Starting Capital (₹)", min_value=10000.0, value=100000.0, step=5000.0, key="bt_cap")
             bt_wf      = st.toggle("Walk-Forward Validation (70/30 split)", value=True, key="bt_wf")
 
-            if st.button("🚀 Run Full Strategy Suite", key="run_bt_suite", use_container_width=True):
+            if st.button("🚀 Run Full Strategy Suite", key="run_bt_suite"):
                 from engine.advanced_backtest import ZeroBacktestEngine
                 from data.historical import get_recent_ohlc_and_atr
                 import numpy as np
@@ -968,7 +1007,7 @@ with tab_trading:
                         })
                 if bt_data_rows:
                     bt_df = pd.DataFrame(bt_data_rows)
-                    st.dataframe(bt_df, hide_index=True, use_container_width=True)
+                    st.dataframe(bt_df, hide_index=True)
 
                     # Show top strategy detail
                     top_name = list(suite.keys())[0]

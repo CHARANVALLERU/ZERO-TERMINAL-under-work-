@@ -34,6 +34,24 @@ def fetch_daily_actuals(target_date: str = None):
     if target_date == today_str and not is_market_closed_post_4pm(now):
         return {}
 
+    # Check live data source first if available
+    try:
+        from data.live_index_service import get_live_index_quote
+        live_actuals = {}
+        for idx in ["NIFTY 50", "BANKNIFTY", "SENSEX"]:
+            quote = get_live_index_quote(idx)
+            if quote and quote.get("price") is not None:
+                live_actuals[idx] = {
+                    "open": quote.get("open") or quote.get("price"),
+                    "high": quote.get("high") or quote.get("price"),
+                    "low": quote.get("low") or quote.get("price"),
+                    "close": quote.get("close") or quote.get("price")
+                }
+        if live_actuals and all(v["open"] != "N/A" for v in live_actuals.values()):
+            return live_actuals
+    except Exception as le:
+        print(f"Live index quote fetch notice: {le}")
+
     tickers = {
         "NIFTY 50": "^NSEI",
         "BANKNIFTY": "^NSEBANK",

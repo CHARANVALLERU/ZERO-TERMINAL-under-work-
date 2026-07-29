@@ -121,10 +121,26 @@ def _generate_single_index_prediction(index_name, us_summary, gift_price, adr_da
     #   the latest news overlay so the band tracks the live tape. The
     #   sentinel `live=True` lets the UI mark these cards.
     _market_open = is_market_open()
-    live_spot = pred_open  # the geometric prediction is the best spot proxy
-                           # when the live ticker isn't injected.
+    live_spot = pred_open  # fallback
+
+    # Integrate live ticker quote from official exchange source
+    live_quote = None
+    try:
+        from data.live_index_service import get_live_index_quote
+        live_quote = get_live_index_quote(index_name)
+        if live_quote and live_quote.get("price"):
+            live_spot = live_quote["price"]
+            if live_quote.get("open"):
+                pred_open = live_quote["open"]
+            if live_quote.get("high"):
+                pred_high = max(pred_high, live_quote["high"])
+            if live_quote.get("low"):
+                pred_low = min(pred_low, live_quote["low"])
+    except Exception:
+        pass
+
     if _market_open:
-        pred_open_live = live_spot
+        pred_open_live = pred_open if live_quote and live_quote.get("open") else live_spot
         pred_close_live = live_spot
     else:
         pred_open_live = None
