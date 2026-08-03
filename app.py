@@ -27,24 +27,12 @@ from engine.paper_brokerage import PaperBrokerage
 from data.mtf_features import build_mtf_features
 
 # ── ZERO Live Price Server ─────────────────────────────────────────────────────
-# Start the background HTTP price proxy (localhost:7701) on the very first
-# Streamlit process boot. It is a daemon thread so it dies with the process.
-# st.session_state is NOT used here because the server must survive reruns.
-import threading as _threading
-_price_server_started = False
-
-def _ensure_price_server():
-    global _price_server_started
-    if _price_server_started:
-        return
-    try:
-        from engine.live_price_server import start_price_server
-        start_price_server()
-        _price_server_started = True
-    except Exception as _e:
-        pass  # non-critical — ticker will show seed values until server starts
-
-_threading.Thread(target=_ensure_price_server, daemon=True).start()
+# Ensure price server is launched on boot
+try:
+    from engine.live_price_server import start_price_server
+    start_price_server()
+except Exception:
+    pass
 # ──────────────────────────────────────────────────────────────────────────────
 
 def render_quant_toast():
