@@ -51,45 +51,56 @@ YFINANCE_TICKERS = {
 _LIVE_CACHE: Dict[str, Dict[str, Any]] = {}
 
 
+YAHOO_V8_URL = "https://query1.finance.yahoo.com/v8/finance/chart/{symbol}?interval=1m&range=1d&includePrePost=false"
+HEADERS_YAHOO = {
+    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36",
+    "Accept": "application/json",
+    "Accept-Language": "en-US,en;q=0.9",
+}
+
+
 def fetch_bse_sensex_live() -> Optional[Dict[str, float]]:
     """
-    Scrapes live price, open, high, low, close for SENSEX from BSE India.
-    URL: https://www.bseindia.com/sensex/code/16
+    Fetches live SENSEX price via Yahoo Finance v8 Chart API.
+    Uses meta.regularMarketPrice which is the TRUE last-traded price.
+    BSE official API (api.bseindia.com) is CDN-blocked and returns HTML.
     """
     try:
-        session = requests.Session()
-        resp = session.get(LIVE_SOURCES["SENSEX"], headers=HEADERS, timeout=5)
-        if resp.status_code == 200:
-            text = resp.text
-            # Use regex to look for BSE JSON payloads or rendered span tags
-            # BSE page often contains JSON payload with "CurrVal", "OpenVal", "HighVal", "LowVal", "PrevClose"
-            curr_match = re.search(r'"CurrVal"\s*:\s*"([0-9.,]+)"', text) or re.search(r'id="lblLTP"[^>]*>([0-9.,]+)<', text)
-            open_match = re.search(r'"OpenVal"\s*:\s*"([0-9.,]+)"', text) or re.search(r'id="lblOpen"[^>]*>([0-9.,]+)<', text)
-            high_match = re.search(r'"HighVal"\s*:\s*"([0-9.,]+)"', text) or re.search(r'id="lblHigh"[^>]*>([0-9.,]+)<', text)
-            low_match  = re.search(r'"LowVal"\s*:\s*"([0-9.,]+)"', text) or re.search(r'id="lblLow"[^>]*>([0-9.,]+)<', text)
-            close_match = re.search(r'"PrevClose"\s*:\s*"([0-9.,]+)"', text) or re.search(r'id="lblClose"[^>]*>([0-9.,]+)<', text)
+        url = YAHOO_V8_URL.format(symbol="^BSESN")
+        r = requests.get(url, headers=HEADERS_YAHOO, timeout=5)
+        if r.status_code != 200:
+            return None
+        d = r.json()
+        result = d.get("chart", {}).get("result", [])
+        if not result:
+            return None
+        meta = result[0].get("meta", {})
 
-            if curr_match:
-                def _to_f(val_str):
-                    return float(val_str.replace(',', ''))
+        price  = float(meta.get("regularMarketPrice") or 0)
+        prev_c = float(meta.get("chartPreviousClose") or meta.get("previousClose") or 0)
 
-                current_price = _to_f(curr_match.group(1))
-                open_val = _to_f(open_match.group(1)) if open_match else current_price
-                high_val = _to_f(high_match.group(1)) if high_match else current_price
-                low_val = _to_f(low_match.group(1)) if low_match else current_price
-                close_val = _to_f(close_match.group(1)) if close_match else current_price
+        quotes = result[0].get("indicators", {}).get("quote", [{}])[0]
+        opens  = [c for c in quotes.get("open", []) if c is not None]
+        highs  = [c for c in quotes.get("high", []) if c is not None]
+        lows   = [c for c in quotes.get("low", []) if c is not None]
 
-                return {
-                    "price": current_price,
-                    "open": open_val,
-                    "high": high_val,
-                    "low": low_val,
-                    "prev_close": close_val,
-                    "source": "BSE Official Web"
-                }
+        open_v = float(opens[0])   if opens else price
+        high_v = float(max(highs)) if highs else price
+        low_v  = float(min(lows))  if lows  else price
+
+        if price < 1:
+            return None
+
+        return {
+            "price":      round(price, 2),
+            "open":       round(open_v, 2),
+            "high":       round(high_v, 2),
+            "low":        round(low_v, 2),
+            "prev_close": round(prev_c, 2),
+            "source":     "Yahoo LIVE (SENSEX)"
+        }
     except Exception as e:
-        logger.debug(f"BSE web scraping exception: {e}")
-
+        logger.debug(f"Yahoo v8 SENSEX exception: {e}")
     return None
 
 
@@ -130,28 +141,36 @@ def fetch_nse_live(index_name: str) -> Optional[Dict[str, float]]:
 
 
 def fetch_yfinance_fallback(index_name: str) -> Optional[Dict[str, float]]:
-    """Fast yfinance ticker quote fallback."""
+    """yfinance fast_info fallback — uses fast_info.last_price for near-real-time price."""
     ticker_symbol = YFINANCE_TICKERS.get(index_name)
     if not ticker_symbol:
         return None
 
     try:
-        ticker = yf.Ticker(ticker_symbol)
-        df = ticker.history(period="1d", interval="1m")
-        if df.empty:
-            df = ticker.history(period="1d")
-        if not df.empty:
-            latest = df.iloc[-1]
-            return {
-                "price": round(float(latest["Close"]), 2),
-                "open": round(float(df.iloc[0]["Open"]), 2),
-                "high": round(float(df["High"].max()), 2),
-                "low": round(float(df["Low"].min()), 2),
-                "prev_close": round(float(df.iloc[0]["Open"]), 2), # fallback
-                "source": "yfinance fast feed"
-            }
+        tk = yf.Ticker(ticker_symbol)
+        fi = getattr(tk, 'fast_info', None)
+        if fi is None:
+            raise ValueError("fast_info not available")
+
+        price    = float(getattr(fi, 'last_price', 0) or 0)
+        prev_c   = float(getattr(fi, 'previous_close', 0) or 0)
+        open_v   = float(getattr(fi, 'open', 0) or price)
+        high_v   = float(getattr(fi, 'day_high', 0) or price)
+        low_v    = float(getattr(fi, 'day_low', 0) or price)
+
+        if price < 1:
+            raise ValueError("fast_info price invalid")
+
+        return {
+            "price":      round(price, 2),
+            "open":       round(open_v, 2),
+            "high":       round(high_v, 2),
+            "low":        round(low_v, 2),
+            "prev_close": round(prev_c, 2),
+            "source":     "yfinance fast feed"
+        }
     except Exception as e:
-        logger.debug(f"yfinance fallback exception for {index_name}: {e}")
+        logger.debug(f"yfinance fast_info exception for {index_name}: {e}")
 
     return None
 

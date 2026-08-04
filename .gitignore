@@ -1,0 +1,17 @@
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Runtime/session files
+db/cache/
+db/last_good/
+db/feedback_log.json
+db/.zero_session.json
+db/news_seen.json
+db/*.log
+db/*.db
+
+# Obsidian daily logs (auto-generated)
+obsidian_vault/01_Daily_Logs/

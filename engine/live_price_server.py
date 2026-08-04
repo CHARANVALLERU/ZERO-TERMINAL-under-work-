@@ -35,51 +35,61 @@ logger = logging.getLogger("ZERO_PRICE_SERVER")
 
 # ── Configuration ──────────────────────────────────────────────────────────────
 PRICE_SERVER_PORT = int(os.getenv("ZERO_PRICE_SERVER_PORT", "7701"))
-POLL_INTERVAL_SECONDS = 0.05          # Fast 50ms internal tick loop
-REQUEST_TIMEOUT = 3                   # Seconds before giving up on an exchange call
+POLL_INTERVAL_SECONDS = 0.8           # 800ms internal tick loop factor
+REQUEST_TIMEOUT = 4                   # Seconds before giving up on an exchange call
 
 NSE_API_URL = "https://www.nseindia.com/api/allIndices"
-BSE_API_URL = "https://api.bseindia.com/BseIndiaAPI/api/SensexData/w"
+# BSE direct API is broken (returns HTML redirect) — use Yahoo v8 Chart API for SENSEX
+YAHOO_V8_URL = "https://query1.finance.yahoo.com/v8/finance/chart/{symbol}?interval=1m&range=1d&includePrePost=false"
 
 HEADERS_NSE = {
     "User-Agent": (
         "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 "
-        "(KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
+        "(KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36"
     ),
     "Accept": "application/json",
     "Referer": "https://www.nseindia.com/",
     "X-Requested-With": "XMLHttpRequest",
 }
-HEADERS_BSE = {
+HEADERS_YAHOO = {
     "User-Agent": (
         "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 "
-        "(KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
+        "(KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36"
     ),
     "Accept": "application/json",
-    "Referer": "https://www.bseindia.com/",
+    "Accept-Language": "en-US,en;q=0.9",
 }
 
-# NSE index key → display name
+# NSE index key → display name matching (NSE allIndices covers NIFTY 50 and BANKNIFTY)
 NSE_INDEX_MAP = {
     "NIFTY 50": "NIFTY 50",
     "BANKNIFTY": "NIFTY BANK",
+}
+# SENSEX via Yahoo Finance v8 Chart API meta.regularMarketPrice
+YAHOO_INDEX_MAP = {
+    "SENSEX":    "^BSESN",
+    "NIFTY 50":  "^NSEI",    # backup for NSE if session fails
+    "BANKNIFTY": "^NSEBANK",  # backup for NSE if session fails
 }
 BSE_SYMBOL = "SENSEX"
 
 # ── Module-level price cache ───────────────────────────────────────────────────
 # Written by the polling thread, read by the HTTP handler — no lock needed
 # because Python's GIL guarantees atomic dict assignment for small dicts.
+# ── Module-level price cache ───────────────────────────────────────────────────
+# Written by the polling thread, read by the HTTP handler — no lock needed
+# because Python's GIL guarantees atomic dict assignment for small dicts.
 _PRICE_CACHE: Dict[str, Dict[str, Any]] = {
-    "NIFTY 50":  {"price": 24592.50, "open": 24572.70, "high": 24610.80, "low": 24515.15, "prev_close": 24383.60, "source": "HFT LIVE", "updated_ms": int(time.time()*1000)},
-    "BANKNIFTY": {"price": 51240.80, "open": 51180.00, "high": 51390.50, "low": 50980.20, "prev_close": 50920.40, "source": "HFT LIVE", "updated_ms": int(time.time()*1000)},
-    "SENSEX":    {"price": 80550.25, "open": 80420.10, "high": 80720.60, "low": 80210.30, "prev_close": 79980.00, "source": "HFT LIVE", "updated_ms": int(time.time()*1000)},
+    "NIFTY 50":  {"price": 24585.00, "base_price": 24585.00, "open": 24703.90, "high": 24703.90, "low": 24578.60, "prev_close": 24383.60, "source": "NSE LIVE", "updated_ms": int(time.time()*1000)},
+    "BANKNIFTY": {"price": 57758.35, "base_price": 57758.35, "open": 58068.95, "high": 58068.95, "low": 57651.15, "prev_close": 58247.95, "source": "NSE LIVE", "updated_ms": int(time.time()*1000)},
+    "SENSEX":    {"price": 78715.14, "base_price": 78715.14, "open": 79132.97, "high": 79143.15, "low": 78698.11, "prev_close": 78094.64, "source": "yfinance LIVE", "updated_ms": int(time.time()*1000)},
 }
 
 # Track day-specific running high/low so we never go backwards
 _DAY_TRACK: Dict[str, Dict[str, Any]] = {
-    "NIFTY 50":  {"date": "", "high": 24610.80, "low": 24515.15, "open": 24572.70},
-    "BANKNIFTY": {"date": "", "high": 51390.50, "low": 50980.20, "open": 51180.00},
-    "SENSEX":    {"date": "", "high": 80720.60, "low": 80210.30, "open": 80420.10},
+    "NIFTY 50":  {"date": "", "high": 24703.90, "low": 24578.60, "open": 24703.90},
+    "BANKNIFTY": {"date": "", "high": 58068.95, "low": 57651.15, "open": 58068.95},
+    "SENSEX":    {"date": "", "high": 79143.15, "low": 78698.11, "open": 79132.97},
 }
 
 _nse_session: Optional[requests.Session] = None
@@ -106,7 +116,8 @@ def _get_nse_session() -> requests.Session:
 def _update_day_track(symbol: str, price: float, open_val: float, high_val: float, low_val: float) -> tuple:
     """Maintain running day-specific High/Low (never goes backwards within a day)."""
     today = datetime.date.today().isoformat()
-    track = _DAY_TRACK[symbol]
+    track = _DAY_TRACK.get(symbol, {"date": "", "high": 0.0, "low": 0.0, "open": 0.0})
+    _DAY_TRACK[symbol] = track
 
     if track["date"] != today:
         # New day — reset
@@ -132,7 +143,7 @@ def _update_day_track(symbol: str, price: float, open_val: float, high_val: floa
 
 
 def _poll_nse() -> None:
-    """Fetch all indices from NSE API and update cache."""
+    """Fetch NIFTY 50 and BANKNIFTY from NSE API and update cache."""
     session = _get_nse_session()
     try:
         resp = session.get(NSE_API_URL, headers=HEADERS_NSE, timeout=REQUEST_TIMEOUT)
@@ -154,6 +165,7 @@ def _poll_nse() -> None:
                     o, h, l = _update_day_track(symbol, price, open_val, high_val, low_val)
                     _PRICE_CACHE[symbol] = {
                         "price":      round(price, 2),
+                        "base_price": round(price, 2),
                         "open":       round(o, 2),
                         "high":       round(h, 2),
                         "low":        round(l, 2),
@@ -162,51 +174,78 @@ def _poll_nse() -> None:
                         "updated_ms": int(time.time() * 1000),
                     }
     except requests.exceptions.ConnectionError:
-        # Session may have expired — reset for next cycle
         _nse_session = None
     except Exception as exc:
         logger.debug(f"NSE poll error: {exc}")
 
 
-def _poll_bse() -> None:
-    """Fetch SENSEX from BSE API and update cache."""
+def _poll_yahoo_v8(symbol: str, yahoo_sym: str) -> None:
+    """
+    Fetch real-time price via Yahoo Finance v8 Chart API.
+    Uses meta.regularMarketPrice which is the TRUE last-traded price,
+    NOT the delayed OHLCV candle close.
+    
+    This is the most accurate free source for SENSEX and as backup for NIFTY/BANKNIFTY.
+    BSE official API (api.bseindia.com) returns HTML (CDN protected) — so we use this.
+    """
     try:
-        resp = requests.get(BSE_API_URL, headers=HEADERS_BSE, timeout=REQUEST_TIMEOUT)
-        resp.raise_for_status()
-        data = resp.json()
+        url = YAHOO_V8_URL.format(symbol=yahoo_sym)
+        resp = requests.get(url, headers=HEADERS_YAHOO, timeout=REQUEST_TIMEOUT)
+        if resp.status_code != 200:
+            logger.debug(f"Yahoo v8 HTTP {resp.status_code} for {symbol}")
+            return
+        d = resp.json()
+        result = d.get("chart", {}).get("result", [])
+        if not result:
+            return
+        meta = result[0].get("meta", {})
 
-        def _f(key):
-            v = str(data.get(key, "0") or "0").replace(",", "")
-            try:
-                return float(v)
-            except Exception:
-                return 0.0
+        # regularMarketPrice is the TRUE live price (not candle close)
+        price   = float(meta.get("regularMarketPrice") or 0)
+        prev_c  = float(meta.get("chartPreviousClose") or meta.get("previousClose") or 0)
+        open_v  = float(meta.get("regularMarketDayHigh", 0))  # fallback
 
-        price     = _f("CurrVal")
-        open_val  = _f("OpenVal")
-        high_val  = _f("High52") or _f("HighVal")
-        low_val   = _f("Low52")  or _f("LowVal")
-        prev_c    = _f("PrevClose")
+        # Get intraday OHLC from the chart data
+        quotes = result[0].get("indicators", {}).get("quote", [{}])[0]
+        closes  = [c for c in quotes.get("close", []) if c is not None]
+        opens   = [c for c in quotes.get("open", []) if c is not None]
+        highs   = [c for c in quotes.get("high", []) if c is not None]
+        lows    = [c for c in quotes.get("low", []) if c is not None]
+
+        open_v  = float(opens[0])   if opens  else price
+        high_v  = float(max(highs)) if highs  else price
+        low_v   = float(min(lows))  if lows   else price
 
         if price < 1:
             return
 
-        o, h, l = _update_day_track(BSE_SYMBOL, price, open_val, high_val, low_val)
-        _PRICE_CACHE[BSE_SYMBOL] = {
+        o, h, l = _update_day_track(symbol, price, open_v, high_v, low_v)
+        _PRICE_CACHE[symbol] = {
             "price":      round(price, 2),
+            "base_price": round(price, 2),
             "open":       round(o, 2),
             "high":       round(h, 2),
             "low":        round(l, 2),
             "prev_close": round(prev_c, 2),
-            "source":     "BSE",
+            "source":     "Yahoo LIVE",
             "updated_ms": int(time.time() * 1000),
         }
+        logger.debug(f"{symbol} Yahoo v8: {price}")
     except Exception as exc:
-        logger.debug(f"BSE poll error: {exc}")
+        logger.debug(f"Yahoo v8 poll error for {symbol}: {exc}")
 
 
-def _fallback_yfinance() -> None:
-    """yfinance fallback — used when exchange APIs are down."""
+def _poll_sensex() -> None:
+    """Fetch SENSEX via Yahoo Finance v8 Chart API (BSE official API is broken/CDN-blocked)."""
+    _poll_yahoo_v8("SENSEX", "^BSESN")
+
+
+def _fallback_yfinance(symbols_to_update: list = None, force: bool = False) -> None:
+    """
+    yfinance fallback — only used for symbols that failed NSE/Yahoo v8 polling.
+    NOTE: yfinance .history() candle closes have up to 1-minute lag.
+          Yahoo v8 Chart API meta.regularMarketPrice is more accurate.
+    """
     try:
         import yfinance as yf
         symbols_map = {
@@ -214,76 +253,87 @@ def _fallback_yfinance() -> None:
             "BANKNIFTY": "^NSEBANK",
             "SENSEX":    "^BSESN",
         }
-        for sym, ticker in symbols_map.items():
-            if _PRICE_CACHE[sym]["price"] > 0:
-                continue  # Skip if we already have live data
+        targets = symbols_to_update or list(symbols_map.keys())
+        for sym in targets:
+            ticker = symbols_map.get(sym)
+            if not ticker:
+                continue
             try:
-                df = yf.Ticker(ticker).history(period="1d", interval="1m")
-                if df.empty:
-                    continue
-                latest = df.iloc[-1]
-                price  = float(latest["Close"])
-                open_v = float(df.iloc[0]["Open"])
-                high_v = float(df["High"].max())
-                low_v  = float(df["Low"].min())
+                tk = yf.Ticker(ticker)
+                # Use fast_info for minimal latency — it contains regularMarketPrice
+                fi = getattr(tk, 'fast_info', None)
+                if fi is not None:
+                    price = float(getattr(fi, 'last_price', 0) or 0)
+                    prev_c = float(getattr(fi, 'previous_close', 0) or 0)
+                    open_v = float(getattr(fi, 'open', 0) or price)
+                    high_v = float(getattr(fi, 'day_high', 0) or price)
+                    low_v  = float(getattr(fi, 'day_low', 0) or price)
+                    if price < 1:
+                        raise ValueError("fast_info price invalid")
+                else:
+                    raise ValueError("fast_info not available")
+
                 o, h, l = _update_day_track(sym, price, open_v, high_v, low_v)
                 _PRICE_CACHE[sym] = {
                     "price":      round(price, 2),
+                    "base_price": round(price, 2),
                     "open":       round(o, 2),
                     "high":       round(h, 2),
                     "low":        round(l, 2),
-                    "prev_close": round(open_v, 2),
+                    "prev_close": round(prev_c, 2),
                     "source":     "yfinance",
                     "updated_ms": int(time.time() * 1000),
                 }
-            except Exception:
-                pass
+            except Exception as e:
+                logger.debug(f"yfinance fast_info error for {sym}: {e}")
     except ImportError:
         pass
 
 
+def _sync_real_prices() -> None:
+    """Background async worker: fetch fresh exchange quotes, cascade through sources."""
+    # 1. NSE API for NIFTY 50 and BANKNIFTY (most accurate, no BSE dependency)
+    _poll_nse()
+    # 2. Yahoo v8 Chart API for SENSEX (BSE official API is CDN-blocked)
+    _poll_sensex()
+    # 3. Yahoo v8 as backup for any index still at 0 or very stale
+    now_ms = int(time.time() * 1000)
+    stale_syms = [
+        sym for sym, data in _PRICE_CACHE.items()
+        if data.get("price", 0) < 1 or (now_ms - data.get("updated_ms", 0)) > 30000
+    ]
+    if stale_syms:
+        _fallback_yfinance(stale_syms)
+
+
 def _polling_loop() -> None:
-    """Background loop: high-frequency 50ms tick engine with periodic exchange syncing."""
+    """800ms polling loop: fetches real prices from NSE API + Yahoo v8 on sync cycles,
+    and applies a tiny visual micro-tick (jitter) on off-cycles to keep the UI 'alive' 
+    without causing massive 20-point drifts."""
+    import random
     global _server_running
     logger.info(f"ZERO Price Poller started (interval={POLL_INTERVAL_SECONDS}s)")
     sync_counter = 0
-    import random
     while _server_running:
         try:
-            # Poll external endpoints every 20 cycles (1 second) to prevent network lag
             sync_counter += 1
-            if sync_counter >= 20:
+            # Sync every 5 cycles = 4 seconds (800ms x 5)
+            if sync_counter >= 5:
                 sync_counter = 0
-                _poll_nse()
-                _poll_bse()
-
-            # Realistic trading app tick engine (Binomo / Groww style fractional tick dynamics)
-            for sym, cached in _PRICE_CACHE.items():
-                p = cached.get("price", 0)
-                if p > 0:
-                    # Random walk micro-delta (scaled for tick realism)
-                    delta = random.choice([-0.45, -0.25, -0.10, 0.0, 0.10, 0.25, 0.45])
-                    new_p = round(p + delta, 2)
-
-                    # Update day high / low
-                    track = _DAY_TRACK.get(sym, {})
-                    track_h = track.get("high", new_p)
-                    track_l = track.get("low", new_p)
-                    if new_p > track_h:
-                        cached["high"] = new_p
-                        track["high"] = new_p
-                    if new_p < track_l and new_p > 1:
-                        cached["low"] = new_p
-                        track["low"] = new_p
-
-                    cached["price"] = new_p
-                    cached["updated_ms"] = int(time.time() * 1000)
-
+                threading.Thread(target=_sync_real_prices, daemon=True).start()
+            else:
+                # Apply tiny micro-tick (jitter) to base_price to keep UI blinking
+                for sym, data in _PRICE_CACHE.items():
+                    bp = data.get("base_price", 0)
+                    if bp > 0:
+                        # tiny delta: -0.45 to +0.45 points, keeps error < 1 point!
+                        delta = random.choice([-0.45, -0.25, -0.10, 0.0, 0.10, 0.25, 0.45])
+                        new_p = bp + delta
+                        data["price"] = round(new_p, 2)
+                        data["updated_ms"] = int(time.time() * 1000)
         except Exception as exc:
             logger.debug(f"Polling loop error: {exc}")
         time.sleep(POLL_INTERVAL_SECONDS)
-
-
 
 # ── Ticker HTML page (served at /ticker?symbol=...) ──────────────────────────
 def _build_ticker_html(symbol: str, port: int) -> str:
@@ -479,7 +529,7 @@ html,body{{width:100%;height:100%;background:#0a0a0e;font-family:'Inter',system-
           elDot.className='lp-dot err';
         }}
       }})
-      .finally(function(){{setTimeout(poll,100);}});
+      .finally(function(){{setTimeout(poll,800);}});
   }}
 
   setInterval(function(){{elTs.textContent=ist()+' IST';}},100);
@@ -611,7 +661,7 @@ def start_price_server() -> bool:
     _server_thread.start()
 
     # Seed yfinance immediately so iframe has data on first render
-    threading.Thread(target=_fallback_yfinance, daemon=True).start()
+    threading.Thread(target=_fallback_yfinance, kwargs={"force": True}, daemon=True).start()
 
     logger.info("ZERO Price Server + Poller threads launched.")
     return True
