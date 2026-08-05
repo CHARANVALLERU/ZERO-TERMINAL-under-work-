@@ -1753,10 +1753,10 @@
             "pred_low": 23527.99
         },
         "actual": {
-            "open": "N/A",
-            "high": "N/A",
-            "low": "N/A",
-            "close": "N/A"
+            "open": 24669.2,
+            "high": 24677.6,
+            "low": 24498.4,
+            "close": 24515.55
         },
         "reason": "",
         "raw_inputs": {
@@ -1949,10 +1949,10 @@
             "pred_low": 55441.6
         },
         "actual": {
-            "open": "N/A",
-            "high": "N/A",
-            "low": "N/A",
-            "close": "N/A"
+            "open": 57810.05,
+            "high": 57931.85,
+            "low": 57456.35,
+            "close": 57547.15
         },
         "reason": "",
         "raw_inputs": {
@@ -2145,10 +2145,10 @@
             "pred_low": 75049.87
         },
         "actual": {
-            "open": "N/A",
-            "high": "N/A",
-            "low": "N/A",
-            "close": "N/A"
+            "open": 79000.67,
+            "high": 79000.67,
+            "low": 78313.0,
+            "close": 78370.73
         },
         "reason": "",
         "raw_inputs": {
@@ -2322,6 +2322,1313 @@
                 "blended_score": -0.0983,
                 "suggested_side": "NEUTRAL",
                 "message": "Consensus too weak for directional trade. Wait for clarity."
+            }
+        },
+        "current_params": {
+            "ALPHA": 0.5,
+            "BETA": 0.5,
+            "GAMMA": 0.5
+        }
+    },
+    {
+        "id": "2026-08-05_NIFTY_50",
+        "date": "2026-08-05",
+        "timestamp": "2026-08-05T14:02:54.523004",
+        "index": "NIFTY 50",
+        "predicted": {
+            "pred_open": 24572.7,
+            "pred_high": 24707.33,
+            "pred_low": 24468.9
+        },
+        "actual": {
+            "open": 24669.2,
+            "high": 24677.6,
+            "low": 24497.95,
+            "close": 24624.65
+        },
+        "reason": "Automated Core Update: Bullish macroeconomic tilt pushed order flow upwards against algorithmic base.",
+        "raw_inputs": {
+            "symbol": "NIFTY 50",
+            "prev_close": 24590.5,
+            "pred_open": 24572.7,
+            "pred_high": 24707.33,
+            "pred_low": 24468.9,
+            "pred_close": 24588.65,
+            "movement_side": "Live Session",
+            "gift_nifty": null,
+            "vix": 15.99,
+            "adr_delta": -1.2,
+            "pcr": 1.0,
+            "sentiment_score": 0.02,
+            "sentiment_intensity": "neutral",
+            "sentiment_factors": [
+                "surge",
+                "up",
+                "rise",
+                "gain",
+                "high",
+                "strong",
+                "inflation",
+                "selloff",
+                "hawkish",
+                "drop"
+            ],
+            "open_lo": 24281.7,
+            "open_hi": 24863.7,
+            "high_lo": 24483.9,
+            "high_hi": 24930.76,
+            "low_lo": 24234.46,
+            "low_hi": 24703.34,
+            "confidence": 53.6,
+            "model": "calibrated",
+            "news_shift_points": 0.0,
+            "agent_consensus": {
+                "verdict": "NEUTRAL",
+                "consensus_score": -0.092,
+                "overall_confidence": 76.7,
+                "debate_summary": "Technical Analyst recommends NEUTRAL (70.7% conf). Fundamental Analyst suggests NEUTRAL (95.0% conf). Sentiment Expert reads NEUTRAL (94.0% conf). Risk Manager classifies market risk as LOW (VIX: 16.0).",
+                "agents": {
+                    "fundamental": {
+                        "agent": "Fundamental Analyst",
+                        "score": -0.289,
+                        "bias": "NEUTRAL",
+                        "confidence": 95.0,
+                        "reasoning": "Fundamental factors balanced between growth expansion and hawkish central bank policies.",
+                        "macro_events_counted": 5
+                    },
+                    "technical": {
+                        "agent": "Technical Analyst",
+                        "score": -0.029,
+                        "bias": "NEUTRAL",
+                        "confidence": 70.7,
+                        "reasoning": "Technical range bound near spot close with neutral Option PCR (1.00).",
+                        "pcr": 1.0,
+                        "expected_gap_pct": -0.07
+                    },
+                    "sentiment": {
+                        "agent": "Sentiment Expert",
+                        "score": 0.018,
+                        "bias": "NEUTRAL",
+                        "intensity": "neutral",
+                        "confidence": 94.0,
+                        "reasoning": "Market news sentiment balanced with neutral news flow."
+                    },
+                    "risk": {
+                        "agent": "Risk Manager",
+                        "risk_rating": "LOW",
+                        "max_leverage": "2.0x (Optimal Growth)",
+                        "ruin_probability": 1.0,
+                        "vix": 16.0,
+                        "reasoning": "Low volatility environment (VIX: 16.0). Favorable regime for trend follow strategies."
+                    }
+                }
+            },
+            "quant_strategy": {
+                "index": "NIFTY 50",
+                "regime": "NEUTRAL_CONSOLIDATION",
+                "regime_label": "Neutral Consolidation",
+                "strategy_name": "Mean Reversion Iron Condor",
+                "action": "RANGE STRADDLE / SPREAD",
+                "direction": "NEUTRAL",
+                "entry_price": 24590.5,
+                "stop_loss": 24389.43,
+                "take_profit_1": 24707.33,
+                "take_profit_2": 24806.67,
+                "risk_reward_ratio": "1:1.8",
+                "win_probability_pct": 62.5,
+                "position_size_pct": 5.0,
+                "risk_tier": "AGGRESSIVE (Low Volatility)",
+                "description": "Sell out-of-the-money options options outside predicted high/low boundaries.",
+                "nautilus_entry_order_type": "GTC LIMIT at entry_price",
+                "nautilus_bracket_type": "GTC OCO (TP + SL)",
+                "nautilus_reduce_only_note": "Standard",
+                "nautilus_post_only_note": "GTC limits passively post \u2014 no POST_ONLY flag needed",
+                "options_flow_note": "PCR neutral: No strong dark-pool / sweep signal detected",
+                "pcr": 1.0
+            },
+            "fincept_thesis": {
+                "symbol": "NIFTY 50",
+                "final_score": -0.0444,
+                "verdict": "\u2696\ufe0f NEUTRAL \u2014 WAIT FOR SETUP",
+                "quant_strategy": {
+                    "role": "Quant Strategist",
+                    "symbol": "NIFTY 50",
+                    "alpha_score": -0.1616,
+                    "momentum_factor": 0.0,
+                    "volatility_factor": -0.404,
+                    "signal": "FLAT",
+                    "confidence": 0.5323
+                },
+                "risk_analysis": {
+                    "role": "Risk Analyst",
+                    "kelly_pct": 12.5,
+                    "position_size_units": 0.51,
+                    "position_value": 12499.35,
+                    "max_risk_amount": 2000.0,
+                    "stress_loss_3x_atr": 302.97,
+                    "vix_regime": "NORMAL",
+                    "recommended_leverage": 2.0
+                },
+                "microstructure": {
+                    "role": "Microstructure Specialist",
+                    "bid": 24580.566064453124,
+                    "ask": 24600.433935546876,
+                    "spread_points": 19.87,
+                    "spread_bps": 8.08,
+                    "market_impact_bps": 10.83,
+                    "total_cost_bps": 14.87,
+                    "liquidity_score": 0.7027,
+                    "execution_advice": "EXECUTE"
+                },
+                "sentiment": {
+                    "composite_score": 0.0,
+                    "confidence": 0.99,
+                    "bullish_count": 0,
+                    "bearish_count": 0,
+                    "neutral_count": 13,
+                    "signals": [],
+                    "intensity": "neutral",
+                    "score_p10": 0.0,
+                    "score_p90": 0.0
+                },
+                "options_flow": {
+                    "flow_score": 0.0,
+                    "interpretation": "No options data"
+                },
+                "generated_at": "2026-08-03T12:05:21"
+            },
+            "fincept_greeks": null,
+            "fincept_intermarket": {
+                "net_intermarket_score": 0.0669,
+                "direction": "FLAT OPEN EXPECTED",
+                "risk_tier": "LOW RISK",
+                "contributors": {
+                    "us_futures": 0.0,
+                    "crude_oil": -0.0,
+                    "dxy_dollar": 0.0267,
+                    "vix_factor": 0.0402
+                }
+            },
+            "nautilus_order_suggestion": {
+                "blended_score": -0.073,
+                "suggested_side": "NEUTRAL",
+                "message": "Consensus too weak for directional trade. Wait for clarity."
+            }
+        },
+        "current_params": {
+            "ALPHA": 0.5,
+            "BETA": 0.5,
+            "GAMMA": 0.5
+        }
+    },
+    {
+        "id": "2026-08-05_BANKNIFTY",
+        "date": "2026-08-05",
+        "timestamp": "2026-08-05T14:02:54.523020",
+        "index": "BANKNIFTY",
+        "predicted": {
+            "pred_open": 57378.62,
+            "pred_high": 58237.1,
+            "pred_low": 57206.54
+        },
+        "actual": {
+            "open": 57810.05,
+            "high": 57931.85,
+            "low": 57456.35,
+            "close": 57739.95
+        },
+        "reason": "Automated Core Update: Bullish macroeconomic tilt pushed order flow upwards against algorithmic base.",
+        "raw_inputs": {
+            "symbol": "BANKNIFTY",
+            "prev_close": 57804.4,
+            "pred_open": 57378.62,
+            "pred_high": 58237.1,
+            "pred_low": 57206.54,
+            "pred_close": 57794.55,
+            "movement_side": "Live Session",
+            "gift_nifty": null,
+            "vix": 15.99,
+            "adr_delta": -1.2,
+            "pcr": 1.0,
+            "sentiment_score": 0.02,
+            "sentiment_intensity": "neutral",
+            "sentiment_factors": [
+                "surge",
+                "up",
+                "rise",
+                "gain",
+                "high",
+                "strong",
+                "inflation",
+                "selloff",
+                "hawkish",
+                "drop"
+            ],
+            "open_lo": 56649.96,
+            "open_hi": 58107.28,
+            "high_lo": 57539.98,
+            "high_hi": 58934.22,
+            "low_lo": 56778.1,
+            "low_hi": 57634.98,
+            "confidence": 64.6,
+            "model": "calibrated",
+            "news_shift_points": 0.0,
+            "agent_consensus": {
+                "verdict": "BEARISH",
+                "consensus_score": -0.185,
+                "overall_confidence": 79.1,
+                "debate_summary": "Technical Analyst recommends BEARISH (77.4% conf). Fundamental Analyst suggests NEUTRAL (95.0% conf). Sentiment Expert reads NEUTRAL (94.0% conf). Risk Manager classifies market risk as LOW (VIX: 16.0).",
+                "agents": {
+                    "fundamental": {
+                        "agent": "Fundamental Analyst",
+                        "score": -0.289,
+                        "bias": "NEUTRAL",
+                        "confidence": 95.0,
+                        "reasoning": "Fundamental factors balanced between growth expansion and hawkish central bank policies.",
+                        "macro_events_counted": 5
+                    },
+                    "technical": {
+                        "agent": "Technical Analyst",
+                        "score": -0.295,
+                        "bias": "BEARISH",
+                        "confidence": 77.4,
+                        "reasoning": "Price action showing breakdown risk (-0.74% gap) with bearish PCR (1.00).",
+                        "pcr": 1.0,
+                        "expected_gap_pct": -0.74
+                    },
+                    "sentiment": {
+                        "agent": "Sentiment Expert",
+                        "score": 0.018,
+                        "bias": "NEUTRAL",
+                        "intensity": "neutral",
+                        "confidence": 94.0,
+                        "reasoning": "Market news sentiment balanced with neutral news flow."
+                    },
+                    "risk": {
+                        "agent": "Risk Manager",
+                        "risk_rating": "LOW",
+                        "max_leverage": "2.0x (Optimal Growth)",
+                        "ruin_probability": 1.0,
+                        "vix": 16.0,
+                        "reasoning": "Low volatility environment (VIX: 16.0). Favorable regime for trend follow strategies."
+                    }
+                }
+            },
+            "quant_strategy": {
+                "index": "BANKNIFTY",
+                "regime": "NEUTRAL_CONSOLIDATION",
+                "regime_label": "Neutral Consolidation",
+                "strategy_name": "Mean Reversion Iron Condor",
+                "action": "RANGE STRADDLE / SPREAD",
+                "direction": "NEUTRAL",
+                "entry_price": 57804.4,
+                "stop_loss": 56948.54,
+                "take_profit_1": 58237.1,
+                "take_profit_2": 58559.6,
+                "risk_reward_ratio": "1:1.8",
+                "win_probability_pct": 62.5,
+                "position_size_pct": 5.0,
+                "risk_tier": "AGGRESSIVE (Low Volatility)",
+                "description": "Sell out-of-the-money options options outside predicted high/low boundaries.",
+                "nautilus_entry_order_type": "GTC LIMIT at entry_price",
+                "nautilus_bracket_type": "GTC OCO (TP + SL)",
+                "nautilus_reduce_only_note": "Standard",
+                "nautilus_post_only_note": "GTC limits passively post \u2014 no POST_ONLY flag needed",
+                "options_flow_note": "PCR neutral: No strong dark-pool / sweep signal detected",
+                "pcr": 1.0
+            },
+            "fincept_thesis": {
+                "symbol": "BANKNIFTY",
+                "final_score": -0.0866,
+                "verdict": "\u2696\ufe0f NEUTRAL \u2014 WAIT FOR SETUP",
+                "quant_strategy": {
+                    "role": "Quant Strategist",
+                    "symbol": "BANKNIFTY",
+                    "alpha_score": -0.2232,
+                    "momentum_factor": 0.0,
+                    "volatility_factor": -0.5579,
+                    "signal": "FLAT",
+                    "confidence": 0.5446
+                },
+                "risk_analysis": {
+                    "role": "Risk Analyst",
+                    "kelly_pct": 12.5,
+                    "position_size_units": 0.22,
+                    "position_value": 12497.31,
+                    "max_risk_amount": 2000.0,
+                    "stress_loss_3x_atr": 418.34,
+                    "vix_regime": "NORMAL",
+                    "recommended_leverage": 2.0
+                },
+                "microstructure": {
+                    "role": "Microstructure Specialist",
+                    "bid": 57772.148646763395,
+                    "ask": 57836.648228236605,
+                    "spread_points": 64.5,
+                    "spread_bps": 11.16,
+                    "market_impact_bps": 18.08,
+                    "total_cost_bps": 23.66,
+                    "liquidity_score": 0.5268,
+                    "execution_advice": "USE LIMIT ORDER"
+                },
+                "sentiment": {
+                    "composite_score": 0.0,
+                    "confidence": 0.99,
+                    "bullish_count": 0,
+                    "bearish_count": 0,
+                    "neutral_count": 13,
+                    "signals": [],
+                    "intensity": "neutral",
+                    "score_p10": 0.0,
+                    "score_p90": 0.0
+                },
+                "options_flow": {
+                    "flow_score": 0.0,
+                    "interpretation": "No options data"
+                },
+                "generated_at": "2026-08-03T12:05:22"
+            },
+            "fincept_greeks": null,
+            "fincept_intermarket": {
+                "net_intermarket_score": 0.0669,
+                "direction": "FLAT OPEN EXPECTED",
+                "risk_tier": "LOW RISK",
+                "contributors": {
+                    "us_futures": 0.0,
+                    "crude_oil": -0.0,
+                    "dxy_dollar": 0.0267,
+                    "vix_factor": 0.0402
+                }
+            },
+            "nautilus_order_suggestion": {
+                "blended_score": -0.1456,
+                "suggested_side": "NEUTRAL",
+                "message": "Consensus too weak for directional trade. Wait for clarity."
+            }
+        },
+        "current_params": {
+            "ALPHA": 0.5,
+            "BETA": 0.5,
+            "GAMMA": 0.5
+        }
+    },
+    {
+        "id": "2026-08-05_SENSEX",
+        "date": "2026-08-05",
+        "timestamp": "2026-08-05T14:02:54.523027",
+        "index": "SENSEX",
+        "predicted": {
+            "pred_open": 78809.82,
+            "pred_high": 79124.85,
+            "pred_low": 78210.98
+        },
+        "actual": {
+            "open": 79000.67,
+            "high": 79000.67,
+            "low": 78286.55,
+            "close": 78581.0
+        },
+        "reason": "Automated Core Update: Bullish macroeconomic tilt pushed order flow upwards against algorithmic base.",
+        "raw_inputs": {
+            "symbol": "SENSEX",
+            "prev_close": 78764.16,
+            "pred_open": 78809.82,
+            "pred_high": 79124.85,
+            "pred_low": 78210.98,
+            "pred_close": 78763.86,
+            "movement_side": "Live Session",
+            "gift_nifty": null,
+            "vix": 15.99,
+            "adr_delta": -1.2,
+            "pcr": 1.0,
+            "sentiment_score": 0.02,
+            "sentiment_intensity": "neutral",
+            "sentiment_factors": [
+                "surge",
+                "up",
+                "rise",
+                "gain",
+                "high",
+                "strong",
+                "inflation",
+                "selloff",
+                "hawkish",
+                "drop"
+            ],
+            "open_lo": 77710.08,
+            "open_hi": 79909.56,
+            "high_lo": 78232.83,
+            "high_hi": 80016.87,
+            "low_lo": 77393.5,
+            "low_hi": 79028.46,
+            "confidence": 50.5,
+            "model": "calibrated",
+            "news_shift_points": 0.0,
+            "agent_consensus": {
+                "verdict": "NEUTRAL",
+                "consensus_score": -0.074,
+                "overall_confidence": 76.7,
+                "debate_summary": "Technical Analyst recommends NEUTRAL (70.6% conf). Fundamental Analyst suggests NEUTRAL (95.0% conf). Sentiment Expert reads NEUTRAL (94.0% conf). Risk Manager classifies market risk as LOW (VIX: 16.0).",
+                "agents": {
+                    "fundamental": {
+                        "agent": "Fundamental Analyst",
+                        "score": -0.289,
+                        "bias": "NEUTRAL",
+                        "confidence": 95.0,
+                        "reasoning": "Fundamental factors balanced between growth expansion and hawkish central bank policies.",
+                        "macro_events_counted": 5
+                    },
+                    "technical": {
+                        "agent": "Technical Analyst",
+                        "score": 0.023,
+                        "bias": "NEUTRAL",
+                        "confidence": 70.6,
+                        "reasoning": "Technical range bound near spot close with neutral Option PCR (1.00).",
+                        "pcr": 1.0,
+                        "expected_gap_pct": 0.06
+                    },
+                    "sentiment": {
+                        "agent": "Sentiment Expert",
+                        "score": 0.018,
+                        "bias": "NEUTRAL",
+                        "intensity": "neutral",
+                        "confidence": 94.0,
+                        "reasoning": "Market news sentiment balanced with neutral news flow."
+                    },
+                    "risk": {
+                        "agent": "Risk Manager",
+                        "risk_rating": "LOW",
+                        "max_leverage": "2.0x (Optimal Growth)",
+                        "ruin_probability": 1.0,
+                        "vix": 16.0,
+                        "reasoning": "Low volatility environment (VIX: 16.0). Favorable regime for trend follow strategies."
+                    }
+                }
+            },
+            "quant_strategy": {
+                "index": "SENSEX",
+                "regime": "NEUTRAL_CONSOLIDATION",
+                "regime_label": "Neutral Consolidation",
+                "strategy_name": "Mean Reversion Iron Condor",
+                "action": "RANGE STRADDLE / SPREAD",
+                "direction": "NEUTRAL",
+                "entry_price": 78764.16,
+                "stop_loss": 77931.37,
+                "take_profit_1": 79124.85,
+                "take_profit_2": 79474.36,
+                "risk_reward_ratio": "1:1.8",
+                "win_probability_pct": 62.5,
+                "position_size_pct": 5.0,
+                "risk_tier": "AGGRESSIVE (Low Volatility)",
+                "description": "Sell out-of-the-money options options outside predicted high/low boundaries.",
+                "nautilus_entry_order_type": "GTC LIMIT at entry_price",
+                "nautilus_bracket_type": "GTC OCO (TP + SL)",
+                "nautilus_reduce_only_note": "Standard",
+                "nautilus_post_only_note": "GTC limits passively post \u2014 no POST_ONLY flag needed",
+                "options_flow_note": "PCR neutral: No strong dark-pool / sweep signal detected",
+                "pcr": 1.0
+            },
+            "fincept_thesis": {
+                "symbol": "SENSEX",
+                "final_score": -0.0734,
+                "verdict": "\u2696\ufe0f NEUTRAL \u2014 WAIT FOR SETUP",
+                "quant_strategy": {
+                    "role": "Quant Strategist",
+                    "symbol": "SENSEX",
+                    "alpha_score": -0.1775,
+                    "momentum_factor": 0.0,
+                    "volatility_factor": -0.4437,
+                    "signal": "FLAT",
+                    "confidence": 0.5355
+                },
+                "risk_analysis": {
+                    "role": "Risk Analyst",
+                    "kelly_pct": 12.5,
+                    "position_size_units": 0.16,
+                    "position_value": 12499.87,
+                    "max_risk_amount": 2000.0,
+                    "stress_loss_3x_atr": 332.81,
+                    "vix_regime": "NORMAL",
+                    "recommended_leverage": 2.0
+                },
+                "microstructure": {
+                    "role": "Microstructure Specialist",
+                    "bid": 78729.20502232143,
+                    "ask": 78799.10747767857,
+                    "spread_points": 69.9,
+                    "spread_bps": 8.87,
+                    "market_impact_bps": 21.77,
+                    "total_cost_bps": 26.2,
+                    "liquidity_score": 0.4759,
+                    "execution_advice": "USE LIMIT ORDER"
+                },
+                "sentiment": {
+                    "composite_score": 0.0,
+                    "confidence": 0.99,
+                    "bullish_count": 0,
+                    "bearish_count": 0,
+                    "neutral_count": 13,
+                    "signals": [],
+                    "intensity": "neutral",
+                    "score_p10": 0.0,
+                    "score_p90": 0.0
+                },
+                "options_flow": {
+                    "flow_score": 0.0,
+                    "interpretation": "No options data"
+                },
+                "generated_at": "2026-08-03T12:05:24"
+            },
+            "fincept_greeks": null,
+            "fincept_intermarket": {
+                "net_intermarket_score": 0.0669,
+                "direction": "FLAT OPEN EXPECTED",
+                "risk_tier": "LOW RISK",
+                "contributors": {
+                    "us_futures": 0.0,
+                    "crude_oil": -0.0,
+                    "dxy_dollar": 0.0267,
+                    "vix_factor": 0.0402
+                }
+            },
+            "nautilus_order_suggestion": {
+                "blended_score": -0.0738,
+                "suggested_side": "NEUTRAL",
+                "message": "Consensus too weak for directional trade. Wait for clarity."
+            }
+        },
+        "current_params": {
+            "ALPHA": 0.5,
+            "BETA": 0.5,
+            "GAMMA": 0.5
+        }
+    },
+    {
+        "id": "2026-08-06_NIFTY_50",
+        "date": "2026-08-06",
+        "timestamp": "2026-08-05T16:05:30.290546",
+        "index": "NIFTY 50",
+        "predicted": {
+            "pred_open": 24669.2,
+            "pred_high": 24772.94,
+            "pred_low": 24497.51
+        },
+        "actual": {
+            "open": 24669.2,
+            "high": 24677.6,
+            "low": 24497.95,
+            "close": 24624.65
+        },
+        "reason": "Automated Core Update: Bullish macroeconomic tilt pushed order flow upwards against algorithmic base.",
+        "raw_inputs": {
+            "symbol": "NIFTY 50",
+            "prev_close": 24624.65,
+            "pred_open": 24669.2,
+            "pred_high": 24772.94,
+            "pred_low": 24497.51,
+            "pred_close": 24669.78,
+            "movement_side": "Neutral / Sentiment Driven",
+            "gift_nifty": null,
+            "vix": 16.35,
+            "adr_delta": 0.22,
+            "pcr": 1.0,
+            "sentiment_score": 0.03,
+            "sentiment_intensity": "neutral",
+            "sentiment_factors": [
+                "recovery",
+                "surge",
+                "up",
+                "rise",
+                "high",
+                "inflation",
+                "rate hike",
+                "hawkish",
+                "down",
+                "weak"
+            ],
+            "open_lo": 24378.2,
+            "open_hi": 24960.2,
+            "high_lo": 24549.51,
+            "high_hi": 24996.37,
+            "low_lo": 24263.07,
+            "low_hi": 24731.95,
+            "confidence": 55.8,
+            "model": "calibrated",
+            "news_shift_points": 0.0,
+            "iv_used": 12.51,
+            "vol_method": "egarch",
+            "india_vix": 12.09,
+            "agent_consensus": {
+                "verdict": "NEUTRAL",
+                "consensus_score": -0.053,
+                "overall_confidence": 76.8,
+                "debate_summary": "Technical Analyst recommends NEUTRAL (71.8% conf). Fundamental Analyst suggests NEUTRAL (95.0% conf). Sentiment Expert reads NEUTRAL (92.7% conf). Risk Manager classifies market risk as LOW (VIX: 16.4).",
+                "agents": {
+                    "fundamental": {
+                        "agent": "Fundamental Analyst",
+                        "score": -0.284,
+                        "bias": "NEUTRAL",
+                        "confidence": 95.0,
+                        "reasoning": "Fundamental factors balanced between growth expansion and hawkish central bank policies.",
+                        "macro_events_counted": 5
+                    },
+                    "technical": {
+                        "agent": "Technical Analyst",
+                        "score": 0.072,
+                        "bias": "NEUTRAL",
+                        "confidence": 71.8,
+                        "reasoning": "Technical range bound near spot close with neutral Option PCR (1.00).",
+                        "pcr": 1.0,
+                        "expected_gap_pct": 0.18
+                    },
+                    "sentiment": {
+                        "agent": "Sentiment Expert",
+                        "score": 0.026,
+                        "bias": "NEUTRAL",
+                        "intensity": "neutral",
+                        "confidence": 92.7,
+                        "reasoning": "Market news sentiment balanced with neutral news flow."
+                    },
+                    "risk": {
+                        "agent": "Risk Manager",
+                        "risk_rating": "LOW",
+                        "max_leverage": "2.0x (Optimal Growth)",
+                        "ruin_probability": 1.0,
+                        "vix": 16.4,
+                        "reasoning": "Low volatility environment (VIX: 16.4). Favorable regime for trend follow strategies."
+                    }
+                }
+            },
+            "quant_strategy": {
+                "index": "NIFTY 50",
+                "regime": "NEUTRAL_CONSOLIDATION",
+                "regime_label": "Neutral Consolidation",
+                "strategy_name": "Mean Reversion Iron Condor",
+                "action": "RANGE STRADDLE / SPREAD",
+                "direction": "NEUTRAL",
+                "entry_price": 24624.65,
+                "stop_loss": 24408.1,
+                "take_profit_1": 24772.94,
+                "take_profit_2": 24884.7,
+                "risk_reward_ratio": "1:1.8",
+                "win_probability_pct": 62.5,
+                "position_size_pct": 4.0,
+                "risk_tier": "MODERATE (Standard Risk)",
+                "description": "Sell out-of-the-money options options outside predicted high/low boundaries.",
+                "nautilus_entry_order_type": "GTC LIMIT at entry_price",
+                "nautilus_bracket_type": "GTC OCO (TP + SL)",
+                "nautilus_reduce_only_note": "Standard",
+                "nautilus_post_only_note": "GTC limits passively post \u2014 no POST_ONLY flag needed",
+                "options_flow_note": "PCR neutral: No strong dark-pool / sweep signal detected",
+                "pcr": 1.0
+            },
+            "fincept_thesis": {
+                "symbol": "NIFTY 50",
+                "final_score": -0.0544,
+                "verdict": "\u2696\ufe0f NEUTRAL \u2014 WAIT FOR SETUP",
+                "quant_strategy": {
+                    "role": "Quant Strategist",
+                    "symbol": "NIFTY 50",
+                    "alpha_score": -0.1815,
+                    "momentum_factor": 0.0,
+                    "volatility_factor": -0.4539,
+                    "signal": "FLAT",
+                    "confidence": 0.5363
+                },
+                "risk_analysis": {
+                    "role": "Risk Analyst",
+                    "kelly_pct": 12.5,
+                    "position_size_units": 0.51,
+                    "position_value": 12499.47,
+                    "max_risk_amount": 2000.0,
+                    "stress_loss_3x_atr": 340.38,
+                    "vix_regime": "NORMAL",
+                    "recommended_leverage": 2.0
+                },
+                "microstructure": {
+                    "role": "Microstructure Specialist",
+                    "bid": 24613.47412109375,
+                    "ask": 24635.82666015625,
+                    "spread_points": 22.35,
+                    "spread_bps": 9.08,
+                    "market_impact_bps": 10.83,
+                    "total_cost_bps": 15.37,
+                    "liquidity_score": 0.6925,
+                    "execution_advice": "USE LIMIT ORDER"
+                },
+                "sentiment": {
+                    "composite_score": -0.0054,
+                    "confidence": 0.9813,
+                    "bullish_count": 0,
+                    "bearish_count": 0,
+                    "neutral_count": 13,
+                    "signals": [
+                        {
+                            "phrase": "rate hike",
+                            "weight": -0.7
+                        }
+                    ],
+                    "intensity": "neutral",
+                    "score_p10": 0.0,
+                    "score_p90": 0.0
+                },
+                "options_flow": {
+                    "flow_score": 0.0,
+                    "interpretation": "No options data"
+                },
+                "generated_at": "2026-08-05T15:46:37"
+            },
+            "fincept_greeks": null,
+            "fincept_intermarket": {
+                "net_intermarket_score": 0.0558,
+                "direction": "FLAT OPEN EXPECTED",
+                "risk_tier": "LOW RISK",
+                "contributors": {
+                    "us_futures": 0.0,
+                    "crude_oil": -0.0,
+                    "dxy_dollar": 0.0228,
+                    "vix_factor": 0.033
+                }
+            },
+            "nautilus_order_suggestion": {
+                "blended_score": -0.0536,
+                "suggested_side": "NEUTRAL",
+                "message": "Consensus too weak for directional trade. Wait for clarity."
+            },
+            "tsfm_forecast": {
+                "status": "error",
+                "backend": "chronos2",
+                "close": {
+                    "p10": null,
+                    "p50": null,
+                    "p90": null
+                },
+                "high_p90": null,
+                "low_p10": null,
+                "horizon": 1,
+                "n_context": 0,
+                "error": "Could not infer frequency for series zero"
+            },
+            "agent_debate": {
+                "bull_case": {
+                    "arguments": [
+                        "Predicted gap-up open (+0.18%) shows overnight demand.",
+                        "Low volatility (VIX 16.4) favors orderly trend continuation."
+                    ],
+                    "strength": 0.18
+                },
+                "bear_case": {
+                    "arguments": [
+                        "Headline flow skews bearish (3 negative vs 2 positive catalysts)."
+                    ],
+                    "strength": 0.1
+                },
+                "risk_assessment": {
+                    "risk_level": "LOW",
+                    "notes": [
+                        "VIX 16.4 calm \u2014 favorable regime for trend strategies."
+                    ]
+                },
+                "pm_verdict": {
+                    "action": "WAIT",
+                    "conviction": 0.08,
+                    "kill_condition": "no trade; re-evaluate on breakout above pred_high 24772.94 or breakdown below pred_low 24497.51",
+                    "position_size_hint_pct": 0.0,
+                    "reasoning": "Offline heuristic debate for NIFTY 50: bull 0.18 vs bear 0.10 (net +0.08 after LOW risk adjustment); gap +0.18%, PCR 1.00, VIX 16.4, sentiment +0.03 -> WAIT at 0.08 conviction."
+                },
+                "rounds": 3,
+                "llm_used": false,
+                "model": null
+            }
+        },
+        "current_params": {
+            "ALPHA": 0.5,
+            "BETA": 0.5,
+            "GAMMA": 0.5
+        }
+    },
+    {
+        "id": "2026-08-06_BANKNIFTY",
+        "date": "2026-08-06",
+        "timestamp": "2026-08-05T16:05:30.290563",
+        "index": "BANKNIFTY",
+        "predicted": {
+            "pred_open": 57619.07,
+            "pred_high": 58266.84,
+            "pred_low": 57052.07
+        },
+        "actual": {
+            "open": 57810.05,
+            "high": 57931.85,
+            "low": 57456.35,
+            "close": 57739.95
+        },
+        "reason": "Automated Core Update: Bullish macroeconomic tilt pushed order flow upwards against algorithmic base.",
+        "raw_inputs": {
+            "symbol": "BANKNIFTY",
+            "prev_close": 57739.95,
+            "pred_open": 57619.07,
+            "pred_high": 58266.84,
+            "pred_low": 57052.07,
+            "pred_close": 57811.84,
+            "movement_side": "Neutral / Sentiment Driven",
+            "gift_nifty": null,
+            "vix": 16.35,
+            "adr_delta": 0.22,
+            "pcr": 1.0,
+            "sentiment_score": 0.03,
+            "sentiment_intensity": "neutral",
+            "sentiment_factors": [
+                "recovery",
+                "surge",
+                "up",
+                "rise",
+                "high",
+                "inflation",
+                "rate hike",
+                "hawkish",
+                "down",
+                "weak"
+            ],
+            "open_lo": 56890.41,
+            "open_hi": 58347.73,
+            "high_lo": 57569.72,
+            "high_hi": 58963.96,
+            "low_lo": 56623.63,
+            "low_hi": 57480.51,
+            "confidence": 66.7,
+            "model": "calibrated",
+            "news_shift_points": 0.0,
+            "iv_used": 15.02,
+            "vol_method": "egarch",
+            "india_vix": 12.09,
+            "agent_consensus": {
+                "verdict": "NEUTRAL",
+                "consensus_score": -0.108,
+                "overall_confidence": 76.9,
+                "debate_summary": "Technical Analyst recommends NEUTRAL (72.1% conf). Fundamental Analyst suggests NEUTRAL (95.0% conf). Sentiment Expert reads NEUTRAL (92.7% conf). Risk Manager classifies market risk as LOW (VIX: 16.4).",
+                "agents": {
+                    "fundamental": {
+                        "agent": "Fundamental Analyst",
+                        "score": -0.284,
+                        "bias": "NEUTRAL",
+                        "confidence": 95.0,
+                        "reasoning": "Fundamental factors balanced between growth expansion and hawkish central bank policies.",
+                        "macro_events_counted": 5
+                    },
+                    "technical": {
+                        "agent": "Technical Analyst",
+                        "score": -0.084,
+                        "bias": "NEUTRAL",
+                        "confidence": 72.1,
+                        "reasoning": "Technical range bound near spot close with neutral Option PCR (1.00).",
+                        "pcr": 1.0,
+                        "expected_gap_pct": -0.21
+                    },
+                    "sentiment": {
+                        "agent": "Sentiment Expert",
+                        "score": 0.026,
+                        "bias": "NEUTRAL",
+                        "intensity": "neutral",
+                        "confidence": 92.7,
+                        "reasoning": "Market news sentiment balanced with neutral news flow."
+                    },
+                    "risk": {
+                        "agent": "Risk Manager",
+                        "risk_rating": "LOW",
+                        "max_leverage": "2.0x (Optimal Growth)",
+                        "ruin_probability": 1.0,
+                        "vix": 16.4,
+                        "reasoning": "Low volatility environment (VIX: 16.4). Favorable regime for trend follow strategies."
+                    }
+                }
+            },
+            "quant_strategy": {
+                "index": "BANKNIFTY",
+                "regime": "NEUTRAL_CONSOLIDATION",
+                "regime_label": "Neutral Consolidation",
+                "strategy_name": "Mean Reversion Iron Condor",
+                "action": "RANGE STRADDLE / SPREAD",
+                "direction": "NEUTRAL",
+                "entry_price": 57739.95,
+                "stop_loss": 56777.85,
+                "take_profit_1": 58266.84,
+                "take_profit_2": 58609.62,
+                "risk_reward_ratio": "1:1.8",
+                "win_probability_pct": 62.5,
+                "position_size_pct": 4.0,
+                "risk_tier": "MODERATE (Standard Risk)",
+                "description": "Sell out-of-the-money options options outside predicted high/low boundaries.",
+                "nautilus_entry_order_type": "GTC LIMIT at entry_price",
+                "nautilus_bracket_type": "GTC OCO (TP + SL)",
+                "nautilus_reduce_only_note": "Standard",
+                "nautilus_post_only_note": "GTC limits passively post \u2014 no POST_ONLY flag needed",
+                "options_flow_note": "PCR neutral: No strong dark-pool / sweep signal detected",
+                "pcr": 1.0
+            },
+            "fincept_thesis": {
+                "symbol": "BANKNIFTY",
+                "final_score": -0.0941,
+                "verdict": "\u2696\ufe0f NEUTRAL \u2014 WAIT FOR SETUP",
+                "quant_strategy": {
+                    "role": "Quant Strategist",
+                    "symbol": "BANKNIFTY",
+                    "alpha_score": -0.2375,
+                    "momentum_factor": 0.0,
+                    "volatility_factor": -0.5937,
+                    "signal": "FLAT",
+                    "confidence": 0.5475
+                },
+                "risk_analysis": {
+                    "role": "Risk Analyst",
+                    "kelly_pct": 12.5,
+                    "position_size_units": 0.22,
+                    "position_value": 12500.7,
+                    "max_risk_amount": 2000.0,
+                    "stress_loss_3x_atr": 445.27,
+                    "vix_regime": "NORMAL",
+                    "recommended_leverage": 2.0
+                },
+                "microstructure": {
+                    "role": "Microstructure Specialist",
+                    "bid": 57705.67158203125,
+                    "ask": 57774.22685546875,
+                    "spread_points": 68.56,
+                    "spread_bps": 11.87,
+                    "market_impact_bps": 18.07,
+                    "total_cost_bps": 24.0,
+                    "liquidity_score": 0.5199,
+                    "execution_advice": "USE LIMIT ORDER"
+                },
+                "sentiment": {
+                    "composite_score": -0.0054,
+                    "confidence": 0.9813,
+                    "bullish_count": 0,
+                    "bearish_count": 0,
+                    "neutral_count": 13,
+                    "signals": [
+                        {
+                            "phrase": "rate hike",
+                            "weight": -0.7
+                        }
+                    ],
+                    "intensity": "neutral",
+                    "score_p10": 0.0,
+                    "score_p90": 0.0
+                },
+                "options_flow": {
+                    "flow_score": 0.0,
+                    "interpretation": "No options data"
+                },
+                "generated_at": "2026-08-05T15:46:39"
+            },
+            "fincept_greeks": null,
+            "fincept_intermarket": {
+                "net_intermarket_score": 0.0558,
+                "direction": "FLAT OPEN EXPECTED",
+                "risk_tier": "LOW RISK",
+                "contributors": {
+                    "us_futures": 0.0,
+                    "crude_oil": -0.0,
+                    "dxy_dollar": 0.0228,
+                    "vix_factor": 0.033
+                }
+            },
+            "nautilus_order_suggestion": {
+                "blended_score": -0.1024,
+                "suggested_side": "NEUTRAL",
+                "message": "Consensus too weak for directional trade. Wait for clarity."
+            },
+            "tsfm_forecast": {
+                "status": "error",
+                "backend": "chronos2",
+                "close": {
+                    "p10": null,
+                    "p50": null,
+                    "p90": null
+                },
+                "high_p90": null,
+                "low_p10": null,
+                "horizon": 1,
+                "n_context": 0,
+                "error": "Could not infer frequency for series zero"
+            },
+            "agent_debate": {
+                "bull_case": {
+                    "arguments": [
+                        "Model projects intraday gains into the close (+0.33%).",
+                        "Low volatility (VIX 16.4) favors orderly trend continuation."
+                    ],
+                    "strength": 0.2
+                },
+                "bear_case": {
+                    "arguments": [
+                        "Headline flow skews bearish (3 negative vs 2 positive catalysts).",
+                        "Predicted gap-down open (-0.21%) shows overnight supply."
+                    ],
+                    "strength": 0.135
+                },
+                "risk_assessment": {
+                    "risk_level": "MODERATE",
+                    "notes": [
+                        "VIX 16.4 calm \u2014 favorable regime for trend strategies.",
+                        "Predicted day range 2.10% of spot is elevated."
+                    ]
+                },
+                "pm_verdict": {
+                    "action": "WAIT",
+                    "conviction": 0.065,
+                    "kill_condition": "no trade; re-evaluate on breakout above pred_high 58266.84 or breakdown below pred_low 57052.07",
+                    "position_size_hint_pct": 0.0,
+                    "reasoning": "Offline heuristic debate for BANKNIFTY: bull 0.20 vs bear 0.14 (net +0.07 after MODERATE risk adjustment); gap -0.21%, PCR 1.00, VIX 16.4, sentiment +0.03 -> WAIT at 0.07 conviction."
+                },
+                "rounds": 3,
+                "llm_used": false,
+                "model": null
+            }
+        },
+        "current_params": {
+            "ALPHA": 0.5,
+            "BETA": 0.5,
+            "GAMMA": 0.5
+        }
+    },
+    {
+        "id": "2026-08-06_SENSEX",
+        "date": "2026-08-06",
+        "timestamp": "2026-08-05T16:05:30.290570",
+        "index": "SENSEX",
+        "predicted": {
+            "pred_open": 79000.67,
+            "pred_high": 79000.67,
+            "pred_low": 77979.5
+        },
+        "actual": {
+            "open": 79000.67,
+            "high": 79000.67,
+            "low": 78286.55,
+            "close": 78581.0
+        },
+        "reason": "Automated Core Update: Bullish macroeconomic tilt pushed order flow upwards against algorithmic base.",
+        "raw_inputs": {
+            "symbol": "SENSEX",
+            "prev_close": 78581.0,
+            "pred_open": 79000.67,
+            "pred_high": 79000.67,
+            "pred_low": 77979.5,
+            "pred_close": 79002.6,
+            "movement_side": "Neutral / Sentiment Driven",
+            "gift_nifty": null,
+            "vix": 16.35,
+            "adr_delta": 0.22,
+            "pcr": 1.0,
+            "sentiment_score": 0.03,
+            "sentiment_intensity": "neutral",
+            "sentiment_factors": [
+                "recovery",
+                "surge",
+                "up",
+                "rise",
+                "high",
+                "inflation",
+                "rate hike",
+                "hawkish",
+                "down",
+                "weak"
+            ],
+            "open_lo": 77900.93,
+            "open_hi": 80100.41,
+            "high_lo": 78091.08,
+            "high_hi": 79875.12,
+            "low_lo": 77162.02,
+            "low_hi": 78796.98,
+            "confidence": 51.8,
+            "model": "calibrated",
+            "news_shift_points": 0.0,
+            "iv_used": 13.93,
+            "vol_method": "egarch",
+            "india_vix": 12.09,
+            "agent_consensus": {
+                "verdict": "NEUTRAL",
+                "consensus_score": -0.004,
+                "overall_confidence": 78.0,
+                "debate_summary": "Technical Analyst recommends NEUTRAL (75.3% conf). Fundamental Analyst suggests NEUTRAL (95.0% conf). Sentiment Expert reads NEUTRAL (92.7% conf). Risk Manager classifies market risk as LOW (VIX: 16.4).",
+                "agents": {
+                    "fundamental": {
+                        "agent": "Fundamental Analyst",
+                        "score": -0.284,
+                        "bias": "NEUTRAL",
+                        "confidence": 95.0,
+                        "reasoning": "Fundamental factors balanced between growth expansion and hawkish central bank policies.",
+                        "macro_events_counted": 5
+                    },
+                    "technical": {
+                        "agent": "Technical Analyst",
+                        "score": 0.214,
+                        "bias": "NEUTRAL",
+                        "confidence": 75.3,
+                        "reasoning": "Technical range bound near spot close with neutral Option PCR (1.00).",
+                        "pcr": 1.0,
+                        "expected_gap_pct": 0.53
+                    },
+                    "sentiment": {
+                        "agent": "Sentiment Expert",
+                        "score": 0.026,
+                        "bias": "NEUTRAL",
+                        "intensity": "neutral",
+                        "confidence": 92.7,
+                        "reasoning": "Market news sentiment balanced with neutral news flow."
+                    },
+                    "risk": {
+                        "agent": "Risk Manager",
+                        "risk_rating": "LOW",
+                        "max_leverage": "2.0x (Optimal Growth)",
+                        "ruin_probability": 1.0,
+                        "vix": 16.4,
+                        "reasoning": "Low volatility environment (VIX: 16.4). Favorable regime for trend follow strategies."
+                    }
+                }
+            },
+            "quant_strategy": {
+                "index": "SENSEX",
+                "regime": "NEUTRAL_CONSOLIDATION",
+                "regime_label": "Neutral Consolidation",
+                "strategy_name": "Mean Reversion Iron Condor",
+                "action": "RANGE STRADDLE / SPREAD",
+                "direction": "NEUTRAL",
+                "entry_price": 78581.0,
+                "stop_loss": 77684.34,
+                "take_profit_1": 79000.67,
+                "take_profit_2": 79369.62,
+                "risk_reward_ratio": "1:1.8",
+                "win_probability_pct": 62.5,
+                "position_size_pct": 4.0,
+                "risk_tier": "MODERATE (Standard Risk)",
+                "description": "Sell out-of-the-money options options outside predicted high/low boundaries.",
+                "nautilus_entry_order_type": "GTC LIMIT at entry_price",
+                "nautilus_bracket_type": "GTC OCO (TP + SL)",
+                "nautilus_reduce_only_note": "Standard",
+                "nautilus_post_only_note": "GTC limits passively post \u2014 no POST_ONLY flag needed",
+                "options_flow_note": "PCR neutral: No strong dark-pool / sweep signal detected",
+                "pcr": 1.0
+            },
+            "fincept_thesis": {
+                "symbol": "SENSEX",
+                "final_score": -0.0791,
+                "verdict": "\u2696\ufe0f NEUTRAL \u2014 WAIT FOR SETUP",
+                "quant_strategy": {
+                    "role": "Quant Strategist",
+                    "symbol": "SENSEX",
+                    "alpha_score": -0.1878,
+                    "momentum_factor": 0.0,
+                    "volatility_factor": -0.4695,
+                    "signal": "FLAT",
+                    "confidence": 0.5376
+                },
+                "risk_analysis": {
+                    "role": "Risk Analyst",
+                    "kelly_pct": 12.5,
+                    "position_size_units": 0.16,
+                    "position_value": 12502.24,
+                    "max_risk_amount": 2000.0,
+                    "stress_loss_3x_atr": 352.2,
+                    "vix_regime": "NORMAL",
+                    "recommended_leverage": 2.0
+                },
+                "microstructure": {
+                    "role": "Microstructure Specialist",
+                    "bid": 78544.10518973214,
+                    "ask": 78617.89481026786,
+                    "spread_points": 73.79,
+                    "spread_bps": 9.39,
+                    "market_impact_bps": 21.74,
+                    "total_cost_bps": 26.43,
+                    "liquidity_score": 0.4714,
+                    "execution_advice": "USE LIMIT ORDER"
+                },
+                "sentiment": {
+                    "composite_score": -0.0054,
+                    "confidence": 0.9813,
+                    "bullish_count": 0,
+                    "bearish_count": 0,
+                    "neutral_count": 13,
+                    "signals": [
+                        {
+                            "phrase": "rate hike",
+                            "weight": -0.7
+                        }
+                    ],
+                    "intensity": "neutral",
+                    "score_p10": 0.0,
+                    "score_p90": 0.0
+                },
+                "options_flow": {
+                    "flow_score": 0.0,
+                    "interpretation": "No options data"
+                },
+                "generated_at": "2026-08-05T15:46:42"
+            },
+            "fincept_greeks": null,
+            "fincept_intermarket": {
+                "net_intermarket_score": 0.0558,
+                "direction": "FLAT OPEN EXPECTED",
+                "risk_tier": "LOW RISK",
+                "contributors": {
+                    "us_futures": 0.0,
+                    "crude_oil": -0.0,
+                    "dxy_dollar": 0.0228,
+                    "vix_factor": 0.033
+                }
+            },
+            "nautilus_order_suggestion": {
+                "blended_score": -0.034,
+                "suggested_side": "NEUTRAL",
+                "message": "Consensus too weak for directional trade. Wait for clarity."
+            },
+            "tsfm_forecast": {
+                "status": "error",
+                "backend": "chronos2",
+                "close": {
+                    "p10": null,
+                    "p50": null,
+                    "p90": null
+                },
+                "high_p90": null,
+                "low_p10": null,
+                "horizon": 1,
+                "n_context": 0,
+                "error": "Could not infer frequency for series zero"
+            },
+            "agent_debate": {
+                "bull_case": {
+                    "arguments": [
+                        "Predicted gap-up open (+0.53%) shows overnight demand.",
+                        "Low volatility (VIX 16.4) favors orderly trend continuation."
+                    ],
+                    "strength": 0.239
+                },
+                "bear_case": {
+                    "arguments": [
+                        "Headline flow skews bearish (3 negative vs 2 positive catalysts)."
+                    ],
+                    "strength": 0.1
+                },
+                "risk_assessment": {
+                    "risk_level": "LOW",
+                    "notes": [
+                        "VIX 16.4 calm \u2014 favorable regime for trend strategies."
+                    ]
+                },
+                "pm_verdict": {
+                    "action": "LONG",
+                    "conviction": 0.139,
+                    "kill_condition": "thesis invalid below pred_low 77979.50",
+                    "position_size_hint_pct": 1.4,
+                    "reasoning": "Offline heuristic debate for SENSEX: bull 0.24 vs bear 0.10 (net +0.14 after LOW risk adjustment); gap +0.53%, PCR 1.00, VIX 16.4, sentiment +0.03 -> LONG at 0.14 conviction."
+                },
+                "rounds": 3,
+                "llm_used": false,
+                "model": null
             }
         },
         "current_params": {

@@ -1,0 +1,134 @@
+# =============================================================================
+# Example config: finetune Kronos on NIFTY50 daily candles (ZERO port)
+# =============================================================================
+# Adapted from upstream Kronos finetune_csv/configs/config_ali09988_candle-5min.yaml
+# (https://github.com/shiyu-coder/Kronos, MIT License).
+#
+# Defaults here are sized for a single consumer GPU or CPU: small epoch
+# counts and batch size. Scale them up once the pipeline runs end to end.
+#
+# Run from D:\ZERO_FRESH with:
+#   python -m engine.kronos_finetune.run_sequential --config engine/kronos_finetune/configs/example_nifty_daily.yaml
+# =============================================================================
+
+data:
+  # Path to your CSV. Required columns:
+  #   timestamps, open, high, low, close, volume, amount
+  # (volume/amount may be 0 if unavailable). Forward slashes work on Windows.
+  # PLACEHOLDER: put your export at this path or point this at an existing file.
+  data_path: "D:/ZERO_FRESH/db/kronos_finetune/data/NIFTY50_daily.csv"
+
+  # Number of past bars the model sees per sample. For daily data 256 bars
+  # is roughly one trading year. Must be <= max_context.
+  lookback_window: 256
+
+  # Number of future bars each training window reserves for prediction.
+  predict_window: 24
+
+  # Maximum model context length (Kronos-small was trained with 512).
+  max_context: 512
+
+  # After per-window z-score normalisation, values are clipped to [-clip, clip]
+  # to tame outliers. Upstream default: 5.0.
+  clip: 5.0
+
+  # Chronological split ratios (must sum to <= 1.0). Validation must be > 0
+  # because best checkpoints are picked by validation loss. NOTE: each split
+  # needs at least lookback_window + predict_window + 1 rows — with the
+  # windows above, val_ratio 0.1 needs a CSV of ~2,810+ rows (>= 11 years of
+  # daily data). For shorter histories, shrink lookback_window/predict_window.
+  train_ratio: 0.9
+  val_ratio: 0.1
+  test_ratio: 0.0
+
+training:
+  # Epochs for each stage (kept small for a first consumer-hardware run;
+  # upstream used 30/20 on a multi-GPU server).
+  tokenizer_epochs: 5
+  basemodel_epochs: 5
+
+  # Sequences per training step. 16 fits comfortably on ~8 GB GPUs with the
+  # windows above; lower it if you hit out-of-memory, raise it on bigger cards.
+  batch_size: 16
+
+  # Log a training-status line every N global steps.
+  log_interval: 20
+
+  # DataLoader worker processes. 0 = load in the main process — the safe
+  # default on Windows (worker processes add spawn overhead there).
+  num_workers: 0
+
+  # Global random seed for reproducibility.
+  seed: 42
+
+  # Stage learning rates (upstream defaults). The predictor rate is much
+  # smaller because it starts from strong pretrained weights.
+  tokenizer_learning_rate: 0.0002   # 2e-4
+  predictor_learning_rate: 0.00002  # 2e-5
+
+  # AdamW hyperparameters (used by the predictor stage; the tokenizer stage
+  # keeps AdamW's default betas, faithful to upstream).
+  adam_beta1: 0.9
+  adam_beta2: 0.95
+  adam_weight_decay: 0.1
+
+  # Gradient accumulation sub-batches per step in the tokenizer stage
+  # (simulates a larger batch). batch_size should be divisible by this.
+  accumulation_steps: 1
+
+model_paths:
+  # Pretrained weights to start from: local checkpoint dirs or Hugging Face
+  # hub ids (downloaded automatically on first use).
+  pretrained_tokenizer: "NeoQuasar/Kronos-Tokenizer-base"
+  pretrained_predictor: "NeoQuasar/Kronos-small"
+
+  # Experiment name — output paths below are derived from it.
+  exp_name: "NIFTY50_daily_example"
+
+  # Root folder for finetuned checkpoints. Leave empty to use the ZERO
+  # default: D:/ZERO_FRESH/db/kronos_finetune/models
+  base_path: ""
+
+  # Derived paths — leave empty ("") to auto-generate as:
+  #   base_save_path:      {base_path}/{exp_name}
+  #   finetuned_tokenizer: {base_path}/{exp_name}/tokenizer/best_model
+  # You may also write a template containing {exp_name} explicitly.
+  base_save_path: ""
+  finetuned_tokenizer: ""
+
+  # Subfolder names for each stage inside base_save_path.
+  tokenizer_save_name: "tokenizer"
+  basemodel_save_name: "basemodel"
+
+  # Training-log directory. Leave unset/empty to use the ZERO default:
+  #   D:/ZERO_FRESH/db/kronos_finetune/logs/{exp_name}
+  # log_dir: ""
+
+experiment:
+  # Free-form metadata printed in banners/logs.
+  name: "kronos_nifty_daily_finetune"
+  description: "Example: finetune Kronos-small on NIFTY50 daily candles for ZERO"
+
+  # Accepted for upstream compatibility but IGNORED: the ZERO port has no
+  # Comet ML / experiment-tracker integration.
+  use_comet: false
+
+  # Which stages run_sequential executes.
+  train_tokenizer: true
+  train_basemodel: true
+
+  # If true, a stage whose best_model checkpoint already exists is skipped.
+  skip_existing: false
+
+  # Start from pretrained weights (true, recommended) or randomly initialise
+  # the architecture (false; requires local checkpoint dirs with config.json).
+  pre_trained_tokenizer: true
+  pre_trained_predictor: true
+
+device:
+  # Use CUDA when available (falls back to CPU with a notice). The
+  # run_sequential --device flag overrides this.
+  use_cuda: true
+
+  # Which CUDA GPU to use when several are present.
+  device_id: 0

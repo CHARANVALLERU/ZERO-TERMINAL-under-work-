@@ -1,21 +1,21 @@
 {
-    "last_updated": "2026-07-06T14:49:42.659222",
+    "last_updated": "2026-08-05T14:57:27.308377",
     "SENSEX": {
-        "center": 78233.7,
+        "center": 78323.12,
         "max_range": 5000,
-        "max_high": 83233.7,
-        "max_low": 73233.7
+        "max_high": 83323.12,
+        "max_low": 73323.12
     },
     "NIFTY 50": {
-        "center": 24386.4,
+        "center": 24513.4,
         "max_range": 2000,
-        "max_high": 26386.4,
-        "max_low": 22386.4
+        "max_high": 26513.4,
+        "max_low": 22513.4
     },
     "BANKNIFTY": {
-        "center": 58254.55,
+        "center": 57511.85,
         "max_range": 2000,
-        "max_high": 60254.55,
-        "max_low": 56254.55
+        "max_high": 59511.85,
+        "max_low": 55511.85
     }
 }

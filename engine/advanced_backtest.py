@@ -5,13 +5,21 @@ Inspired by NautilusTrader's deterministic backtesting architecture.
 Implements walk-forward, multi-strategy, multi-venue backtesting
 with Sharpe ratio, drawdown, and win-rate analytics.
 
+Also carries ZERO's statistical-significance toolkit:
+    * ``diebold_mariano_test``       — HAC (Newey–West) test of equal predictive accuracy
+    * ``probabilistic_sharpe_ratio`` — PSR per Bailey & Lopez de Prado (2012)
+    * ``deflated_sharpe_ratio``      — DSR with expected-max-SR multiple-testing correction
+
 Pure numpy — no pandas required for core math (pandas used only for data loading).
+scipy is optional: when absent, normal CDF/PPF fall back to math.erf / Acklam's
+rational approximation. No network calls at import time.
 """
 
 from __future__ import annotations
 
 import datetime
 import math
+import os
 from typing import Dict, List, Optional, Any
 import numpy as np
 
@@ -103,6 +111,8 @@ class PerformanceAnalytics:
     def full_report(cls, equity_curve: np.ndarray, pnl_list: List[float],
                     periods_per_year: int = 252) -> Dict:
         returns = np.diff(equity_curve) / equity_curve[:-1] if len(equity_curve) > 1 else np.array([0.0])
+        psr = probabilistic_sharpe_ratio(returns)
+        dsr = deflated_sharpe_ratio(returns, n_trials=DSR_DEFAULT_TRIALS)
         return {
             "total_trades":    len(pnl_list),
             "win_rate":        cls.win_rate(pnl_list),
@@ -115,7 +125,251 @@ class PerformanceAnalytics:
             "final_equity":    round(float(equity_curve[-1]), 2) if len(equity_curve) else 0.0,
             "total_return_pct": round((equity_curve[-1] / equity_curve[0] - 1) * 100, 2)
                                 if len(equity_curve) > 1 and equity_curve[0] != 0 else 0.0,
+            # Statistical significance (None when the sample is too small)
+            "psr":             _none_if_nan(psr["psr"]),
+            "dsr":             _none_if_nan(dsr["dsr"]),
+            "dsr_sr_threshold": _none_if_nan(dsr["sr_threshold"]),
         }
+
+
+# ─────────────────────────────────────────────
+#  Statistical Significance (Diebold–Mariano / Lopez de Prado)
+# ─────────────────────────────────────────────
+
+MIN_STAT_N: int = int(os.environ.get("ZERO_STATS_MIN_N", "8"))
+"""Minimum sample size for any significance statistic (below → NaN + insufficient_data)."""
+
+DSR_DEFAULT_TRIALS: int = int(os.environ.get("ZERO_DSR_TRIALS", "10"))
+"""Default multiple-testing budget (number of configurations tried) for DSR."""
+
+EULER_MASCHERONI: float = float(os.environ.get("ZERO_EULER_MASCHERONI", "0.5772156649015329"))
+"""Euler–Mascheroni constant used in the expected-max-Sharpe approximation."""
+
+_SCIPY_STATS = None
+_SCIPY_CHECKED = False
+
+
+def _get_scipy_stats():
+    """Lazily import scipy.stats exactly once; None when scipy is unavailable."""
+    global _SCIPY_STATS, _SCIPY_CHECKED
+    if not _SCIPY_CHECKED:
+        _SCIPY_CHECKED = True
+        try:
+            from scipy import stats as _s  # type: ignore
+            _SCIPY_STATS = _s
+        except Exception:
+            _SCIPY_STATS = None
+    return _SCIPY_STATS
+
+
+def _norm_cdf(x: float) -> float:
+    """Standard-normal CDF — scipy when available, math.erf fallback otherwise."""
+    s = _get_scipy_stats()
+    if s is not None:
+        try:
+            return float(s.norm.cdf(x))
+        except Exception:
+            pass
+    return 0.5 * (1.0 + math.erf(x / math.sqrt(2.0)))
+
+
+def _norm_ppf(p: float) -> float:
+    """Inverse standard-normal CDF — scipy when available, Acklam approximation otherwise."""
+    s = _get_scipy_stats()
+    if s is not None:
+        try:
+            return float(s.norm.ppf(p))
+        except Exception:
+            pass
+    return _acklam_ppf(p)
+
+
+# Acklam's rational-approximation coefficients (max |error| ≈ 1.15e-9)
+_ACKLAM_A = (-3.969683028665376e+01, 2.209460984245205e+02, -2.759285104469687e+02,
+             1.383577518672690e+02, -3.066479806614716e+01, 2.506628277459239e+00)
+_ACKLAM_B = (-5.447609879822406e+01, 1.615858368580409e+02, -1.556989798598866e+02,
+             6.680131188771972e+01, -1.328068155288572e+01)
+_ACKLAM_C = (-7.784894002430293e-03, -3.223964580411365e-01, -2.400758277161838e+00,
+             -2.549732539343734e+00, 4.374664141464968e+00, 2.938163982698783e+00)
+_ACKLAM_D = (7.784695709041462e-03, 3.224671290700398e-01, 2.445134137142996e+00,
+             3.754408661907416e+00)
+
+
+def _acklam_ppf(p: float) -> float:
+    """Pure-python inverse normal CDF (Acklam, 2010). Valid for 0 < p < 1."""
+    p = min(max(float(p), 1e-12), 1.0 - 1e-12)
+    plow, phigh = 0.02425, 1.0 - 0.02425
+    if p < plow:
+        q = math.sqrt(-2.0 * math.log(p))
+        num = (((((_ACKLAM_C[0] * q + _ACKLAM_C[1]) * q + _ACKLAM_C[2]) * q
+                 + _ACKLAM_C[3]) * q + _ACKLAM_C[4]) * q + _ACKLAM_C[5])
+        den = ((((_ACKLAM_D[0] * q + _ACKLAM_D[1]) * q + _ACKLAM_D[2]) * q
+                + _ACKLAM_D[3]) * q + 1.0)
+        return num / den
+    if p > phigh:
+        q = math.sqrt(-2.0 * math.log(1.0 - p))
+        num = (((((_ACKLAM_C[0] * q + _ACKLAM_C[1]) * q + _ACKLAM_C[2]) * q
+                 + _ACKLAM_C[3]) * q + _ACKLAM_C[4]) * q + _ACKLAM_C[5])
+        den = ((((_ACKLAM_D[0] * q + _ACKLAM_D[1]) * q + _ACKLAM_D[2]) * q
+                + _ACKLAM_D[3]) * q + 1.0)
+        return -(num / den)
+    q = p - 0.5
+    r = q * q
+    return ((((((_ACKLAM_A[0] * r + _ACKLAM_A[1]) * r + _ACKLAM_A[2]) * r
+               + _ACKLAM_A[3]) * r + _ACKLAM_A[4]) * r + _ACKLAM_A[5]) * q
+            / (((((_ACKLAM_B[0] * r + _ACKLAM_B[1]) * r + _ACKLAM_B[2]) * r
+                 + _ACKLAM_B[3]) * r + _ACKLAM_B[4]) * r + 1.0))
+
+
+def _none_if_nan(x: Optional[float]) -> Optional[float]:
+    """Round to 4 dp, mapping NaN/None/unparseable values to None (JSON-safe)."""
+    try:
+        v = float(x)  # type: ignore[arg-type]
+    except (TypeError, ValueError):
+        return None
+    return None if math.isnan(v) else round(v, 4)
+
+
+def _skew_kurt(r: np.ndarray, mu: float) -> tuple:
+    """Sample skewness and Pearson (non-excess) kurtosis of `r` (normal → (0, 3))."""
+    dev = r - mu
+    m2 = float(np.mean(dev ** 2))
+    if m2 <= 0.0:
+        return 0.0, 3.0
+    m3 = float(np.mean(dev ** 3))
+    m4 = float(np.mean(dev ** 4))
+    return float(m3 / (m2 ** 1.5)), float(m4 / (m2 * m2))
+
+
+def diebold_mariano_test(loss_model: np.ndarray, loss_baseline: np.ndarray,
+                         h: int = 1, power: int = 2) -> Dict:
+    """
+    Diebold–Mariano test of equal predictive accuracy.
+
+    H0: E[d_t] = 0 with d_t = |loss_model_t|^power − |loss_baseline_t|^power.
+    A significantly NEGATIVE DM statistic means `loss_model` beats the baseline.
+
+    Pass per-period forecast errors (power=2 → squared-error loss, the classic
+    choice) or pre-computed non-negative losses (power=1). The long-run variance
+    is Newey–West HAC with lag h−1 (Bartlett weights); the p-value uses the
+    normal approximation (scipy.stats.norm when available, else math.erf).
+
+    Samples smaller than MIN_STAT_N return NaNs plus 'insufficient_data': True.
+    """
+    res: Dict[str, Any] = {"dm_stat": float("nan"), "p_value": float("nan"),
+                           "n": 0, "significant_5pct": False}
+    lm = np.asarray(loss_model, dtype=float).ravel()
+    lb = np.asarray(loss_baseline, dtype=float).ravel()
+    n0 = int(min(lm.size, lb.size))
+    lm, lb = lm[:n0], lb[:n0]
+    ok = ~(np.isnan(lm) | np.isnan(lb))
+    d = (np.abs(lm[ok]) ** power) - (np.abs(lb[ok]) ** power)
+    n = int(d.size)
+    res["n"] = n
+    if n < MIN_STAT_N:
+        res["insufficient_data"] = True
+        return res
+    mean_d = float(np.mean(d))
+    dev = d - mean_d
+    lrv = float(np.mean(dev * dev))                      # gamma_0
+    lag = max(0, int(h) - 1)
+    for k in range(1, lag + 1):                          # Newey–West, Bartlett weights
+        cov_k = float(np.mean(dev[k:] * dev[:-k]))
+        lrv += 2.0 * (1.0 - k / (lag + 1.0)) * cov_k
+    if lrv <= 1e-16:                                     # degenerate loss differential
+        if abs(mean_d) <= 1e-12:
+            res.update(dm_stat=0.0, p_value=1.0)
+        else:
+            res.update(dm_stat=math.copysign(1e9, mean_d), p_value=0.0,
+                       significant_5pct=True)
+        return res
+    dm = mean_d / math.sqrt(lrv / n)
+    p = 2.0 * (1.0 - _norm_cdf(abs(dm)))
+    p = min(max(p, 0.0), 1.0)
+    res.update(dm_stat=round(dm, 4), p_value=round(p, 6),
+               significant_5pct=bool(p < 0.05))
+    return res
+
+
+def probabilistic_sharpe_ratio(returns: np.ndarray, benchmark_sr: float = 0.0) -> Dict:
+    """
+    Probabilistic Sharpe Ratio (Bailey & Lopez de Prado, 2012).
+
+    P(true SR > benchmark_sr) given the track record, adjusted for the skewness
+    and Pearson kurtosis of `returns`. `returns` and `benchmark_sr` must share
+    the same period (e.g. daily). Returns {'psr', 'sr_hat', 'n'}; NaN plus
+    'insufficient_data': True below MIN_STAT_N observations.
+    """
+    res: Dict[str, Any] = {"psr": float("nan"), "sr_hat": float("nan"), "n": 0}
+    r = np.asarray(returns, dtype=float).ravel()
+    r = r[np.isfinite(r)]
+    n = int(r.size)
+    res["n"] = n
+    if n < MIN_STAT_N:
+        res["insufficient_data"] = True
+        return res
+    mu = float(np.mean(r))
+    sd = float(np.std(r, ddof=1))
+    if sd <= 1e-16:
+        res["insufficient_data"] = True
+        return res
+    sr = mu / sd
+    res["sr_hat"] = round(sr, 6)
+    skew, kurt = _skew_kurt(r, mu)
+    inner = 1.0 - skew * sr + ((kurt - 1.0) / 4.0) * sr * sr
+    if inner <= 1e-12:
+        res["insufficient_data"] = True
+        return res
+    z = (sr - float(benchmark_sr)) * math.sqrt(n - 1.0) / math.sqrt(inner)
+    res["psr"] = round(_norm_cdf(z), 6)
+    return res
+
+
+def deflated_sharpe_ratio(returns: np.ndarray, n_trials: int,
+                          benchmark_sr: float = 0.0) -> Dict:
+    """
+    Deflated Sharpe Ratio (Bailey & Lopez de Prado, 2014).
+
+    PSR computed against the expected MAXIMUM Sharpe producible by luck alone
+    after `n_trials` configuration attempts (Euler–Mascheroni approximation):
+
+        SR* = benchmark_sr + sqrt(Var[SR]) * [(1-γ)·Φ⁻¹(1-1/N) + γ·Φ⁻¹(1-1/(N·e))]
+
+    Var[SR] is estimated from this series' own skew/kurtosis (single-series
+    approximation). Returns {'dsr', 'sr_threshold', 'n_trials'}; NaN plus
+    'insufficient_data': True below MIN_STAT_N observations.
+    """
+    N = max(1, int(n_trials))
+    res: Dict[str, Any] = {"dsr": float("nan"), "sr_threshold": float("nan"),
+                           "n_trials": N}
+    r = np.asarray(returns, dtype=float).ravel()
+    r = r[np.isfinite(r)]
+    n = int(r.size)
+    if n < MIN_STAT_N:
+        res["insufficient_data"] = True
+        return res
+    mu = float(np.mean(r))
+    sd = float(np.std(r, ddof=1))
+    if sd <= 1e-16:
+        res["insufficient_data"] = True
+        return res
+    sr = mu / sd
+    skew, kurt = _skew_kurt(r, mu)
+    inner = 1.0 - skew * sr + ((kurt - 1.0) / 4.0) * sr * sr
+    if inner <= 1e-12:
+        res["insufficient_data"] = True
+        return res
+    var_sr = inner / (n - 1.0)
+    if N <= 1:
+        sr_star = float(benchmark_sr)
+    else:
+        t1 = _norm_ppf(1.0 - 1.0 / N)
+        t2 = _norm_ppf(1.0 - 1.0 / (N * math.e))
+        sr_star = float(benchmark_sr) + math.sqrt(var_sr) * (
+            (1.0 - EULER_MASCHERONI) * t1 + EULER_MASCHERONI * t2)
+    z = (sr - sr_star) * math.sqrt(n - 1.0) / math.sqrt(inner)
+    res.update(sr_threshold=round(sr_star, 6), dsr=round(_norm_cdf(z), 6))
+    return res
 
 
 # ─────────────────────────────────────────────
@@ -235,6 +489,39 @@ class TechnicalSignals:
 #  Backtest Engine
 # ─────────────────────────────────────────────
 
+def _load_costs_net_pnl():
+    """
+    Lazily resolve the optional ``engine.india_costs.net_pnl`` transaction-cost
+    hook (owned by a separate workstream). Returns None when the module is
+    absent, unimportable, or exposes no callable ``net_pnl``.
+    """
+    try:
+        from engine import india_costs  # type: ignore  # optional module
+    except Exception:
+        return None
+    fn = getattr(india_costs, "net_pnl", None)
+    return fn if callable(fn) else None
+
+
+def _apply_cost_hook(costs_fn, fallback_pnl: float, **ctx) -> tuple:
+    """
+    Call the india_costs hook for a net-of-costs PnL. Any failure (bad
+    signature, exception inside the hook) silently falls back to the gross
+    value, preserving pre-hook behaviour exactly. Returns (pnl, hook_applied).
+    """
+    if costs_fn is None:
+        return fallback_pnl, False
+    try:
+        return float(costs_fn(fallback_pnl, **ctx)), True
+    except TypeError:
+        try:
+            return float(costs_fn(fallback_pnl)), True
+        except Exception:
+            return fallback_pnl, False
+    except Exception:
+        return fallback_pnl, False
+
+
 class ZeroBacktestEngine:
     """
     ZERO's own walk-forward backtesting engine.
@@ -268,21 +555,32 @@ class ZeroBacktestEngine:
         signal_fn,          # fn(index, bars) → "BUY" | "SELL" | "EXIT" | None
         walk_forward: bool = True,
         train_frac:   float = 0.7,
+        embargo:      int   = 0,
     ) -> Dict:
         """
         Run a backtest over the provided bars.
         signal_fn receives (bar_index: int, bars: List[Dict]) and returns a signal string.
         Returns performance report dict.
+
+        `embargo` > 0 purges that many bars from the END of the training
+        partition (purged K-fold style leakage guard). The test partition is
+        unchanged; with embargo=0 (default) behaviour is identical to before.
         """
         if not bars or len(bars) < 10:
             return {"error": "Insufficient bars for backtesting (min 10)"}
+
+        # Optional India transaction-cost hook (engine.india_costs, separate
+        # workstream). None when the module is absent or exposes no net_pnl.
+        costs_fn = _load_costs_net_pnl()
+        cost_hit = False
 
         # Partition into train / test
         n_total = len(bars)
         if walk_forward:
             n_train = max(5, int(n_total * train_frac))
+            n_purge = min(max(0, int(embargo)), max(0, n_train - 5))
             test_bars  = bars[n_train:]
-            train_bars = bars[:n_train]
+            train_bars = bars[:n_train - n_purge]
         else:
             test_bars  = bars
             train_bars = bars
@@ -320,10 +618,15 @@ class ZeroBacktestEngine:
                 comm    = fill_px * position * self.commission_pct
                 raw_pnl = (fill_px - entry_px) * position
                 net_pnl = raw_pnl - comm
+                net_pnl, hit = _apply_cost_hook(costs_fn, net_pnl,
+                                                entry_price=entry_px, exit_price=fill_px,
+                                                qty=abs(position), side="LONG_EXIT",
+                                                date=bar.get("date", ""))
+                cost_hit = cost_hit or hit
                 pnl_lst.append(net_pnl)
                 current_equity += net_pnl - comm
                 trades.append({"type": "SELL", "price": fill_px, "date": bar.get("date", ""),
-                               "pnl": round(net_pnl, 2), "comm": comm})
+                               "pnl": round(net_pnl, 2), "gross_pnl": round(raw_pnl, 2), "comm": comm})
                 position = 0.0
 
             elif sig == "SHORT" and position == 0:
@@ -339,10 +642,15 @@ class ZeroBacktestEngine:
                 comm    = fill_px * abs(position) * self.commission_pct
                 raw_pnl = (entry_px - fill_px) * abs(position)
                 net_pnl = raw_pnl - comm
+                net_pnl, hit = _apply_cost_hook(costs_fn, net_pnl,
+                                                entry_price=entry_px, exit_price=fill_px,
+                                                qty=abs(position), side="SHORT_EXIT",
+                                                date=bar.get("date", ""))
+                cost_hit = cost_hit or hit
                 pnl_lst.append(net_pnl)
                 current_equity += net_pnl - comm
                 trades.append({"type": "COVER", "price": fill_px, "date": bar.get("date", ""),
-                               "pnl": round(net_pnl, 2), "comm": comm})
+                               "pnl": round(net_pnl, 2), "gross_pnl": round(raw_pnl, 2), "comm": comm})
                 position = 0.0
 
             # Mark-to-market open position
@@ -361,6 +669,8 @@ class ZeroBacktestEngine:
             "initial_capital": self.initial_capital,
             "trades":         trades[-20:],  # last 20 for display
             "walk_forward":   walk_forward,
+            "embargo":        int(embargo),
+            "cost_hook":      "india_costs" if cost_hit else None,
         })
         return report
 

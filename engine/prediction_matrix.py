@@ -2,7 +2,7 @@ from data.global_feeds import get_us_market_summary
 from data.gift_nifty import get_gift_nifty_price
 from data.adr_tracker import get_adr_delta
 from data.options_chain import fetch_nse_option_chain, process_option_chain
-from data.historical import get_recent_ohlc_and_atr
+from data.historical import get_recent_ohlc_and_atr, get_historical_data
 from data.market_news import get_global_news, analyze_sentiment
 from engine.opening_predictor import predict_opening_gap, get_opening_price
 from engine.range_predictor import calculate_envelopes, predict_high_low, sentiment_adjusted_levels, _predict_high_low_pure
@@ -33,7 +33,7 @@ INDEX_OPTIONS_SYMBOLS = {
 
 def _generate_single_index_prediction(index_name, us_summary, gift_price, adr_data,
                                        news_items, sentiment_data, range_config,
-                                       calibrator=None, news_overlay=None):
+                                       calibrator=None, news_overlay=None, india_vix=None):
     """
     Generates prediction for a single index using its own historical data,
     ATR, and options chain. Predictions are clamped to the allowed range.
@@ -93,8 +93,21 @@ def _generate_single_index_prediction(index_name, us_summary, gift_price, adr_da
     gap += sentiment_gap_adj
     pred_open = get_opening_price(spot_close, gap)
     
-    # Calculate Range
-    iv = 15.0
+    # Calculate Range — volatility now comes from the session-IV layer
+    # (EGARCH/GJR-GARCH → EWMA → ATR fallback, blended with India VIX).
+    # Degrades to the legacy 15.0 default when no data is available.
+    _hist_df = None
+    _vol_method = 'legacy_default'
+    _india_vix_used = None
+    try:
+        from engine.volatility_forecast import get_session_iv
+        _hist_df = get_historical_data(hist_key)
+        _vol = get_session_iv(_hist_df, india_vix)
+        iv = float(_vol.get('iv') or 15.0)
+        _vol_method = _vol.get('method', 'unknown')
+        _india_vix_used = _vol.get('vix_used')
+    except Exception:
+        iv = 15.0
     upper_b, lower_b = calculate_envelopes(pred_open, atr, iv)
     
     # Fetch options chain (if available for this index)
@@ -253,6 +266,10 @@ def _generate_single_index_prediction(index_name, us_summary, gift_price, adr_da
         'confidence': (calib.get('confidence') if calib else None),
         'model': (calib.get('model') if calib else 'baseline'),
         'news_shift_points': round(float(news_shift_pts), 1),
+        # Session-IV layer transparency
+        'iv_used': round(float(iv), 2),
+        'vol_method': _vol_method,
+        'india_vix': (round(float(_india_vix_used), 2) if _india_vix_used else None),
     }
 
     # ------------------------------------------------------------------
@@ -447,6 +464,46 @@ def _generate_single_index_prediction(index_name, us_summary, gift_price, adr_da
     except Exception:
         res['nautilus_order_suggestion'] = None
 
+    # ------------------------------------------------------------------
+    # TSFM Ensemble Leg (Chronos-2 / Kronos / TimesFM)
+    # Optional foundation-model forecast; fully no-op safe when the heavy
+    # deps are not installed. Attached alongside the calibrated envelope
+    # so the UI can show agreement/disagreement between the two families.
+    # ------------------------------------------------------------------
+    try:
+        from engine.tsfm_predictor import get_forecaster
+        if _hist_df is None:
+            _hist_df = get_historical_data(hist_key)
+        if _hist_df is not None:
+            _tsfm_fc = get_forecaster().forecast_ohlc(
+                _hist_df, horizon=1,
+                covariates={'gift_premium': gift_premium, 'vix': vix,
+                            'pcr': pcr, 'sentiment': sentiment_score})
+            res['tsfm_forecast'] = _tsfm_fc
+            if _tsfm_fc.get('status') == 'forecasted':
+                res['tsfm_blend'] = get_forecaster().compare_vs_point(_tsfm_fc, res)
+        else:
+            res['tsfm_forecast'] = None
+    except Exception:
+        res['tsfm_forecast'] = None
+
+    # ------------------------------------------------------------------
+    # Agent Debate Layer (TradingAgents-style bull/bear → PM verdict)
+    # Uses Gemini when an API key is configured; otherwise a deterministic
+    # offline fallback built from the consensus factors. Every verdict is
+    # logged to db/agent_decisions.jsonl for later accuracy scoring.
+    # ------------------------------------------------------------------
+    try:
+        from engine.agent_debate import debate as _run_agent_debate
+        res['agent_debate'] = _run_agent_debate(
+            index_name, res,
+            news_items=news_items,
+            sentiment_data=sentiment_data,
+            option_chain=options_data,
+        )
+    except Exception:
+        res['agent_debate'] = None
+
     return res
 
 
@@ -482,6 +539,14 @@ def _generate_prediction_matrix_raw(news_overlay=None):
     adr_data = get_adr_delta()
     news_items = get_global_news()
     sentiment_data = analyze_sentiment(news_items)
+
+    # 1b. India VIX — fetched once, shared across all three indices.
+    # Feeds the volatility-forecast layer (blended with GARCH/EWMA model IV).
+    try:
+        from data.india_vix import fetch_india_vix
+        india_vix_value = fetch_india_vix()
+    except Exception:
+        india_vix_value = None
     
     # 2. Get range config (auto-refreshes monthly)
     range_config = get_range_config()
@@ -522,7 +587,8 @@ def _generate_prediction_matrix_raw(news_overlay=None):
         try:
             idx_prediction = _generate_single_index_prediction(
                 index_name, us_summary, gift_price, adr_data,
-                news_items, sentiment_data, range_config, calibrator, news_overlay
+                news_items, sentiment_data, range_config, calibrator, news_overlay,
+                india_vix=india_vix_value
             )
             result[index_name] = idx_prediction
         except Exception as e:

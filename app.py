@@ -7,6 +7,21 @@ import json
 import base64
 from engine.prediction_matrix import generate_prediction_matrix, rederive_with_overlay
 from ui.components import apply_digital_core_theme, digital_clock_component, predicted_info_card, sidebar_news_section, show_zero_digital_splash, order_flow_table, automated_training_dashboard, learning_stats_card, render_zero_engine_modal, render_zero_brain_sidebar, render_youtube_knowledge_sidebar, render_trading_strategy_bubbles, render_forexfactory_priority_card, render_trading_agents_panel, render_quantdinge_strategy_card, render_fincept_thesis_card, render_nautilus_order_card, render_intermarket_card, render_options_greeks_card, render_live_price_ticker, render_zero_agi_sidebar, render_zero_agi_modal
+from ui.v11_components import (
+    render_session_iv_badge,
+    render_tsfm_forecast_card,
+    render_agent_debate_panel,
+    render_options_intelligence_card,
+    render_broker_control_panel,
+    render_provider_registry_panel,
+    render_ic_memo_generator,
+    render_backtest_stats_panel,
+)
+# ── KRONOS K-LINE FOUNDATION MODEL panel (vendored from open-source Kronos) ──
+try:
+    from ui.kronos_panel import render_kronos_terminal_panel
+except Exception:
+    render_kronos_terminal_panel = None
 from engine.learning_service import log_daily_feedback, get_feedback_logs, calculate_engine_accuracy, fetch_daily_actuals, update_feedback_logs, update_unfulfilled_feedback_logs, auto_train_engine
 from ui.charts import ohlc_range_chart, sentiment_gauge_chart
 from ui.news_feed import (
@@ -25,6 +40,79 @@ from engine.genetic_mutator import StrategyGeneticEngine
 from engine.monte_carlo import MonteCarloRiskEngine
 from engine.paper_brokerage import PaperBrokerage
 from data.mtf_features import build_mtf_features
+
+# ── Cyber UI modules (graceful fallback to legacy components) ─────────────────
+try:
+    from ui.cyber_theme import apply_cyber_theme, inject_reveal_boot_script
+except ImportError:
+    apply_cyber_theme = None
+    inject_reveal_boot_script = None
+
+try:
+    from ui.terminal_chrome import (
+        render_terminal_hero,
+        render_control_deck_divider,
+        inject_terminal_micro_interactions,
+        render_section_header,
+    )
+except ImportError:
+    render_terminal_hero = None
+    render_control_deck_divider = None
+    inject_terminal_micro_interactions = None
+    render_section_header = None
+
+try:
+    from ui.sidebar_cyber import (
+        show_zero_digital_splash as cyber_splash,
+        digital_clock_component as cyber_clock,
+        render_zero_agi_sidebar as cyber_agi_sidebar,
+        render_sidebar_brand_block,
+    )
+except ImportError:
+    cyber_splash = show_zero_digital_splash
+    cyber_clock = digital_clock_component
+    cyber_agi_sidebar = render_zero_agi_sidebar
+    render_sidebar_brand_block = None
+
+try:
+    from ui.cards_prediction import (
+        predicted_info_card as cyber_pred_card,
+        render_live_price_ticker as cyber_ticker,
+        order_flow_table as cyber_order_flow,
+    )
+except ImportError:
+    cyber_pred_card = predicted_info_card
+    cyber_ticker = render_live_price_ticker
+    cyber_order_flow = order_flow_table
+
+try:
+    from ui.cards_agents import (
+        render_trading_agents_panel as cyber_agents,
+        render_quantdinge_strategy_card as cyber_qd,
+        render_trading_strategy_bubbles as cyber_bubbles,
+        render_forexfactory_priority_card as cyber_ff,
+        render_agent_debate_panel as cyber_debate,
+    )
+except ImportError:
+    cyber_agents = render_trading_agents_panel
+    cyber_qd = render_quantdinge_strategy_card
+    cyber_bubbles = render_trading_strategy_bubbles
+    cyber_ff = render_forexfactory_priority_card
+    cyber_debate = render_agent_debate_panel
+
+try:
+    from ui.cards_fincept import (
+        render_fincept_thesis_card as cyber_fincept,
+        render_nautilus_order_card as cyber_nautilus,
+        render_intermarket_card as cyber_inter,
+        render_options_greeks_card as cyber_greeks,
+    )
+except ImportError:
+    cyber_fincept = render_fincept_thesis_card
+    cyber_nautilus = render_nautilus_order_card
+    cyber_inter = render_intermarket_card
+    cyber_greeks = render_options_greeks_card
+# ──────────────────────────────────────────────────────────────────────────────
 
 # ── ZERO Live Price Server ─────────────────────────────────────────────────────
 # Ensure price server is launched on boot
@@ -79,6 +167,16 @@ st.set_page_config(
 
 # Apply Theme
 apply_digital_core_theme()
+if apply_cyber_theme is not None:
+    try:
+        apply_cyber_theme()
+    except Exception:
+        pass
+if inject_reveal_boot_script is not None:
+    try:
+        inject_reveal_boot_script()
+    except Exception:
+        pass
 request_notification_permission()
 
 # ── Automated Virtual Environment Check & Setup ────────────────────────────
@@ -175,7 +273,7 @@ else:
             _should_full = True
 
 if _should_full and not _show_splash_this_session:
-    show_zero_digital_splash()
+    cyber_splash()
     st.session_state['_splash_shown'] = True
 
     # Fast cache retrieval for instant bootup
@@ -407,16 +505,31 @@ except Exception:
 # Sidebar: ZERO ENGINE button (above DATA) + DATA section
 with st.sidebar:
     # ── ZERO ENGINE Section ───────────────────────────────────────────────────
-    st.markdown("""
-    <div style="margin-bottom: 4px;">
-      <span style="font-family:'Orbitron',sans-serif;font-weight:900;font-size:1rem;
-                   color:#fff;letter-spacing:3px;">ZERO</span>
-      <span style="font-family:'Orbitron',sans-serif;font-weight:900;font-size:1rem;
-                   color:#E50914;letter-spacing:3px;"> ENGINE</span>
-    </div>
-    <p style="font-size:0.5rem;color:#333;letter-spacing:2px;margin:-2px 0 8px 0;
-              text-transform:uppercase;">AI INTELLIGENCE CORE · GEMINI</p>
-    """, unsafe_allow_html=True)
+    if render_sidebar_brand_block is not None:
+        try:
+            render_sidebar_brand_block()
+        except Exception:
+            st.markdown("""
+            <div style="margin-bottom: 4px;">
+              <span style="font-family:'Orbitron',sans-serif;font-weight:900;font-size:1rem;
+                           color:#fff;letter-spacing:3px;">ZERO</span>
+              <span style="font-family:'Orbitron',sans-serif;font-weight:900;font-size:1rem;
+                           color:#E50914;letter-spacing:3px;"> ENGINE</span>
+            </div>
+            <p style="font-size:0.5rem;color:#333;letter-spacing:2px;margin:-2px 0 8px 0;
+                      text-transform:uppercase;">AI INTELLIGENCE CORE · GEMINI</p>
+            """, unsafe_allow_html=True)
+    else:
+        st.markdown("""
+        <div style="margin-bottom: 4px;">
+          <span style="font-family:'Orbitron',sans-serif;font-weight:900;font-size:1rem;
+                       color:#fff;letter-spacing:3px;">ZERO</span>
+          <span style="font-family:'Orbitron',sans-serif;font-weight:900;font-size:1rem;
+                       color:#E50914;letter-spacing:3px;"> ENGINE</span>
+        </div>
+        <p style="font-size:0.5rem;color:#333;letter-spacing:2px;margin:-2px 0 8px 0;
+                  text-transform:uppercase;">AI INTELLIGENCE CORE · GEMINI</p>
+        """, unsafe_allow_html=True)
 
     if st.button("⚡ OPEN ZERO ENGINE", key="open_zero_engine_btn"):
         st.session_state['show_zero_engine'] = True
@@ -425,7 +538,7 @@ with st.sidebar:
     st.markdown("---")
 
     # ── ZERO AGI Section ──────────────────────────────────────────────────────
-    render_zero_agi_sidebar()
+    cyber_agi_sidebar()
 
     st.markdown("---")
 
@@ -542,18 +655,18 @@ if _breaking:
     render_breaking_banner(_breaking)
 
 # Perfectly Centered Clock
-digital_clock_component()
+cyber_clock()
 
 # Live scrolling headline ribbon.
 render_news_ticker(st.session_state.get('news_feed', []))
 
 # ForexFactory Priority #1 Macro Feed Banner
-render_forexfactory_priority_card(st.session_state.get('news_feed') or m.get('latest_news'))
+cyber_ff(st.session_state.get('news_feed') or m.get('latest_news'))
 
 st.markdown("<div style='margin-bottom: 20px;'></div>", unsafe_allow_html=True)
 
 # Six-Page System (Tabs)
-tab1, tab2, tab3, tab6, tab_trading, tab4, tab5 = st.tabs(["NIFTY 50", "BANKNIFTY", "SENSEX", "GLOBAL NEWS", "TRADING TERMINAL", "LEARNING LAB", "PREDICTION HISTORY"])
+tab1, tab2, tab3, tab6, tab_trading, tab_kronos, tab4, tab5 = st.tabs(["NIFTY 50", "BANKNIFTY", "SENSEX", "GLOBAL NEWS", "TRADING TERMINAL", "KRONOS ENGINE", "LEARNING LAB", "PREDICTION HISTORY"])
 
 # UI: remember active tab across auto-refreshes; badge unread breaking items.
 persist_active_tab()
@@ -583,40 +696,65 @@ def render_market_page(symbol, data, key_prefix):
     except Exception:
         _live_q = None
 
-    st.markdown(f"<p class='gold-title'>01 // {symbol} PREDICTION VECTOR</p>", unsafe_allow_html=True)
+    if render_section_header is not None:
+        try:
+            render_section_header("01", f"{symbol} PREDICTION VECTOR")
+        except Exception:
+            st.markdown(f"<p class='gold-title'>01 // {symbol} PREDICTION VECTOR</p>", unsafe_allow_html=True)
+    else:
+        st.markdown(f"<p class='gold-title'>01 // {symbol} PREDICTION VECTOR</p>", unsafe_allow_html=True)
+    render_session_iv_badge(data)  # V1.1: volatility layer badge
+
     col1, col2 = st.columns([1.8, 1.2])
     with col1:
-        predicted_info_card(symbol, data)
+        cyber_pred_card(symbol, data)
     with col2:
         # Live price widget sits above Order Block Depth
-        render_live_price_ticker(symbol, live_quote=_live_q)
+        cyber_ticker(symbol, live_quote=_live_q)
         st.markdown("<div class='digital-card' style='margin-top:10px;'>", unsafe_allow_html=True)
         st.markdown("<p class='label-grey'>Order Block Depth</p>", unsafe_allow_html=True)
-        order_flow_table(data)
+        cyber_order_flow(data)
         st.markdown("</div>", unsafe_allow_html=True)
 
     # TradingAgents Multi-Agent Consensus & QuantDinger Strategy Setup
     if data.get('agent_consensus'):
-        render_trading_agents_panel(data.get('agent_consensus'))
+        cyber_agents(data.get('agent_consensus'))
     if data.get('quant_strategy'):
-        render_quantdinge_strategy_card(data.get('quant_strategy'))
+        cyber_qd(data.get('quant_strategy'))
+
+    # V1.1: Agent Debate panel (TradingAgents-style PM verdict)
+    if data.get('agent_debate'):
+        cyber_debate(data.get('agent_debate'))
+
+    # V1.1: TSFM ensemble forecast card
+    if data.get('tsfm_forecast'):
+        render_tsfm_forecast_card(data.get('tsfm_forecast'))
 
     # ── New: Fincept Quant Team Thesis + Inter-Market + Greeks + Nautilus Orders ──
     # Rendered in a 2-col layout for space efficiency
     _col_left, _col_right = st.columns([1.4, 1])
     with _col_left:
         if data.get('fincept_thesis'):
-            render_fincept_thesis_card(data.get('fincept_thesis'))
+            cyber_fincept(data.get('fincept_thesis'))
         if data.get('nautilus_order_suggestion'):
-            render_nautilus_order_card(data.get('nautilus_order_suggestion'))
+            cyber_nautilus(data.get('nautilus_order_suggestion'))
     with _col_right:
         if data.get('fincept_intermarket'):
-            render_intermarket_card(data.get('fincept_intermarket'))
+            cyber_inter(data.get('fincept_intermarket'))
         if data.get('fincept_greeks'):
-            render_options_greeks_card(data.get('fincept_greeks'))
+            cyber_greeks(data.get('fincept_greeks'))
+
+    # V1.1: Options intelligence (OI-change, IV smile, multi-leg strategies)
+    render_options_intelligence_card(data.get('options_data'), data)
 
 
-    st.markdown(f"<p class='gold-title'>02 // {symbol} VOLATILITY OVERLAY</p>", unsafe_allow_html=True)
+    if render_section_header is not None:
+        try:
+            render_section_header("02", f"{symbol} VOLATILITY OVERLAY")
+        except Exception:
+            st.markdown(f"<p class='gold-title'>02 // {symbol} VOLATILITY OVERLAY</p>", unsafe_allow_html=True)
+    else:
+        st.markdown(f"<p class='gold-title'>02 // {symbol} VOLATILITY OVERLAY</p>", unsafe_allow_html=True)
 
     fig = go.Figure()
     fig.add_hline(y=data['prev_close'], line_dash="dot", line_color="#333")
@@ -635,7 +773,13 @@ def render_market_page(symbol, data, key_prefix):
     st.plotly_chart(fig, width='stretch', key=f"{key_prefix}_v", config={'displayModeBar': False})
 
     st.markdown("<div style='margin: 40px 0;'></div>", unsafe_allow_html=True)
-    st.markdown(f"<p class='gold-title'>03 // INTRADAY PROBABILITY CLOUD</p>", unsafe_allow_html=True)
+    if render_section_header is not None:
+        try:
+            render_section_header("03", "INTRADAY PROBABILITY CLOUD")
+        except Exception:
+            st.markdown("<p class='gold-title'>03 // INTRADAY PROBABILITY CLOUD</p>", unsafe_allow_html=True)
+    else:
+        st.markdown("<p class='gold-title'>03 // INTRADAY PROBABILITY CLOUD</p>", unsafe_allow_html=True)
     st.plotly_chart(ohlc_range_chart(data), width='stretch', key=f"{key_prefix}_c", config={'displayModeBar': False})
 
 # Page Routing — each index gets its own independent prediction data
@@ -644,11 +788,36 @@ with tab2: render_market_page("BANKNIFTY", m.get("BANKNIFTY", {}), "b1")
 with tab3: render_market_page("SENSEX", m.get("SENSEX", {}), "s1")
 
 with tab_trading:
+    if render_terminal_hero is not None:
+        try:
+            render_terminal_hero()
+        except Exception:
+            pass
+    if render_control_deck_divider is not None:
+        try:
+            render_control_deck_divider()
+        except Exception:
+            pass
+    if inject_terminal_micro_interactions is not None:
+        try:
+            inject_terminal_micro_interactions()
+        except Exception:
+            pass
+
     st.markdown("<h2 class='gold-title'>QUANTUM TRADING TERMINAL</h2>", unsafe_allow_html=True)
-    st.markdown("<p class='label-grey' style='margin-bottom: 20px;'>Multi-timeframe execution, risk management, and genetic optimization.</p>", unsafe_allow_html=True)
-    
+    st.markdown("<p class='label-grey' style='margin-bottom: 20px;'>Multi-timeframe execution, risk management, genetic optimization, and V1.1 intelligence controls.</p>", unsafe_allow_html=True)
+
+    # V1.1: top control bar — broker, provider health, IC memo
+    v11_ctrl_1, v11_ctrl_2, v11_ctrl_3 = st.columns([1, 1, 1])
+    with v11_ctrl_1:
+        render_broker_control_panel()
+    with v11_ctrl_2:
+        render_provider_registry_panel()
+    with v11_ctrl_3:
+        render_ic_memo_generator(m)
+
     # Strategy & Risk Advisory Bubbles (Top Section)
-    render_trading_strategy_bubbles(m, st.session_state.get('news_feed'))
+    cyber_bubbles(m, st.session_state.get('news_feed'))
     
     # 1. XGBoost Predictor Section
     with st.expander("🤖 MULTI-TIMEFRAME XGBOOST PREDICTOR", expanded=False):
@@ -1018,11 +1187,22 @@ with tab_trading:
                 st.info("Configure and run the strategy suite to see ranked performance analytics.")
             st.markdown("</div>", unsafe_allow_html=True)
 
+with tab_kronos:
+    # ── KRONOS ENGINE TAB — K-line foundation model console (vendored from open-source Kronos) ──
+    if render_kronos_terminal_panel is not None:
+        render_kronos_terminal_panel()
+    else:
+        st.caption("Kronos K-line foundation model panel unavailable (ui/kronos_panel.py failed to import).")
+
 with tab4:
 
     st.markdown("<h2 class='gold-title'>ULTRA-LOW LATENCY LEARNING CORE</h2>", unsafe_allow_html=True)
-    st.markdown("<p class='label-grey' style='margin-bottom: 40px;'>Autonomous parameter correction and systemic validation.</p>", unsafe_allow_html=True)
-    
+    st.markdown("<p class='label-grey' style='margin-bottom: 40px;'>Autonomous parameter correction, systemic validation, and V1.1 statistical rigor.</p>", unsafe_allow_html=True)
+
+    # V1.1: statistical validation panel (DM / PSR / DSR / embargo / costs)
+    with st.expander("📈 WALK-FORWARD STATISTICAL VALIDATION (DM / PSR / DSR)", expanded=False):
+        render_backtest_stats_panel()
+
     col_f, col_s = st.columns([1.5, 1])
     
     with col_f:

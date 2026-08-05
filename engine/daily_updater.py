@@ -102,6 +102,23 @@ def run_daily_update():
         logger.error(f"Failed to generate predictions: {e}")
         matrix = {}
 
+    # Step 3b: Write the deterministic daily IC memo to the Obsidian vault
+    logger.info("Step 3b: Writing daily IC memo to Obsidian vault...")
+    try:
+        if matrix and 'error' not in matrix:
+            from engine.report_generator import memo_from_latest
+            _debate = None
+            try:
+                _debate = (matrix.get('NIFTY 50') or {}).get('agent_debate')
+            except Exception:
+                _debate = None
+            memo_path = memo_from_latest(matrix=matrix, debate=_debate)
+            logger.info(f"  Daily IC memo written: {memo_path}")
+        else:
+            logger.info("  Skipped — no valid prediction matrix this cycle.")
+    except Exception as e:
+        logger.error(f"IC memo generation failed: {e}")
+
     # Step 4: Log daily predictions for the upcoming trading session
     logger.info(f"Step 4: Logging predictions for upcoming session {next_session_date}...")
     try:

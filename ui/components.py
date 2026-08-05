@@ -157,6 +157,15 @@ def apply_digital_core_theme():
     </style>
     """, unsafe_allow_html=True)
 
+    # Layer cyber theme when available (other agents land ui.cyber_theme in parallel).
+    try:
+        from ui.cyber_theme import apply_cyber_theme as _apply_cyber_theme
+        _apply_cyber_theme()
+    except ImportError:
+        pass
+    except Exception:
+        pass
+
 import base64
 import os
 import streamlit as st

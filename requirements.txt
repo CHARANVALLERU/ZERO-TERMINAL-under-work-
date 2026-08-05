@@ -35,3 +35,21 @@ google-generativeai>=0.7.0
 # ── YouTube Context Ingestion ───────────────────────────────────────
 youtube-transcript-api>=1.2.4
 yt-dlp
+
+# ── Optional: Volatility & TSFM ensemble legs ───────────────────────
+# All optional — the engine degrades gracefully (EWMA / no-op) without them.
+# arch                     # EGARCH/GJR-GARCH volatility forecasts (engine/volatility_forecast.py)
+# chronos-forecasting      # Chronos-2 TSFM leg (engine/tsfm_predictor.py; pulls torch)
+# torch                    # Chronos-2 / Kronos / TimesFM backend
+# timesfm[torch]           # TimesFM 2.5 leg
+
+# ── Optional: KRONOS ENGINE — K-line foundation model (vendored) ────
+# Kronos is VENDORED at engine/kronos/ — no repo clone or KRONOS_REPO_PATH
+# needed anymore. Without torch (heavy — uncomment above or install
+# manually) the KRONOS ENGINE tab sits in OFFLINE/STANDBY mode and the
+# rest of the terminal degrades gracefully.
+einops                     # tensor ops for the vendored model (engine/kronos/)
+huggingface_hub            # pulls NeoQuasar/Kronos-* weights on first LOAD MODEL
+safetensors                # safe/fast checkpoint loading
+tqdm                       # progress bars (weight download / finetune loops)
+pyyaml                     # finetune configs (engine/kronos_finetune/configs/)

@@ -1,0 +1,20 @@
+{
+  "NSE": {
+    "success": 1,
+    "failure": 0,
+    "health": 1.0,
+    "updated": "2026-08-05T14:22:23.693171"
+  },
+  "BSE": {
+    "success": 0,
+    "failure": 0,
+    "health": 0.5,
+    "updated": "2026-08-05T14:22:23.693178"
+  },
+  "yfinance": {
+    "success": 0,
+    "failure": 0,
+    "health": 0.5,
+    "updated": "2026-08-05T14:22:23.693182"
+  }
+}

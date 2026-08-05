@@ -12,6 +12,7 @@ Usage
     python cli.py backtest           # walk-forward evaluation on the feedback log
     python cli.py update             # run the full daily update cycle
     python cli.py accuracy           # baseline accuracy report from the log
+    python cli.py memo               # write today's IC memo to the Obsidian vault
 """
 import sys
 import json
@@ -53,12 +54,26 @@ def _accuracy():
     _print_report("BASELINE ACCURACY", evaluate_baseline())
 
 
+def _memo():
+    from engine.prediction_matrix import generate_prediction_matrix
+    from engine.report_generator import memo_from_latest
+    m = generate_prediction_matrix()
+    debate = None
+    try:
+        debate = (m.get('NIFTY 50') or {}).get('agent_debate')
+    except Exception:
+        debate = None
+    path = memo_from_latest(matrix=m, debate=debate)
+    print(f"IC memo written: {path}")
+
+
 _COMMANDS = {
     "predict": _predict,
     "train": _train,
     "backtest": _backtest,
     "update": _update,
     "accuracy": _accuracy,
+    "memo": _memo,
 }
 
 
