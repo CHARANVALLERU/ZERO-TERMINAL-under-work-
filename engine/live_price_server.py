@@ -540,6 +540,11 @@ html,body{{width:100%;height:100%;background:#0a0a0e;font-family:'Inter',system-
 </html>"""
 
 
+# Client dropped the socket mid-response (ticker poll / iframe reload).
+# On Windows this surfaces as ConnectionAbortedError WinError 10053.
+_CLIENT_ABORT_ERRORS = (BrokenPipeError, ConnectionAbortedError, ConnectionResetError)
+
+
 # ── HTTP Handler ────────────────────────────────────────────────────────────────
 class PriceHandler(BaseHTTPRequestHandler):
     """Handles GET requests from the browser iframe."""
@@ -547,31 +552,47 @@ class PriceHandler(BaseHTTPRequestHandler):
     def log_message(self, fmt, *args):  # silence default access log
         pass
 
+    def _safe_wfile_write(self, data: bytes) -> None:
+        """Write response body; ignore client disconnects (no traceback spam)."""
+        try:
+            self.wfile.write(data)
+        except _CLIENT_ABORT_ERRORS:
+            pass
+
     def _send_json(self, payload: dict, status: int = 200) -> None:
         body = json.dumps(payload).encode("utf-8")
-        self.send_response(status)
-        self.send_header("Content-Type", "application/json; charset=utf-8")
-        self.send_header("Content-Length", str(len(body)))
-        self.send_header("Access-Control-Allow-Origin", "*")
-        self.send_header("Access-Control-Allow-Methods", "GET, OPTIONS")
-        self.send_header("Cache-Control", "no-cache, no-store")
-        self.end_headers()
-        self.wfile.write(body)
+        try:
+            self.send_response(status)
+            self.send_header("Content-Type", "application/json; charset=utf-8")
+            self.send_header("Content-Length", str(len(body)))
+            self.send_header("Access-Control-Allow-Origin", "*")
+            self.send_header("Access-Control-Allow-Methods", "GET, OPTIONS")
+            self.send_header("Cache-Control", "no-cache, no-store")
+            self.end_headers()
+            self._safe_wfile_write(body)
+        except _CLIENT_ABORT_ERRORS:
+            pass
 
     def _send_html(self, body_bytes: bytes, status: int = 200) -> None:
-        self.send_response(status)
-        self.send_header("Content-Type", "text/html; charset=utf-8")
-        self.send_header("Content-Length", str(len(body_bytes)))
-        self.send_header("Cache-Control", "no-cache, no-store")
-        self.send_header("Access-Control-Allow-Origin", "*")
-        self.end_headers()
-        self.wfile.write(body_bytes)
+        try:
+            self.send_response(status)
+            self.send_header("Content-Type", "text/html; charset=utf-8")
+            self.send_header("Content-Length", str(len(body_bytes)))
+            self.send_header("Cache-Control", "no-cache, no-store")
+            self.send_header("Access-Control-Allow-Origin", "*")
+            self.end_headers()
+            self._safe_wfile_write(body_bytes)
+        except _CLIENT_ABORT_ERRORS:
+            pass
 
     def do_OPTIONS(self):
-        self.send_response(200)
-        self.send_header("Access-Control-Allow-Origin", "*")
-        self.send_header("Access-Control-Allow-Methods", "GET, OPTIONS")
-        self.end_headers()
+        try:
+            self.send_response(200)
+            self.send_header("Access-Control-Allow-Origin", "*")
+            self.send_header("Access-Control-Allow-Methods", "GET, OPTIONS")
+            self.end_headers()
+        except _CLIENT_ABORT_ERRORS:
+            pass
 
     def do_GET(self):
         parsed = urlparse(self.path)

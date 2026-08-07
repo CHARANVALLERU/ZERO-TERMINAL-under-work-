@@ -1,0 +1,28 @@
+# ZERO Streamlit config — watcher hardening
+# Streamlit 1.61+: server.fileWatcherType / server.folderWatchBlacklist
+# Root cause mitigated: local_sources_watcher.get_module_paths walking
+# transformers' lazy __getattr__ (vision modules → torchvision).
+
+[server]
+# poll is more stable than watchdog on Windows with large trees / venvs.
+# Use "none" only if you want zero auto-reload (production lock-down).
+fileWatcherType = "poll"
+
+# Extra ignores (Streamlit already skips **/site-packages and **/.*).
+# Keep .venv explicit so Windows path variants never slip through.
+folderWatchBlacklist = [
+    ".venv",
+    ".venv/Lib/site-packages",
+    ".git",
+    "__pycache__",
+    ".pytest_cache",
+    "obsidian_vault",
+    "sandbox",
+]
+
+[browser]
+gatherUsageStats = false
+
+[runner]
+# Avoid noisy reruns from file touches under heavy ML installs.
+fastReruns = true

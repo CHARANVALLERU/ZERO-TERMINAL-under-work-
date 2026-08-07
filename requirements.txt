@@ -4,9 +4,12 @@ numpy
 pandas
 requests
 
-# ── UI ───────────────────────────────────────────────────────────────
+# ── UI (Streamlit terminal) ──────────────────────────────────────────
 streamlit
 plotly
+Pillow                 # AGI vision / screenshot paths (PIL)
+mss                    # multi-monitor screen capture fallback (ui/components.py)
+streamlit-autorefresh  # live-feed auto-refresh (optional; UI degrades without)
 
 # ── Live data ingestion ──────────────────────────────────────────────
 yfinance
@@ -17,19 +20,23 @@ vaderSentiment
 pytz
 
 # ── Persistence ──────────────────────────────────────────────────────
+# db/ uses stdlib sqlite3; SQLAlchemy is unused by app code today but kept
+# for tooling / future ORM. pyarrow is optional (parquet feature-store).
 SQLAlchemy
-pyarrow            # feature-store parquet (optional; degrades gracefully)
+pyarrow                # feature-store parquet (optional; degrades gracefully)
 
 # ── Optional ML accelerators ─────────────────────────────────────────
-# The calibration layer auto-detects and uses these when present, but
-# falls back to a built-in pure-numpy ridge model if they are absent.
+# Calibrator uses pure-numpy ridge; xgboost is auto-detected when present.
+# scikit-learn / joblib are not imported by ZERO today (safe extras / ecosystem).
 scikit-learn
 xgboost
-scipy
+scipy                  # advanced_backtest stats helpers (lazy; optional)
 joblib
 
 # ── ZERO ENGINE — Gemini AI ──────────────────────────────────────────
-# Free-tier Gemini API. Install: pip install google-generativeai
+# Prefer google-genai (new SDK). Legacy google-generativeai still works as
+# fallback in gemini_chat / agent_debate / zero_agi_engine.
+google-genai>=1.0.0
 google-generativeai>=0.7.0
 
 # ── YouTube Context Ingestion ───────────────────────────────────────
@@ -38,18 +45,39 @@ yt-dlp
 
 # ── Optional: Volatility & TSFM ensemble legs ───────────────────────
 # All optional — the engine degrades gracefully (EWMA / no-op) without them.
-# arch                     # EGARCH/GJR-GARCH volatility forecasts (engine/volatility_forecast.py)
+# arch                     # EGARCH/GJR-GARCH (engine/volatility_forecast.py)
 # chronos-forecasting      # Chronos-2 TSFM leg (engine/tsfm_predictor.py; pulls torch)
-# torch                    # Chronos-2 / Kronos / TimesFM backend
-# timesfm[torch]           # TimesFM 2.5 leg
+# timesfm[torch]           # TimesFM 2.5 leg (heavy; often hard on bleeding-edge Python)
 
 # ── Optional: KRONOS ENGINE — K-line foundation model (vendored) ────
 # Kronos is VENDORED at engine/kronos/ — no repo clone or KRONOS_REPO_PATH
-# needed anymore. Without torch (heavy — uncomment above or install
-# manually) the KRONOS ENGINE tab sits in OFFLINE/STANDBY mode and the
-# rest of the terminal degrades gracefully.
+# needed. Without torch the KRONOS ENGINE tab sits in OFFLINE/STANDBY and
+# the rest of the terminal degrades gracefully.
+# Public NeoQuasar/Kronos-* models work without a token; optional HF_TOKEN
+# (or HUGGING_FACE_HUB_TOKEN) raises Hub rate limits when set (see run.bat).
+# torch                    # Chronos-2 / Kronos / TimesFM backend (heavy)
+# torchvision              # required for quiet Streamlit+transformers (watcher
+#                          # probes vision modules → ModuleNotFoundError spam
+#                          # without it). Must match torch CPU/CUDA build
+#                          # (e.g. torch 2.13.0+cpu ↔ torchvision 0.28.0+cpu).
 einops                     # tensor ops for the vendored model (engine/kronos/)
 huggingface_hub            # pulls NeoQuasar/Kronos-* weights on first LOAD MODEL
 safetensors                # safe/fast checkpoint loading
 tqdm                       # progress bars (weight download / finetune loops)
 pyyaml                     # finetune configs (engine/kronos_finetune/configs/)
+# accelerate               # optional HF/Chronos ecosystem; not required by vendored Kronos
+
+# ── ZERO AITE — Automated Intelligent Trading Environment ───────────
+# Daemon (`python -m engine.aite.daemon`) and generation runner
+# (`python -m engine.aite.runner`) need the ZERO core stack above:
+#   numpy, pandas          — breed / OOS exam / backtest / portfolio
+#   requests, yfinance     — OHLC load path (exam.load_market_frame)
+#   pytz                   — IST scheduling helpers (premarket 08:45)
+# Streamlit UI tab also uses plotly (already listed). The 3D bot graph is
+# custom canvas JS in ui/aite/graph_3d.py — no three.js / npm package
+# (nothing to pip-install; no CDN three.js dependency).
+#
+# Optional MT5 paper path (Windows + MetaTrader 5 terminal required).
+# Lazy-imported in engine/aite/mt5_adapter.py — AITE runs on local paper
+# sim without it. Enable with ZERO_AITE_MT5=1 (see .env.example).
+# MetaTrader5            # pip install MetaTrader5  (optional; Windows)

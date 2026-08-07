@@ -24,16 +24,18 @@ _FALLBACK_CSS = r"""
 @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Inter:wght@300;400;600;800&display=swap');
 
 :root {
+  --zero-black: #000000;
+  --zero-red: #E50914;
+  --zero-white: #ffffff;
+  --zero-gold: #D4AF37;
+  --zero-yellow: #FFD600;
+  --zero-green: #00ff88;
   --zero-bg: #000000;
   --zero-bg-elev: #0a0a0a;
-  --zero-red: #E50914;
-  --zero-gold: #D4AF37;
   --zero-neon: #00ff88;
   --zero-neon-alt: #00E676;
-  --zero-cyan: #00B0FF;
-  --zero-white: #ffffff;
-  --zero-muted: #666666;
-  --zero-muted-2: #888888;
+  --zero-muted: rgba(255, 255, 255, 0.40);
+  --zero-muted-2: rgba(255, 255, 255, 0.55);
   --zero-border: #1a1a1a;
   --zero-font-display: 'Orbitron', sans-serif;
   --zero-font-body: 'Inter', sans-serif;
@@ -42,6 +44,12 @@ _FALLBACK_CSS = r"""
 html { scroll-behavior: smooth; }
 ::-webkit-scrollbar { display: none !important; }
 html, body { -ms-overflow-style: none !important; scrollbar-width: none !important; }
+
+/* Keep Streamlit shell at viewport height (prevents blank black page). */
+html, body, #root, .withScreencast, .stApp, [data-testid="stAppViewContainer"] {
+  height: 100% !important;
+  min-height: 100vh !important;
+}
 
 body, [data-testid="stAppViewContainer"] {
   background: var(--zero-bg);
@@ -56,18 +64,19 @@ body, [data-testid="stAppViewContainer"] {
   background-image:
     radial-gradient(ellipse 80% 60% at 50% 0%, rgba(229, 9, 20, 0.08), transparent 55%),
     radial-gradient(ellipse 100% 100% at 50% 50%, transparent 40%, rgba(0, 0, 0, 0.75) 100%),
-    linear-gradient(rgba(0, 176, 255, 0.03) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(0, 176, 255, 0.03) 1px, transparent 1px);
+    linear-gradient(rgba(212, 175, 55, 0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(212, 175, 55, 0.03) 1px, transparent 1px);
   background-size: 100% 100%, 100% 100%, 48px 48px, 48px 48px;
   background-attachment: fixed;
   position: relative;
+  overflow: auto !important;
 }
 .stApp::before {
   content: "";
   pointer-events: none;
   position: fixed;
   inset: 0;
-  z-index: 9998;
+  z-index: 1;
   background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.12) 2px, rgba(0,0,0,0.12) 4px);
   opacity: 0.35;
   animation: zero-scanline-drift 8s linear infinite;
@@ -77,8 +86,15 @@ body, [data-testid="stAppViewContainer"] {
   pointer-events: none;
   position: fixed;
   inset: 0;
-  z-index: 9997;
+  z-index: 1;
   background: radial-gradient(ellipse at center, transparent 50%, rgba(0,0,0,0.55) 100%);
+}
+[data-testid="stAppViewContainer"],
+[data-testid="stHeader"],
+[data-testid="stSidebar"],
+[data-testid="stBottom"] {
+  position: relative;
+  z-index: 2;
 }
 @keyframes zero-scanline-drift { 0% { transform: translateY(0); } 100% { transform: translateY(4px); } }
 
@@ -173,9 +189,9 @@ body, [data-testid="stAppViewContainer"] {
 @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 @keyframes slideUpFade { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: translateY(0); } }
 .reveal-up, .digital-card, [data-reveal] {
-  opacity: 1;
+  opacity: 1 !important;
   transform: none;
-  animation: slideUpFade 0.45s cubic-bezier(0.22,0.61,0.36,1) both;
+  animation: slideUpFade 0.45s cubic-bezier(0.22,0.61,0.36,1);
 }
 .reveal-delay-1 { animation-delay: 0.05s; }
 .reveal-delay-2 { animation-delay: 0.12s; }
@@ -189,7 +205,7 @@ body, [data-testid="stAppViewContainer"] {
 
 .zero-glitch { position: relative; display: inline-block; color: var(--zero-white); font-family: var(--zero-font-display); text-shadow: 0 0 8px rgba(229,9,20,0.4); }
 .zero-glitch::before, .zero-glitch::after { content: attr(data-text); position: absolute; left: 0; top: 0; width: 100%; overflow: hidden; opacity: 0.8; }
-.zero-glitch::before { color: var(--zero-cyan); clip-path: inset(0 0 55% 0); transform: translate(-2px,0); animation: glitch-a 2.4s infinite linear alternate-reverse; }
+.zero-glitch::before { color: var(--zero-gold); clip-path: inset(0 0 55% 0); transform: translate(-2px,0); animation: glitch-a 2.4s infinite linear alternate-reverse; }
 .zero-glitch::after { color: var(--zero-red); clip-path: inset(45% 0 0 0); transform: translate(2px,0); animation: glitch-b 2.1s infinite linear alternate-reverse; }
 @keyframes glitch-a { 0%{transform:translate(0)} 20%{transform:translate(-2px,1px)} 40%{transform:translate(2px,-1px)} 60%{transform:translate(-1px,0)} 80%{transform:translate(1px,1px)} 100%{transform:translate(0)} }
 @keyframes glitch-b { 0%{transform:translate(0)} 25%{transform:translate(2px,0)} 50%{transform:translate(-2px,1px)} 75%{transform:translate(1px,-1px)} 100%{transform:translate(0)} }
@@ -210,7 +226,7 @@ body, [data-testid="stAppViewContainer"] {
   opacity: 0.4;
 }
 .matrix-grid {
-  background-image: linear-gradient(rgba(0,176,255,0.06) 1px, transparent 1px), linear-gradient(90deg, rgba(0,176,255,0.06) 1px, transparent 1px);
+  background-image: linear-gradient(rgba(212,175,55,0.06) 1px, transparent 1px), linear-gradient(90deg, rgba(212,175,55,0.06) 1px, transparent 1px);
   background-size: 32px 32px;
 }
 .cyber-badge {
@@ -260,7 +276,7 @@ div.stButton > button:hover, button[kind="primary"]:hover, button[kind="secondar
 
 [data-testid="stMetric"] {
   background: rgba(10,10,10,0.6); border: 1px solid #1a1a1a; border-radius: 4px;
-  padding: 10px 12px; box-shadow: 0 0 12px rgba(0,176,255,0.06);
+  padding: 10px 12px; box-shadow: 0 0 12px rgba(212,175,55,0.06);
 }
 [data-testid="stMetricLabel"] {
   color: var(--zero-muted) !important; font-family: var(--zero-font-display);

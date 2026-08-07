@@ -6,10 +6,19 @@ import sys
 import subprocess
 
 def apply_digital_core_theme():
-    """Digital Core Theme: Deep Black, Slate Grey, Blood Red, Pure White."""
+    """Digital Core Theme: black / red / white / gold / yellow / green only."""
     st.markdown("""
     <style>
     @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Inter:wght@300;400;600;800&display=swap');
+
+    :root {
+        --zero-black: #000000;
+        --zero-red: #E50914;
+        --zero-white: #ffffff;
+        --zero-gold: #D4AF37;
+        --zero-yellow: #FFD600;
+        --zero-green: #00ff88;
+    }
     
     html {
         scroll-behavior: smooth;
@@ -25,6 +34,13 @@ def apply_digital_core_theme():
     
     .stApp {
         background: radial-gradient(circle at top left, #0a0a0a, #000000);
+        height: 100% !important;
+        min-height: 100vh !important;
+        overflow: auto !important;
+    }
+    html, body, #root, .withScreencast, [data-testid="stAppViewContainer"] {
+        height: 100% !important;
+        min-height: 100vh !important;
     }
     
     .main-title {
@@ -153,6 +169,144 @@ def apply_digital_core_theme():
         flex-direction: column;
         width: 100%;
     }
+
+    /* ── Status badge / pill alignment (consensus · QuantDinge · debate) ── */
+    .zero-panel-hdr {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 10px 14px;
+        box-sizing: border-box;
+    }
+    .zero-panel-hdr__meta {
+        min-width: 0;
+        flex: 1 1 auto;
+    }
+    .zero-panel-hdr__stamp {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-end;
+        justify-content: center;
+        flex: 0 0 auto;
+        gap: 4px;
+        text-align: right;
+    }
+    .zero-status-badge {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        box-sizing: border-box;
+        font-family: 'Orbitron', sans-serif;
+        font-weight: 900;
+        font-size: 0.78rem;
+        letter-spacing: 1px;
+        line-height: 1.2;
+        padding: 6px 12px;
+        border-radius: 6px;
+        border: 1px solid currentColor;
+        white-space: nowrap;
+        text-align: center;
+        flex-shrink: 0;
+        max-width: 100%;
+        overflow: visible;
+        vertical-align: middle;
+    }
+    .zero-status-badge--long {
+        white-space: normal;
+        text-align: center;
+        max-width: 12.5rem;
+        line-height: 1.15;
+        word-break: keep-all;
+    }
+    .zero-status-badge--fill {
+        color: #000;
+        border-color: transparent;
+    }
+    .zero-agent-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 8px;
+        font-size: 0.65rem;
+        font-weight: 800;
+        color: #aaa;
+        min-height: 1.4em;
+    }
+    .zero-agent-row__bias {
+        display: inline-flex;
+        align-items: center;
+        white-space: nowrap;
+        flex-shrink: 0;
+        line-height: 1.2;
+    }
+    .zero-agent-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 10px;
+        margin-top: 14px;
+        align-items: stretch;
+    }
+    .zero-agent-grid > * {
+        height: 100%;
+        box-sizing: border-box;
+        min-width: 0;
+    }
+    .zero-metric-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 8px;
+        background: rgba(0,0,0,0.4);
+        padding: 10px;
+        border-radius: 6px;
+        text-align: center;
+        align-items: stretch;
+    }
+    .zero-metric-grid > * {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        min-width: 0;
+        box-sizing: border-box;
+    }
+    @media (max-width: 720px) {
+        .zero-metric-grid { grid-template-columns: 1fr 1fr; }
+        .zero-panel-hdr__stamp { align-items: flex-start; text-align: left; }
+    }
+    /* Neutralize tilted cyber holo stamps (cards_agents live path) */
+    .za-holo-stamp {
+        display: inline-flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        transform: none !important;
+        white-space: nowrap !important;
+        text-align: center !important;
+        flex-shrink: 0 !important;
+        line-height: 1.2 !important;
+        box-sizing: border-box !important;
+        max-width: 100%;
+        overflow: visible !important;
+        vertical-align: middle !important;
+    }
+    .za-hud .za-holo-stamp,
+    .za-body .za-holo-stamp {
+        white-space: normal !important;
+        max-width: 12.5rem;
+        line-height: 1.15 !important;
+    }
+    .za-agent-grid,
+    .za-metric-grid,
+    .za-split {
+        align-items: stretch !important;
+    }
+    .za-agent-grid > *,
+    .za-metric-grid > *,
+    .za-split > * {
+        min-width: 0;
+        height: 100%;
+        box-sizing: border-box;
+    }
     
     </style>
     """, unsafe_allow_html=True)
@@ -180,91 +334,167 @@ def get_base64_of_bin_file(bin_file):
         return ""
 
 def show_zero_digital_splash():
-    """Centered loader with brand title and cycling professional descriptions."""
+    """Digital-core boot splash: ZER white / O red, slower timings, no title shake."""
     logo_path = os.path.join(os.path.dirname(__file__), 'assets', 'logo.png')
     logo_b64 = get_base64_of_bin_file(logo_path)
-    if logo_b64:
-        img_src = f"data:image/png;base64,{logo_b64}"
-    else:
-        img_src = ""
+    img_src = f"data:image/png;base64,{logo_b64}" if logo_b64 else ""
 
-    html_loader = """
-    <div style="height: 100vh; display: flex; flex-direction: column; justify-content: center; align-items: center; background: #000; font-family: 'Inter', sans-serif; overflow: hidden;">
-        <img src="__IMG_SRC__" alt="ZERO Core" style="width: 140px; margin-bottom: 30px; border-radius: 50%; box-shadow: 0 0 25px rgba(220,38,38,0.3); animation: pulse-core 2.5s infinite alternate;" />
-        <div style="color: #666; font-size: 0.75rem; font-weight: 500; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 40px;">ZERO V1.0 // Renaissance of Market Predictions</div>
-        
-        <div style="width: 40px; height: 40px; border: 2px solid #1a1a1a; border-top: 2px solid #E50914; border-radius: 50%; animation: spin 0.8s linear infinite;"></div>
-        
-        <div style="margin-top: 40px; min-height: 40px; text-align: center;">
-            <div id="loader-desc" style="color: #E50914; font-weight: 800; font-size: 10px; letter-spacing: 3px; text-transform: uppercase; border: 1px solid #E50914; padding: 6px 18px;">INITIALIZING QUANTUM CORES...</div>
-        </div>
-        
-        <div style="margin-top: 25px; color: #333; font-size: 0.5rem; font-weight: 700; letter-spacing: 2px;">ESTABLISHING SECURE HANDSHAKE...</div>
-        
-        <style>
-            @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-            @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@900&display=swap');
-            body { 
-                margin: 0; padding: 0; overflow: hidden; background: #000; 
-                scrollbar-width: none; -ms-overflow-style: none;
-            }
-            body::-webkit-scrollbar { display: none; }
-        </style>
-        
-        <script>
-            // Hard focus on top to avoid scrolling issues
-            window.parent.scrollTo(0,0);
-
-            const descs = [
-                "SYNCHRONIZING GLOBAL ORDER FLOWS...",
-                "DECRYPTING ASYMMETRIC PRICE SIGNALS...",
-                "MONITORING QUANTUM LIQUIDITY TRAPS...",
-                "CALIBRATING VOLATILITY ENVELOPES (ATR 14)...",
-                "ANALYZING GEOPOLITICAL SENTIMENT VECTORS...",
-                "VERIFYING GIFT NIFTY OPEN INTEREST DELTA...",
-                "EXECUTING RECURSIVE QUANTUM ANALYSIS..."
-            ];
-            let i = 0;
-            // Use a single, named timer so we can stop it the moment the
-            // user has entered the main terminal. The previous version
-            // leaked a setInterval that kept firing forever.
-            const loaderTimer = setInterval(() => {
-                i = (i + 1) % descs.length;
-                const el = document.getElementById('loader-desc');
-                if (el) el.innerHTML = descs[i];
-            }, 1400);
-
-            // Watch the parent doc for the DIG & DIVE click. As soon as
-            // the splash HTML is replaced, kill the cycling loop.
-            const stop = () => {
-                clearInterval(loaderTimer);
-                const el = document.getElementById('loader-desc');
-                if (el) el.innerHTML = 'QUANTUM CORES SYNCHRONIZED';
-            };
-            const tryHook = () => {
-                const doc = window.parent.document;
-                if (!doc) return false;
-                if (doc.__zeroSplashHooked) return true;
-                doc.__zeroSplashHooked = true;
-                const obs = new MutationObserver(() => {
-                    // splash html is gone → page has reloaded into the main terminal
-                    if (!doc.body || !doc.body.contains(document.body)) {
-                        stop();
-                        obs.disconnect();
-                    }
-                });
-                try { obs.observe(doc.documentElement, {childList:true, subtree:false}); } catch (e) {}
-                // Hard fallback: stop after 25 s no matter what.
-                setTimeout(stop, 25000);
-                return true;
-            };
-            // Hook after the DOM is ready.
-            if (document.readyState === 'complete') tryHook();
-            else window.addEventListener('load', tryHook);
-        </script>
+    # Duration scale ~1.45x vs prior boot timings (pulse 2.5->3.6, spin 0.8->1.15, cycle 1400->2000).
+    html_loader = f"""
+<!DOCTYPE html>
+<html><head><meta charset="utf-8"/>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&family=Share+Tech+Mono&display=swap');
+  * {{ box-sizing: border-box; margin: 0; padding: 0; }}
+  body {{
+    margin: 0; overflow: hidden; background: #000;
+    font-family: 'Share Tech Mono', monospace;
+    height: 100vh;
+    scrollbar-width: none; -ms-overflow-style: none;
+  }}
+  body::-webkit-scrollbar {{ display: none; }}
+  .stage {{
+    position: relative; height: 100vh; width: 100%;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    background:
+      radial-gradient(ellipse at 50% 28%, rgba(229,9,20,0.08) 0%, transparent 55%),
+      linear-gradient(#000 50%, transparent 50%),
+      linear-gradient(90deg, #0a0a0a, #000);
+    background-size: 100% 100%, 100% 3px, 100% 100%;
+    overflow: hidden;
+  }}
+  .matrix {{
+    position: absolute; inset: 0; pointer-events: none; opacity: 0.16;
+    background-image: repeating-linear-gradient(
+      0deg, transparent, transparent 2px, rgba(0,255,136,0.04) 2px, rgba(0,255,136,0.04) 4px
+    );
+    animation: matrix-scroll 17.4s linear infinite;
+  }}
+  @keyframes matrix-scroll {{
+    from {{ background-position: 0 0; }}
+    to   {{ background-position: 0 120px; }}
+  }}
+  .scan {{
+    position: absolute; left: 0; right: 0; height: 2px;
+    background: linear-gradient(90deg, transparent, #D4AF37, transparent);
+    opacity: 0.3; animation: scan-y 4.6s linear infinite;
+  }}
+  @keyframes scan-y {{
+    0%   {{ top: 0%; }}
+    100% {{ top: 100%; }}
+  }}
+  .logo {{
+    width: 120px; height: 120px; border-radius: 50%;
+    border: 1px solid rgba(229,9,20,0.45);
+    box-shadow: 0 0 40px rgba(229,9,20,0.35), 0 0 20px rgba(212,175,55,0.12);
+    object-fit: cover; margin-bottom: 22px;
+    animation: pulse-core 3.6s ease-in-out infinite alternate;
+    position: relative; z-index: 2;
+  }}
+  .logo-fallback {{
+    width: 120px; height: 120px; border-radius: 50%;
+    border: 1px solid #E50914; display: flex; align-items: center; justify-content: center;
+    color: #E50914; font-family: Orbitron, sans-serif; font-weight: 900; font-size: 1.4rem;
+    letter-spacing: 4px; margin-bottom: 22px; z-index: 2;
+    box-shadow: 0 0 30px rgba(229,9,20,0.4);
+    animation: pulse-core 3.6s ease-in-out infinite alternate;
+  }}
+  @keyframes pulse-core {{
+    from {{ box-shadow: 0 0 20px rgba(229,9,20,0.25), 0 0 10px rgba(212,175,55,0.1); }}
+    to   {{ box-shadow: 0 0 48px rgba(229,9,20,0.55), 0 0 22px rgba(212,175,55,0.22); }}
+  }}
+  /* Title: static — no shake / glitch / jitter */
+  .wordmark {{
+    font-family: 'Orbitron', sans-serif; font-weight: 900; font-size: 3.2rem;
+    letter-spacing: 0.45em; position: relative; z-index: 2;
+    line-height: 1; text-shadow: 0 0 18px rgba(229,9,20,0.25);
+    animation: none !important;
+    transform: none !important;
+  }}
+  .wordmark .z, .wordmark .e, .wordmark .r {{ color: #ffffff; }}
+  .wordmark .o {{ color: #E50914; text-shadow: 0 0 16px rgba(229,9,20,0.55); }}
+  .tag {{
+    margin-top: 14px; color: #666; font-size: 0.68rem;
+    letter-spacing: 0.28em; text-transform: uppercase; z-index: 2;
+  }}
+  .ring {{
+    margin-top: 36px; width: 42px; height: 42px; border-radius: 50%;
+    border: 2px solid #1a1a1a; border-top-color: #E50914;
+    border-right-color: #00ff88; animation: spin 1.15s linear infinite; z-index: 2;
+  }}
+  @keyframes spin {{ to {{ transform: rotate(360deg); }} }}
+  #loader-desc {{
+    margin-top: 36px; color: #E50914; font-weight: 700; font-size: 0.62rem;
+    letter-spacing: 0.28em; text-transform: uppercase;
+    border: 1px solid rgba(229,9,20,0.55); padding: 8px 18px;
+    background: rgba(229,9,20,0.06); z-index: 2;
+    box-shadow: 0 0 16px rgba(229,9,20,0.15);
+  }}
+  .handshake {{
+    margin-top: 18px; color: #444; font-size: 0.5rem;
+    letter-spacing: 0.22em; z-index: 2;
+  }}
+  @media (prefers-reduced-motion: reduce) {{
+    .matrix, .scan, .logo, .logo-fallback, .ring {{ animation: none !important; }}
+  }}
+</style>
+</head>
+<body>
+  <div class="stage">
+    <div class="matrix"></div>
+    <div class="scan"></div>
+    {"<img class='logo' src='" + img_src + "' alt='ZERO Core'/>" if img_src else "<div class='logo-fallback'>Z</div>"}
+    <div class="wordmark" aria-label="ZERO">
+      <span class="z">Z</span><span class="e">E</span><span class="r">R</span><span class="o">O</span>
     </div>
-    """.replace("__IMG_SRC__", img_src)
+    <div class="tag">V1.0 // RENAISSANCE OF MARKET PREDICTIONS</div>
+    <div class="ring"></div>
+    <div id="loader-desc">INITIALIZING QUANTUM CORES...</div>
+    <div class="handshake">ESTABLISHING SECURE HANDSHAKE...</div>
+  </div>
+  <script>
+    window.parent.scrollTo(0,0);
+    const descs = [
+      "SYNCHRONIZING GLOBAL ORDER FLOWS...",
+      "DECRYPTING ASYMMETRIC PRICE SIGNALS...",
+      "MONITORING QUANTUM LIQUIDITY TRAPS...",
+      "CALIBRATING VOLATILITY ENVELOPES (ATR 14)...",
+      "ANALYZING GEOPOLITICAL SENTIMENT VECTORS...",
+      "VERIFYING GIFT NIFTY OPEN INTEREST DELTA...",
+      "EXECUTING RECURSIVE QUANTUM ANALYSIS..."
+    ];
+    let i = 0;
+    const loaderTimer = setInterval(() => {{
+      i = (i + 1) % descs.length;
+      const el = document.getElementById('loader-desc');
+      if (el) el.textContent = descs[i];
+    }}, 2000);
+    const stop = () => {{
+      clearInterval(loaderTimer);
+      const el = document.getElementById('loader-desc');
+      if (el) el.textContent = 'QUANTUM CORES SYNCHRONIZED';
+    }};
+    const tryHook = () => {{
+      const doc = window.parent.document;
+      if (!doc) return false;
+      if (doc.__zeroSplashHooked) return true;
+      doc.__zeroSplashHooked = true;
+      const obs = new MutationObserver(() => {{
+        if (!doc.body || !doc.body.contains(document.body)) {{
+          stop(); obs.disconnect();
+        }}
+      }});
+      try {{ obs.observe(doc.documentElement, {{childList:true, subtree:false}}); }} catch (e) {{}}
+      setTimeout(stop, 36000);
+      return true;
+    }};
+    if (document.readyState === 'complete') tryHook();
+    else window.addEventListener('load', tryHook);
+  </script>
+</body></html>
+    """
     st.iframe(html_loader, height=600)
+
 
 
 def digital_clock_component():
@@ -605,7 +835,7 @@ def render_live_price_ticker(symbol: str, live_quote: dict = None):
 <meta charset="UTF-8">
 <style>
 *{{margin:0;padding:0;box-sizing:border-box}}
-html,body{{width:100%;height:100%;background:#0a0a0e;font-family:'Inter',system-ui,sans-serif;overflow:hidden}}
+html,body{{width:100%;height:100%;background:#0a0a0a;font-family:'Inter',system-ui,sans-serif;overflow:hidden}}
 .lp-card{{
   background:linear-gradient(135deg,rgba(8,8,12,1) 0%,rgba(14,12,20,1) 100%);
   border:1px solid rgba(255,255,255,0.07);
@@ -762,7 +992,8 @@ html,body{{width:100%;height:100%;background:#0a0a0e;font-family:'Inter',system-
 </html>"""
 
     import streamlit as st
-    st.html(ticker_html, unsafe_allow_javascript=True)
+    # Isolate in iframe — st.html leaked html/body CSS into the parent and blanked the page.
+    st.iframe(ticker_html, height=200, width="stretch")
 
 
 def order_flow_table(data):
@@ -1609,7 +1840,7 @@ def render_trading_strategy_bubbles(matrix=None, news_feed=None):
     .sp-buy { background: rgba(0, 255, 136, 0.15); color: #00ff88; border: 1px solid #00ff88; }
     .sp-target { background: rgba(212, 175, 55, 0.15); color: #D4AF37; border: 1px solid #D4AF37; }
     .sp-stop { background: rgba(229, 9, 20, 0.15); color: #E50914; border: 1px solid #E50914; }
-    .sp-size { background: rgba(0, 180, 255, 0.15); color: #00b4ff; border: 1px solid #00b4ff; }
+    .sp-size { background: rgba(212, 175, 55, 0.15); color: #D4AF37; border: 1px solid #D4AF37; }
     .sp-val {
         color: #ffffff;
         font-size: 1.1rem;
@@ -1780,7 +2011,7 @@ def render_trading_strategy_bubbles(matrix=None, news_feed=None):
                 <div class="sp-val">{stop_loss:,.1f}</div>
                 <div class="sp-desc">Strict intraday exit trigger ({stop_loss_pts:.0f} pts below spot). A 15-min candle close below invalidates the bullish thesis.</div>
             </div>
-            <div style="background:rgba(0,0,0,0.5); padding:10px 12px; border-radius:4px; border-left:3px solid #00b4ff;">
+            <div style="background:rgba(0,0,0,0.5); padding:10px 12px; border-radius:4px; border-left:3px solid #D4AF37;">
                 <span class="safe-point-badge sp-size">⚖️ REC. POSITION SIZE & CASH</span>
                 <div class="sp-val">{rec_size_pct}</div>
                 <div class="sp-desc">Allocate max {rec_size_pct} capital per trade. Keep <b>{cash_buffer_pct}%</b> cash buffer for unexpected headline spikes.</div>
@@ -1993,7 +2224,7 @@ def render_trading_agents_panel(agent_consensus: dict | None = None):
     debate = agent_consensus.get('debate_summary', '')
     agents = agent_consensus.get('agents', {})
 
-    v_color = "#00E676" if "BULLISH" in verdict else ("#FF1744" if "BEARISH" in verdict else "#FFC107")
+    v_color = "#00E676" if "BULLISH" in verdict else ("#E50914" if "BEARISH" in verdict else "#FFC107")
 
     agents_html = ""
     for role_key, agent_data in agents.items():
@@ -2003,7 +2234,7 @@ def render_trading_agents_panel(agent_consensus: dict | None = None):
         bias = agent_data.get('bias', agent_data.get('risk_rating', 'NEUTRAL'))
         agent_conf = agent_data.get('confidence', 50.0)
         reasoning = agent_data.get('reasoning', '')
-        b_color = "#00E676" if bias in ["BULLISH", "LOW"] else ("#FF1744" if bias in ["BEARISH", "HIGH"] else "#FFC107")
+        b_color = "#00E676" if bias in ["BULLISH", "LOW"] else ("#E50914" if bias in ["BEARISH", "HIGH"] else "#FFC107")
 
         agents_html += f"""<div style="background: rgba(30, 30, 30, 0.7); border: 1px solid rgba(255,255,255,0.08); border-radius: 6px; padding: 10px;"><div style="display: flex; justify-content: space-between; font-size: 0.65rem; font-weight: 800; color: #aaa;"><span>{name.upper()}</span><span style="color: {b_color};">{bias} ({agent_conf}%)</span></div><p style="font-size: 0.62rem; color: #888; margin: 4px 0 0 0; line-height: 1.3;">{reasoning}</p></div>"""
 
@@ -2032,7 +2263,7 @@ def render_quantdinge_strategy_card(quant_strategy: dict | None = None):
     pos_size = quant_strategy.get('position_size_pct', 3.0)
     desc = quant_strategy.get('description', '')
 
-    act_color = "#00E676" if "BUY" in action else ("#FF1744" if "SELL" in action else "#00B0FF")
+    act_color = "#00E676" if "BUY" in action else ("#E50914" if "SELL" in action else "#D4AF37")
 
     # Nautilus execution fields
     entry_type  = quant_strategy.get("nautilus_entry_order_type", "DAY LIMIT")
@@ -2040,9 +2271,9 @@ def render_quantdinge_strategy_card(quant_strategy: dict | None = None):
     uw_note     = quant_strategy.get("options_flow_note", "")
     pcr_val     = quant_strategy.get("pcr", 1.0)
 
-    full_html = f"""<div style="background: rgba(15, 25, 35, 0.85); border: 1px solid rgba(0, 176, 255, 0.4); border-radius: 10px; padding: 16px; margin-bottom: 20px;"><div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(0, 176, 255, 0.15); padding-bottom: 8px; margin-bottom: 12px;"><div><span style="font-family: 'Orbitron', sans-serif; font-size: 0.85rem; font-weight: 900; color: #00B0FF; letter-spacing: 2px;">⚡ QUANTDINGER ENGINE · {idx} STRATEGY</span><div style="font-size: 0.6rem; color: #888; margin-top: 2px;">Regime: <b style="color: #fff;">{regime}</b></div></div><div style="background: {act_color}; color: #000; font-family: 'Orbitron', sans-serif; font-weight: 900; font-size: 0.75rem; padding: 4px 12px; border-radius: 6px;">{action}</div></div><div style="font-size: 0.85rem; font-weight: 800; color: #fff; margin-bottom: 6px;">🎯 {strat_name}</div><p style="font-size: 0.68rem; color: #aaa; margin-bottom: 12px;">{desc}</p><div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; background: rgba(0,0,0,0.4); padding: 10px; border-radius: 6px; text-align: center;"><div><div style="font-size: 0.55rem; color: #777; text-transform: uppercase;">ENTRY PRICE</div><div style="font-size: 0.8rem; font-weight: 800; color: #fff;">{entry}</div></div><div><div style="font-size: 0.55rem; color: #FF1744; text-transform: uppercase;">STOP LOSS (SL)</div><div style="font-size: 0.8rem; font-weight: 800; color: #FF1744;">{sl}</div></div><div><div style="font-size: 0.55rem; color: #00E676; text-transform: uppercase;">TARGET (TP1 / TP2)</div><div style="font-size: 0.8rem; font-weight: 800; color: #00E676;">{tp1} / {tp2}</div></div><div><div style="font-size: 0.55rem; color: #D4AF37; text-transform: uppercase;">R:R / WIN PROB</div><div style="font-size: 0.8rem; font-weight: 800; color: #D4AF37;">{rr} · {win_prob}%</div></div></div>
+    full_html = f"""<div style="background: rgba(10, 10, 10, 0.85); border: 1px solid rgba(212, 175, 55, 0.4); border-radius: 10px; padding: 16px; margin-bottom: 20px;"><div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(212, 175, 55, 0.15); padding-bottom: 8px; margin-bottom: 12px;"><div><span style="font-family: 'Orbitron', sans-serif; font-size: 0.85rem; font-weight: 900; color: #D4AF37; letter-spacing: 2px;">⚡ QUANTDINGER ENGINE · {idx} STRATEGY</span><div style="font-size: 0.6rem; color: #888; margin-top: 2px;">Regime: <b style="color: #fff;">{regime}</b></div></div><div style="background: {act_color}; color: #000; font-family: 'Orbitron', sans-serif; font-weight: 900; font-size: 0.75rem; padding: 4px 12px; border-radius: 6px;">{action}</div></div><div style="font-size: 0.85rem; font-weight: 800; color: #fff; margin-bottom: 6px;">🎯 {strat_name}</div><p style="font-size: 0.68rem; color: #aaa; margin-bottom: 12px;">{desc}</p><div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; background: rgba(0,0,0,0.4); padding: 10px; border-radius: 6px; text-align: center;"><div><div style="font-size: 0.55rem; color: #777; text-transform: uppercase;">ENTRY PRICE</div><div style="font-size: 0.8rem; font-weight: 800; color: #fff;">{entry}</div></div><div><div style="font-size: 0.55rem; color: #E50914; text-transform: uppercase;">STOP LOSS (SL)</div><div style="font-size: 0.8rem; font-weight: 800; color: #E50914;">{sl}</div></div><div><div style="font-size: 0.55rem; color: #00E676; text-transform: uppercase;">TARGET (TP1 / TP2)</div><div style="font-size: 0.8rem; font-weight: 800; color: #00E676;">{tp1} / {tp2}</div></div><div><div style="font-size: 0.55rem; color: #D4AF37; text-transform: uppercase;">R:R / WIN PROB</div><div style="font-size: 0.8rem; font-weight: 800; color: #D4AF37;">{rr} · {win_prob}%</div></div></div>
 <div style="background:rgba(0,0,0,0.3);border-radius:6px;padding:8px 12px;margin-top:8px;font-size:0.6rem;color:#aaa;">
-  <b style="color:#00B0FF;">Entry Order:</b> {entry_type} &nbsp;·&nbsp; <b style="color:#D4AF37;">Bracket:</b> {bracket}<br>
+  <b style="color:#D4AF37;">Entry Order:</b> {entry_type} &nbsp;·&nbsp; <b style="color:#D4AF37;">Bracket:</b> {bracket}<br>
   <b style="color:#888;">PCR {pcr_val}</b> — {uw_note}
 </div>
 <div style="font-size: 0.58rem; color: #666; text-align: right; margin-top: 6px;">Recommended Max Risk Allocation: {pos_size}% Portfolio</div></div>"""
@@ -2066,13 +2297,13 @@ def render_fincept_thesis_card(thesis: dict | None = None):
     sent        = thesis.get("sentiment") or {}
     opt_flow    = thesis.get("options_flow") or {}
 
-    score_color = "#00E676" if final_score > 0.2 else ("#FF1744" if final_score < -0.2 else "#D4AF37")
+    score_color = "#00E676" if final_score > 0.2 else ("#E50914" if final_score < -0.2 else "#D4AF37")
     bar_w       = int(min(100, abs(final_score) * 100))
     bar_dir     = "right" if final_score > 0 else "left"
-    bar_bg      = "#00E676" if final_score > 0 else "#FF1744"
+    bar_bg      = "#00E676" if final_score > 0 else "#E50914"
 
     alpha_sig   = strat.get("signal", "FLAT")
-    alpha_col   = "#00E676" if alpha_sig == "LONG" else ("#FF1744" if alpha_sig == "SHORT" else "#888")
+    alpha_col   = "#00E676" if alpha_sig == "LONG" else ("#E50914" if alpha_sig == "SHORT" else "#888")
     kelly_pct   = risk.get("kelly_pct", 0.0)
     pos_val     = risk.get("position_value", 0.0)
     liq_score   = micro.get("liquidity_score", 0.0)
@@ -2121,15 +2352,15 @@ def render_fincept_thesis_card(thesis: dict | None = None):
   <!-- 4-col analyst grid -->
   <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:14px;">
     <!-- Quant Strategist -->
-    <div style="background:rgba(0,176,255,0.07);border:1px solid rgba(0,176,255,0.2);border-radius:8px;padding:10px;text-align:center;">
-      <div style="font-size:0.5rem;color:#00B0FF;text-transform:uppercase;letter-spacing:1px;margin-bottom:4px;">⚡ Quant Signal</div>
+    <div style="background:rgba(212,175,55,0.07);border:1px solid rgba(212,175,55,0.2);border-radius:8px;padding:10px;text-align:center;">
+      <div style="font-size:0.5rem;color:#D4AF37;text-transform:uppercase;letter-spacing:1px;margin-bottom:4px;">⚡ Quant Signal</div>
       <div style="font-size:0.95rem;font-weight:900;color:{alpha_col};">{alpha_sig}</div>
       <div style="font-size:0.58rem;color:#666;margin-top:2px;">α {strat.get('alpha_score',0):.3f}</div>
     </div>
     <!-- Risk -->
     <div style="background:rgba(255,165,0,0.07);border:1px solid rgba(255,165,0,0.2);border-radius:8px;padding:10px;text-align:center;">
-      <div style="font-size:0.5rem;color:#FFA500;text-transform:uppercase;letter-spacing:1px;margin-bottom:4px;">🛡 Risk</div>
-      <div style="font-size:0.95rem;font-weight:900;color:#FFA500;">½K {kelly_pct:.1f}%</div>
+      <div style="font-size:0.5rem;color:#D4AF37;text-transform:uppercase;letter-spacing:1px;margin-bottom:4px;">🛡 Risk</div>
+      <div style="font-size:0.95rem;font-weight:900;color:#D4AF37;">½K {kelly_pct:.1f}%</div>
       <div style="font-size:0.58rem;color:#666;margin-top:2px;">pos ₹{pos_val:,.0f}</div>
     </div>
     <!-- Microstructure -->
@@ -2140,8 +2371,8 @@ def render_fincept_thesis_card(thesis: dict | None = None):
     </div>
     <!-- Options Flow -->
     <div style="background:rgba(230,0,70,0.07);border:1px solid rgba(230,0,70,0.2);border-radius:8px;padding:10px;text-align:center;">
-      <div style="font-size:0.5rem;color:#FF1744;text-transform:uppercase;letter-spacing:1px;margin-bottom:4px;">🐋 Flow</div>
-      <div style="font-size:0.95rem;font-weight:900;color:#FF1744;">{flow_score:+.3f}</div>
+      <div style="font-size:0.5rem;color:#E50914;text-transform:uppercase;letter-spacing:1px;margin-bottom:4px;">🐋 Flow</div>
+      <div style="font-size:0.95rem;font-weight:900;color:#E50914;">{flow_score:+.3f}</div>
       <div style="font-size:0.58rem;color:#666;margin-top:2px;">PCR {pcr:.2f}</div>
     </div>
   </div>
@@ -2149,7 +2380,7 @@ def render_fincept_thesis_card(thesis: dict | None = None):
   <!-- Flow + Execution advice -->
   <div style="background:rgba(0,0,0,0.35);border-radius:7px;padding:9px 12px;font-size:0.65rem;color:#aaa;margin-bottom:10px;">
     <b style="color:#D4AF37;">🦁 Options Flow:</b> {flow_interp}<br>
-    <b style="color:#00B0FF;">📋 Execution:</b> {exec_advice} &nbsp;·&nbsp;
+    <b style="color:#D4AF37;">📋 Execution:</b> {exec_advice} &nbsp;·&nbsp;
     <b style="color:#888;">Sentiment:</b> <span style="color:#ccc;">{sent_int} ({sent_score:+.3f})</span>
   </div>
 
@@ -2185,12 +2416,12 @@ def render_nautilus_order_card(suggestion: dict | None = None):
 </div>""", unsafe_allow_html=True)
         return
 
-    side_color = "#00E676" if side == "BUY" else "#FF1744"
+    side_color = "#00E676" if side == "BUY" else "#E50914"
     side_icon  = "📈" if side == "BUY" else "📉"
 
     tif_badges = "".join(
-        f'<span style="background:rgba(0,176,255,0.12);border:1px solid rgba(0,176,255,0.3);'
-        f'border-radius:4px;padding:2px 7px;font-size:0.5rem;color:#00B0FF;margin:2px;">{t}</span>'
+        f'<span style="background:rgba(212,175,55,0.12);border:1px solid rgba(212,175,55,0.3);'
+        f'border-radius:4px;padding:2px 7px;font-size:0.5rem;color:#D4AF37;margin:2px;">{t}</span>'
         for t in tif_opts
     )
 
@@ -2203,7 +2434,7 @@ def render_nautilus_order_card(suggestion: dict | None = None):
               border-bottom:1px solid rgba(255,255,255,0.06);padding-bottom:9px;margin-bottom:12px;">
     <div>
       <span style="font-family:'Orbitron',sans-serif;font-size:0.78rem;font-weight:900;
-                   color:#00B0FF;letter-spacing:2px;">
+                   color:#D4AF37;letter-spacing:2px;">
         ⚡ NAUTILUS ORDER ENGINE
       </span>
       <div style="font-size:0.55rem;color:#555;margin-top:2px;">
@@ -2225,8 +2456,8 @@ def render_nautilus_order_card(suggestion: dict | None = None):
       <div style="font-size:1.0rem;font-weight:900;color:#fff;">{entry_px:,.2f}</div>
     </div>
     <div>
-      <div style="font-size:0.5rem;color:#FF1744;text-transform:uppercase;margin-bottom:3px;">Stop Loss</div>
-      <div style="font-size:1.0rem;font-weight:900;color:#FF1744;">{sl:,.2f}</div>
+      <div style="font-size:0.5rem;color:#E50914;text-transform:uppercase;margin-bottom:3px;">Stop Loss</div>
+      <div style="font-size:1.0rem;font-weight:900;color:#E50914;">{sl:,.2f}</div>
     </div>
     <div>
       <div style="font-size:0.5rem;color:#00E676;text-transform:uppercase;margin-bottom:3px;">Take Profit</div>
@@ -2238,7 +2469,7 @@ def render_nautilus_order_card(suggestion: dict | None = None):
   <div style="background:rgba(0,0,0,0.3);border-radius:7px;padding:8px 12px;font-size:0.62rem;
               color:#aaa;margin-bottom:10px;">
     <b style="color:#D4AF37;">Entry Strategy:</b> {entry_type}<br>
-    <b style="color:#00B0FF;">Contingency Chain:</b> {contingency} &nbsp;·&nbsp;
+    <b style="color:#D4AF37;">Contingency Chain:</b> {contingency} &nbsp;·&nbsp;
     <b style="color:#888;">Signal Strength:</b> <span style="color:{side_color};">{abs(blended):.3f}</span>
   </div>
 
@@ -2262,12 +2493,12 @@ def render_intermarket_card(intermarket: dict | None = None):
     risk_tier = intermarket.get("risk_tier", "NORMAL")
     contribs  = intermarket.get("contributors", {})
 
-    dir_color = "#00E676" if "UP" in direction else ("#FF1744" if "DOWN" in direction else "#D4AF37")
-    risk_col  = "#FF1744" if "HIGH" in risk_tier else ("#D4AF37" if "ELEVATED" in risk_tier else "#00E676")
+    dir_color = "#00E676" if "UP" in direction else ("#E50914" if "DOWN" in direction else "#D4AF37")
+    risk_col  = "#E50914" if "HIGH" in risk_tier else ("#D4AF37" if "ELEVATED" in risk_tier else "#00E676")
 
     def _bar(val, max_val=0.3):
         pct = min(100, abs(val) / max(max_val, 0.001) * 100)
-        col = "#00E676" if val > 0 else "#FF1744"
+        col = "#00E676" if val > 0 else "#E50914"
         return (f'<div style="background:rgba(255,255,255,0.05);border-radius:3px;height:4px;overflow:hidden;margin-top:3px;">'
                 f'<div style="width:{pct:.0f}%;height:100%;background:{col};border-radius:3px;'
                 f'float:{"left" if val > 0 else "right"};"></div></div>')
@@ -2277,7 +2508,7 @@ def render_intermarket_card(intermarket: dict | None = None):
                "dxy_dollar": "💵 DXY Dollar", "vix_factor": "📊 VIX Factor"}
     for key, lbl in labels.items():
         v = contribs.get(key, 0.0)
-        vc = "#00E676" if v > 0 else "#FF1744"
+        vc = "#00E676" if v > 0 else "#E50914"
         rows += (f'<div style="display:flex;justify-content:space-between;align-items:center;'
                  f'padding:4px 0;border-bottom:1px solid rgba(255,255,255,0.04);">'
                  f'<span style="font-size:0.6rem;color:#888;">{lbl}</span>'
@@ -2286,11 +2517,11 @@ def render_intermarket_card(intermarket: dict | None = None):
                  f'{_bar(v)}')
 
     html = f"""
-<div style="background:rgba(8,18,32,0.9);border:1px solid rgba(0,176,255,0.25);
+<div style="background:rgba(10,10,10,0.9);border:1px solid rgba(212,175,55,0.25);
             border-radius:10px;padding:14px;margin:10px 0;">
   <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
     <span style="font-family:'Orbitron',sans-serif;font-size:0.7rem;font-weight:900;
-                 color:#00B0FF;letter-spacing:1.5px;">🌐 INTER-MARKET ANALYSIS</span>
+                 color:#D4AF37;letter-spacing:1.5px;">🌐 INTER-MARKET ANALYSIS</span>
     <span style="background:{risk_col}22;border:1px solid {risk_col}55;color:{risk_col};
                  font-size:0.5rem;font-weight:700;padding:2px 8px;border-radius:4px;">{risk_tier}</span>
   </div>
@@ -2313,7 +2544,7 @@ def render_options_greeks_card(greeks: dict | None = None):
         return
 
     html = f"""
-<div style="background:rgba(8,18,32,0.9);border:1px solid rgba(212,175,55,0.25);
+<div style="background:rgba(10,10,10,0.9);border:1px solid rgba(212,175,55,0.25);
             border-radius:10px;padding:14px;margin:10px 0;">
   <div style="font-family:'Orbitron',sans-serif;font-size:0.7rem;font-weight:900;
               color:#D4AF37;letter-spacing:1.5px;margin-bottom:10px;">
@@ -2326,7 +2557,7 @@ def render_options_greeks_card(greeks: dict | None = None):
     </div>
     <div style="background:rgba(0,0,0,0.3);border-radius:6px;padding:8px;">
       <div style="font-size:0.5rem;color:#888;">PUT PRICE</div>
-      <div style="font-size:0.9rem;font-weight:800;color:#FF1744;">₹{greeks.get('put_price',0):.1f}</div>
+      <div style="font-size:0.9rem;font-weight:800;color:#E50914;">₹{greeks.get('put_price',0):.1f}</div>
     </div>
     <div style="background:rgba(0,0,0,0.3);border-radius:6px;padding:8px;">
       <div style="font-size:0.5rem;color:#888;">IV%</div>
@@ -2334,7 +2565,7 @@ def render_options_greeks_card(greeks: dict | None = None):
     </div>
     <div style="background:rgba(0,0,0,0.3);border-radius:6px;padding:8px;">
       <div style="font-size:0.5rem;color:#888;">DELTA C/P</div>
-      <div style="font-size:0.9rem;font-weight:800;color:#00B0FF;">
+      <div style="font-size:0.9rem;font-weight:800;color:#D4AF37;">
         {greeks.get('delta_call',0):.3f} / {greeks.get('delta_put',0):.3f}
       </div>
     </div>
@@ -2344,7 +2575,7 @@ def render_options_greeks_card(greeks: dict | None = None):
     </div>
     <div style="background:rgba(0,0,0,0.3);border-radius:6px;padding:8px;">
       <div style="font-size:0.5rem;color:#888;">THETA/DAY</div>
-      <div style="font-size:0.9rem;font-weight:800;color:#FF9800;">{greeks.get('theta_daily',0):.2f}</div>
+      <div style="font-size:0.9rem;font-weight:800;color:#D4AF37;">{greeks.get('theta_daily',0):.2f}</div>
     </div>
   </div>
   <div style="font-size:0.5rem;color:#444;text-align:right;margin-top:6px;">
@@ -2664,8 +2895,8 @@ def render_zero_agi_modal():
                 <div style="font-size:0.6rem; color:#D4AF37; font-weight:800; letter-spacing:1.5px;">🎯 TAKE PROFIT 1 (TP1)</div>
                 <div style="font-size:1.1rem; font-weight:900; color:#FFF; margin-top:2px;">{res.get('tp1', '--')}</div>
               </div>
-              <div style="background:rgba(0,176,255,0.06); border:1px solid rgba(0,176,255,0.25); border-radius:8px; padding:12px;">
-                <div style="font-size:0.6rem; color:#00B0FF; font-weight:800; letter-spacing:1.5px;">🚀 TAKE PROFIT 2 (TP2)</div>
+              <div style="background:rgba(212,175,55,0.06); border:1px solid rgba(212,175,55,0.25); border-radius:8px; padding:12px;">
+                <div style="font-size:0.6rem; color:#D4AF37; font-weight:800; letter-spacing:1.5px;">🚀 TAKE PROFIT 2 (TP2)</div>
                 <div style="font-size:1.1rem; font-weight:900; color:#FFF; margin-top:2px;">{res.get('tp2', '--')}</div>
               </div>
             </div>

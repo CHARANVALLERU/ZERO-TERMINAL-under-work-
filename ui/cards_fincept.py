@@ -10,7 +10,7 @@ _PAL = {
     "gold": "#D4AF37",
     "neon": "#00ff88",
     "green": "#00E676",
-    "blue": "#00B0FF",
+    "yellow": "#FFD600",
     "white": "#fff",
     "muted": "#666",
 }
@@ -21,9 +21,9 @@ _HUD_CSS = """
 @keyframes zf-bar-grow{from{width:0}to{width:var(--zf-w)}}
 @keyframes zf-pulse-glow{0%,100%{box-shadow:0 0 6px var(--zf-glow),0 0 14px var(--zf-glow)}50%{box-shadow:0 0 12px var(--zf-glow),0 0 28px var(--zf-glow)}}
 @keyframes zf-stamp{0%{transform:scale(1.35);opacity:0}60%{transform:scale(0.96);opacity:1}100%{transform:scale(1);opacity:1}}
-.zf-hud{background:linear-gradient(160deg,#0a0a0a 0%,#000 55%,#0a0a0a 100%);border:1px solid rgba(0,176,255,0.28);
+.zf-hud{background:linear-gradient(160deg,#0a0a0a 0%,#000 55%,#0a0a0a 100%);border:1px solid rgba(212,175,55,0.28);
   border-radius:4px;padding:18px;margin:14px 0;position:relative;overflow:hidden;
-  box-shadow:inset 0 0 40px rgba(0,176,255,0.04),0 0 24px rgba(0,0,0,0.8)}
+  box-shadow:inset 0 0 40px rgba(212,175,55,0.04),0 0 24px rgba(0,0,0,0.8)}
 .zf-hud::before{content:'';position:absolute;inset:0;pointer-events:none;
   background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,255,136,0.015) 3px);
   opacity:.55}
@@ -32,7 +32,7 @@ _HUD_CSS = """
 .zf-holo-track{height:7px;border-radius:2px;background:rgba(255,255,255,0.06);overflow:hidden;margin-top:8px;
   border:1px solid rgba(255,255,255,0.06)}
 .zf-holo-fill{height:100%;border-radius:2px;
-  background:linear-gradient(90deg,#00B0FF,#00ff88,#D4AF37,#00B0FF);background-size:200% 100%;
+  background:linear-gradient(90deg,#D4AF37,#00ff88,#D4AF37,#D4AF37);background-size:200% 100%;
   animation:zf-holo-scan 2.8s linear infinite,zf-bar-grow .9s ease-out forwards;
   box-shadow:0 0 10px rgba(0,255,136,0.55)}
 .zf-stamp{display:inline-block;font-family:'Orbitron',sans-serif;font-weight:900;font-size:0.9rem;
@@ -45,17 +45,17 @@ _HUD_CSS = """
   --zf-glow:#E50914;box-shadow:0 0 16px rgba(229,9,20,0.5),inset 0 0 12px rgba(229,9,20,0.15);
   animation:zf-stamp .45s ease-out,zf-pulse-glow 1.6s ease-in-out infinite}
 .zf-chip{display:inline-block;padding:3px 9px;margin:2px;font-size:0.5rem;font-family:'Orbitron',sans-serif;
-  letter-spacing:1px;color:#00B0FF;border:1px solid rgba(0,176,255,0.55);border-radius:3px;
-  background:rgba(0,176,255,0.08);box-shadow:0 0 8px rgba(0,176,255,0.35);--zf-glow:#00B0FF;
+  letter-spacing:1px;color:#D4AF37;border:1px solid rgba(212,175,55,0.55);border-radius:3px;
+  background:rgba(212,175,55,0.08);box-shadow:0 0 8px rgba(212,175,55,0.35);--zf-glow:#D4AF37;
   animation:zf-pulse-glow 2.2s ease-in-out infinite}
 .zf-contrib-track{background:rgba(255,255,255,0.05);height:5px;border-radius:2px;overflow:hidden;margin-top:4px}
 .zf-contrib-fill{height:100%;border-radius:2px;animation:zf-bar-grow .85s ease-out forwards}
 .zf-hex{clip-path:polygon(50% 0%,93% 25%,93% 75%,50% 100%,7% 75%,7% 25%);
   background:linear-gradient(160deg,#0a0a0a,#000);border:none;padding:18px 8px;text-align:center;
   position:relative;min-height:78px;display:flex;flex-direction:column;justify-content:center;align-items:center}
-.zf-hex-wrap{background:linear-gradient(135deg,rgba(212,175,55,0.45),rgba(0,176,255,0.35),rgba(0,255,136,0.3));
+.zf-hex-wrap{background:linear-gradient(135deg,rgba(212,175,55,0.45),rgba(212,175,55,0.35),rgba(0,255,136,0.3));
   clip-path:polygon(50% 0%,93% 25%,93% 75%,50% 100%,7% 75%,7% 25%);padding:1.5px}
-.zf-cell{background:rgba(10,10,10,0.9);border:1px solid rgba(0,176,255,0.2);border-radius:3px;
+.zf-cell{background:rgba(10,10,10,0.9);border:1px solid rgba(212,175,55,0.2);border-radius:3px;
   padding:10px;text-align:center}
 .zf-foot{font-size:0.48rem;color:#666;text-align:right;letter-spacing:1.5px;margin-top:10px}
 </style>
@@ -128,14 +128,14 @@ def render_fincept_thesis_card(thesis: dict | None = None):
     {verdict}
     <div class="zf-holo-track">
       <div class="zf-holo-fill" style="--zf-w:{bar_w}%;width:{bar_w}%;
-           background:linear-gradient(90deg,#00B0FF,{bar_bg},#D4AF37);
+           background:linear-gradient(90deg,#D4AF37,{bar_bg},#D4AF37);
            float:{'right' if bar_dir == 'left' else 'left'};"></div>
     </div>
   </div>
 
   <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:14px;">
-    <div class="zf-cell" style="border-color:rgba(0,176,255,0.35);">
-      <div style="font-size:0.48rem;color:#00B0FF;letter-spacing:1.5px;margin-bottom:4px;">QUANT SIGNAL</div>
+    <div class="zf-cell" style="border-color:rgba(212,175,55,0.35);">
+      <div style="font-size:0.48rem;color:#D4AF37;letter-spacing:1.5px;margin-bottom:4px;">QUANT SIGNAL</div>
       <div style="font-size:0.95rem;font-weight:900;color:{alpha_col};text-shadow:0 0 8px {alpha_col}66;">{alpha_sig}</div>
       <div style="font-size:0.55rem;color:#666;margin-top:2px;">α {alpha_score:.3f}</div>
     </div>
@@ -159,7 +159,7 @@ def render_fincept_thesis_card(thesis: dict | None = None):
   <div style="background:rgba(0,0,0,0.45);border-radius:3px;padding:9px 12px;font-size:0.62rem;color:#666;margin-bottom:8px;
               border:1px solid rgba(255,255,255,0.04);">
     <b style="color:#D4AF37;">OPTIONS FLOW:</b> <span style="color:#fff;">{flow_interp}</span><br>
-    <b style="color:#00B0FF;">EXECUTION:</b> <span style="color:#fff;">{exec_advice}</span> &nbsp;·&nbsp;
+    <b style="color:#D4AF37;">EXECUTION:</b> <span style="color:#fff;">{exec_advice}</span> &nbsp;·&nbsp;
     <b style="color:#666;">SENTIMENT:</b> <span style="color:#ccc;">{sent_int} ({sent_score:+.3f})</span>
   </div>
   <div class="zf-foot">FINCEPT PLATFORM · QUANT TEAM ORCHESTRATOR · ZERO ENGINE v4</div>
@@ -199,11 +199,11 @@ def render_nautilus_order_card(suggestion: dict | None = None):
     tif_badges = "".join(f'<span class="zf-chip">{t}</span>' for t in tif_opts)
 
     html = f"""
-<div class="zf-hud" style="border-color:{side_color}55;box-shadow:0 0 28px {side_color}22,inset 0 0 40px rgba(0,176,255,0.04);">
+<div class="zf-hud" style="border-color:{side_color}55;box-shadow:0 0 28px {side_color}22,inset 0 0 40px rgba(212,175,55,0.04);">
   <div style="display:flex;justify-content:space-between;align-items:center;
               border-bottom:1px solid rgba(255,255,255,0.06);padding-bottom:10px;margin-bottom:14px;">
     <div>
-      <div class="zf-hud-title" style="color:#00B0FF;text-shadow:0 0 12px rgba(0,176,255,0.4);">NAUTILUS ORDER ENGINE</div>
+      <div class="zf-hud-title" style="color:#D4AF37;text-shadow:0 0 12px rgba(212,175,55,0.4);">NAUTILUS ORDER ENGINE</div>
       <div style="font-size:0.5rem;color:#666;margin-top:3px;letter-spacing:1px;">
         IOC · FOK · GTC · GTD · DAY · OCO · OTO · OUO · ICEBERG · TRAILING STOP
       </div>
@@ -233,7 +233,7 @@ def render_nautilus_order_card(suggestion: dict | None = None):
   <div style="background:rgba(0,0,0,0.4);border-radius:3px;padding:8px 12px;font-size:0.6rem;
               color:#666;margin-bottom:12px;border:1px solid rgba(255,255,255,0.04);">
     <b style="color:#D4AF37;">Entry Strategy:</b> <span style="color:#fff;">{entry_type}</span><br>
-    <b style="color:#00B0FF;">Contingency Chain:</b> <span style="color:#fff;">{contingency}</span> &nbsp;·&nbsp;
+    <b style="color:#D4AF37;">Contingency Chain:</b> <span style="color:#fff;">{contingency}</span> &nbsp;·&nbsp;
     <b style="color:#666;">Signal Strength:</b> <span style="color:{side_color};">{abs(blended):.3f}</span>
   </div>
 
@@ -289,9 +289,9 @@ def render_intermarket_card(intermarket: dict | None = None):
         )
 
     html = f"""
-<div class="zf-hud" style="border-color:rgba(0,176,255,0.35);">
+<div class="zf-hud" style="border-color:rgba(212,175,55,0.35);">
   <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
-    <span class="zf-hud-title" style="color:#00B0FF;text-shadow:0 0 12px rgba(0,176,255,0.4);">INTER-MARKET ANALYSIS</span>
+    <span class="zf-hud-title" style="color:#D4AF37;text-shadow:0 0 12px rgba(212,175,55,0.4);">INTER-MARKET ANALYSIS</span>
     <span style="background:{risk_col}22;border:1px solid {risk_col}66;color:{risk_col};
                  font-size:0.48rem;font-weight:700;padding:3px 10px;border-radius:2px;
                  letter-spacing:1.5px;box-shadow:0 0 8px {risk_col}44;">{risk_tier}</span>
@@ -306,7 +306,7 @@ def render_intermarket_card(intermarket: dict | None = None):
            width:{min(100, abs(score) / 0.3 * 100):.0f}%;"></div>
     </div>
   </div>
-  <div style="background:rgba(0,0,0,0.45);border-radius:3px;padding:10px;border:1px solid rgba(0,176,255,0.12);">
+  <div style="background:rgba(0,0,0,0.45);border-radius:3px;padding:10px;border:1px solid rgba(212,175,55,0.12);">
     {rows}
   </div>
 </div>"""
@@ -335,7 +335,7 @@ def render_options_greeks_card(greeks: dict | None = None):
         ("CALL PRICE", f"₹{call_price:.1f}", "#00E676"),
         ("PUT PRICE", f"₹{put_price:.1f}", "#E50914"),
         ("IV%", f"{iv_pct:.1f}%", "#D4AF37"),
-        ("DELTA C/P", f"{delta_call:.3f} / {delta_put:.3f}", "#00B0FF"),
+        ("DELTA C/P", f"{delta_call:.3f} / {delta_put:.3f}", "#D4AF37"),
         ("GAMMA", f"{gamma:.6f}", "#00ff88"),
         ("THETA/DAY", f"{theta_daily:.2f}", "#D4AF37"),
     ]

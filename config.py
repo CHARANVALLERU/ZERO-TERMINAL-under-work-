@@ -14,6 +14,13 @@ GEMINI_API_KEY = os.getenv("GEMINI_API_KEY", "").strip()
 ZERO_ENGINE_MODEL = "gemini-2.0-flash"      # Latest available free-tier model
 ZERO_ENGINE_MAX_HISTORY = 20                # Max message pairs to retain in context
 
+# ── Hugging Face Hub (optional — public Kronos weights work without it) ─
+# Prefer HF_TOKEN; HUGGING_FACE_HUB_TOKEN is the older alias huggingface_hub
+# still reads.  Raises anonymous rate limits when set; never required.
+HF_TOKEN = (
+    os.getenv("HF_TOKEN", "") or os.getenv("HUGGING_FACE_HUB_TOKEN", "")
+).strip()
+
 # ── YouTube & Ingestion Proxy Configuration ──────────────────────────────
 # Webshare or Generic Proxy credentials to bypass YouTube IP blocks (RequestBlocked/IpBlocked)
 YOUTUBE_PROXY_USERNAME = os.getenv("YOUTUBE_PROXY_USERNAME", os.getenv("WEBSHARE_PROXY_USERNAME", ""))
@@ -25,6 +32,19 @@ YOUTUBE_PROXY_HTTPS = os.getenv("YOUTUBE_PROXY_HTTPS", os.getenv("HTTPS_PROXY", 
 # Path to your Obsidian Vault directory.
 PROJECT_ROOT = os.path.dirname(os.path.abspath(__file__))
 OBSIDIAN_VAULT_PATH = os.getenv("OBSIDIAN_VAULT_PATH", os.path.join(PROJECT_ROOT, "obsidian_vault"))
+# Secondary vault: receives a delayed mirror of primary writes (≥24h).
+# Override via SECOND_ZERO_VAULT_PATH. Sync is skipped (no crash) if unwritable.
+SECOND_ZERO_VAULT_PATH = os.getenv(
+    "SECOND_ZERO_VAULT_PATH",
+    os.path.join(PROJECT_ROOT, "second_zero_vault"),
+)
+# Hours a primary write must age before it is copied to SECOND ZERO.
+VAULT_BACKUP_DELAY_HOURS = float(os.getenv("VAULT_BACKUP_DELAY_HOURS", "24"))
+# Persistent dual-vault sync queue (primary_synced_at → second_synced_at).
+VAULT_SYNC_QUEUE_PATH = os.getenv(
+    "VAULT_SYNC_QUEUE_PATH",
+    os.path.join(PROJECT_ROOT, "db", "vault_sync_queue.json"),
+)
 
 # Timezone
 TIMEZONE = 'Asia/Kolkata'

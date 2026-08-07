@@ -37,7 +37,7 @@ _P = {
     "gold": "#D4AF37",
     "neon": "#00ff88",
     "green": "#00E676",
-    "cyan": "#00B0FF",
+    "yellow": "#FFD600",
     "white": "#fff",
     "mute": "#666",
 }
@@ -77,7 +77,7 @@ def _deck_css() -> str:
 .z11-deck::before {{
   content:'';
   position:absolute;top:0;left:0;right:0;height:2px;
-  background:linear-gradient(90deg,transparent,{_P['cyan']},{_P['neon']},transparent);
+  background:linear-gradient(90deg,transparent,{_P['yellow']},{_P['neon']},transparent);
   opacity:0.85;
 }}
 .z11-label {{
@@ -142,7 +142,7 @@ def render_session_iv_badge(data: dict | None) -> None:
     elif method == "gjr_garch":
         color = _P["neon"]
     elif method == "ewma":
-        color = _P["cyan"]
+        color = _P["yellow"]
     elif method == "atr_fallback":
         color = _P["crimson"]
 
@@ -169,14 +169,14 @@ def render_session_iv_badge(data: dict | None) -> None:
 def render_tsfm_forecast_card(tsfm_data: dict | None) -> None:
     """Render Chronos-2 / Kronos / TimesFM P10/P50/P90 forecast."""
     if not tsfm_data or not isinstance(tsfm_data, dict):
-        return
+        tsfm_data = {"status": "unavailable", "error": "no forecast payload"}
 
     status = tsfm_data.get("status")
     if status != "forecasted":
         reason = tsfm_data.get("error") or tsfm_data.get("status") or "unavailable"
         st.markdown(_deck_css() + f"""
 <div class="z11-deck" style="border-color:{_P['mute']}44;">
-  <div class="z11-label" style="color:{_P['cyan']};">◆ TSFM ENSEMBLE</div>
+  <div class="z11-label" style="color:{_P['yellow']};">◆ TSFM ENSEMBLE</div>
   <p style="font-size:0.65rem;color:{_P['mute']};margin:8px 0 0 0;">
     Optional leg inactive — <span style="color:{_P['crimson']};">{reason}</span>
   </p>
@@ -207,10 +207,10 @@ def render_tsfm_forecast_card(tsfm_data: dict | None) -> None:
     mid_pct = max(0.0, min(100.0, ((mid_v - lo_v) / span) * 100.0))
 
     st.markdown(_deck_css() + f"""
-<div class="z11-deck" style="border-color:{_P['cyan']}44;box-shadow:inset 0 0 40px {_P['void']},0 0 18px {_P['cyan']}22;">
+<div class="z11-deck" style="border-color:{_P['yellow']}44;box-shadow:inset 0 0 40px {_P['void']},0 0 18px {_P['yellow']}22;">
   <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;">
     <div>
-      <span class="z11-label z11-glow-text" style="color:{_P['cyan']};">◆ TSFM ENSEMBLE</span>
+      <span class="z11-label z11-glow-text" style="color:{_P['yellow']};">◆ TSFM ENSEMBLE</span>
       <div style="font-size:0.55rem;color:{_P['mute']};margin-top:4px;">
         Backend: <b style="color:{_P['white']};">{backend}</b> · Context: {n_context} bars
       </div>
@@ -228,10 +228,10 @@ def render_tsfm_forecast_card(tsfm_data: dict | None) -> None:
       <span>P10</span><span style="color:{_P['white']};">P50</span><span>P90</span>
     </div>
     <div style="position:relative;height:10px;background:{_P['void']};
-      border:1px solid {_P['cyan']}33;border-radius:2px;overflow:visible;">
+      border:1px solid {_P['yellow']}33;border-radius:2px;overflow:visible;">
       <div style="position:absolute;left:0;right:0;top:0;bottom:0;
         background:linear-gradient(90deg,{_P['crimson']}88,{_P['gold']}66,{_P['green']}88);
-        box-shadow:0 0 14px {_P['cyan']}55;"></div>
+        box-shadow:0 0 14px {_P['yellow']}55;"></div>
       <div style="position:absolute;left:{mid_pct}%;top:-4px;width:3px;height:18px;
         background:{_P['white']};box-shadow:0 0 10px {_P['white']};transform:translateX(-50%);"></div>
     </div>
@@ -368,7 +368,7 @@ def render_agent_debate_panel(debate_data: dict | None) -> None:
       <b style="color:{_P['crimson']};">KILL</b>: {kill}
     </div>
     <div style="font-size:0.6rem;color:{_P['mute']};">
-      <b style="color:{_P['cyan']};">SIZING</b>: {sizing}% of portfolio
+      <b style="color:{_P['yellow']};">SIZING</b>: {sizing}% of portfolio
     </div>
   </div>
 </div>
@@ -496,8 +496,8 @@ def render_broker_control_panel() -> None:
 def render_provider_registry_panel() -> None:
     """Show health-scored NSE/BSE/yfinance provider registry."""
     st.markdown(_deck_css() + f"""
-<div class="z11-deck" style="border-color:{_P['cyan']}44;margin-bottom:8px;">
-  <div class="z11-label z11-glow-text" style="color:{_P['cyan']};">◆ DATA PROVIDER HUD</div>
+<div class="z11-deck" style="border-color:{_P['yellow']}44;margin-bottom:8px;">
+  <div class="z11-label z11-glow-text" style="color:{_P['yellow']};">◆ DATA PROVIDER HUD</div>
   <div style="font-size:0.55rem;color:{_P['mute']};margin-top:4px;">health meters · priority · capability matrix</div>
 </div>
 """, unsafe_allow_html=True)

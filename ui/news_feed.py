@@ -5,10 +5,13 @@ import textwrap
 import email.utils
 from datetime import datetime, timezone
 
+_BLACK = "#000000"
 _GREEN = "#00ff88"
 _RED = "#E50914"
+_WHITE = "#ffffff"
 _GOLD = "#D4AF37"
-_GREY = "#666"
+_YELLOW = "#FFD600"
+_GREY = "rgba(255,255,255,0.40)"
 
 
 def _dir_color(direction):

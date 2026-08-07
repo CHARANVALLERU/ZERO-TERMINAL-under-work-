@@ -27,6 +27,15 @@ KRONOS_MODEL_ID      Hugging Face model id     (NeoQuasar/Kronos-small)
 KRONOS_TOKENIZER_ID  Hugging Face tokenizer id (NeoQuasar/Kronos-Tokenizer-base)
 KRONOS_DEVICE        torch device string; 'auto' = cuda if available else cpu
 KRONOS_MAX_CONTEXT   max context bars fed to the model (512)
+HF_TOKEN / HUGGING_FACE_HUB_TOKEN
+                     Optional Hugging Face Hub token (also config.HF_TOKEN).
+                     Public NeoQuasar models work without it; token raises
+                     anonymous rate limits.  When the local HF cache already
+                     has the weights, load uses local_files_only (no Hub hit).
+TRANSFORMERS_VERBOSITY
+                     Forced to 'error' during load for a quiet Streamlit UI.
+HF_HUB_OFFLINE       If already set by the user, respected; otherwise we
+                     prefer local_files_only when cache is warm.
 
 Sampling note
 -------------
@@ -54,6 +63,7 @@ Usage (engine.* callers)
 from __future__ import annotations
 
 import importlib.util
+import logging
 import os
 import threading
 import time
@@ -78,8 +88,162 @@ KRONOS_TOKENIZER_ID = os.environ.get("KRONOS_TOKENIZER_ID",
 KRONOS_DEVICE = os.environ.get("KRONOS_DEVICE", "auto").strip() or "auto"
 KRONOS_MAX_CONTEXT = _env_int("KRONOS_MAX_CONTEXT", 512)
 
+# Short UI caption — public models need no token; rate limits apply anonymously.
+HF_HUB_AUTH_CAPTION = (
+    "Public NeoQuasar/Kronos weights load without a Hugging Face token; "
+    "set HF_TOKEN (or HUGGING_FACE_HUB_TOKEN) to raise rate limits. "
+    "Warm HF cache loads offline - Streamlit will not re-hit the Hub."
+)
+
 _PRICE_COLS = ("open", "high", "low", "close")
 _OPT_COLS = ("volume", "amount")
+
+
+class _HfUnauthWarningFilter(logging.Filter):
+    """Drop the noisy 'unauthenticated requests to the HF Hub' UserWarning
+    when no token is configured — public models still work; we surface the
+    rate-limit note via HF_HUB_AUTH_CAPTION / status() instead."""
+
+    def filter(self, record: logging.LogRecord) -> bool:
+        try:
+            msg = record.getMessage()
+        except Exception:
+            return True
+        if "unauthenticated requests to the HF Hub" in msg:
+            return False
+        if "Please set a HF_TOKEN" in msg:
+            return False
+        return True
+
+
+def hf_hub_auth_caption() -> str:
+    """Stable one-liner for Streamlit captions (token optional, cache preferred)."""
+    return HF_HUB_AUTH_CAPTION
+
+
+def _resolve_hf_token() -> str | None:
+    """Optional Hub token from env or config.HF_TOKEN (GEMINI_API_KEY style).
+
+    Never required — returns None when unset so anonymous public downloads
+    still work (subject to Hub rate limits).
+    """
+    for key in ("HF_TOKEN", "HUGGING_FACE_HUB_TOKEN"):
+        raw = os.environ.get(key, "")
+        if isinstance(raw, str) and raw.strip():
+            return raw.strip()
+    try:
+        from config import HF_TOKEN as cfg_token  # type: ignore
+        if isinstance(cfg_token, str) and cfg_token.strip():
+            return cfg_token.strip()
+    except Exception:
+        pass
+    return None
+
+
+def _hub_repo_cached(repo_id: str) -> bool:
+    """True when the local Hugging Face cache already has ``config.json`` for
+    ``repo_id`` — enough to prefer ``local_files_only`` and skip Hub traffic."""
+    try:
+        from huggingface_hub import try_to_load_from_cache
+        try:
+            from huggingface_hub import _CACHED_NO_EXIST
+        except ImportError:
+            _CACHED_NO_EXIST = object()  # type: ignore
+        path = try_to_load_from_cache(repo_id, "config.json")
+        if path is None or path is _CACHED_NO_EXIST:
+            return False
+        return bool(path) and os.path.isfile(str(path))
+    except Exception:
+        return False
+
+
+def _quiet_hub_logging() -> None:
+    """Reduce Hub chatter during Kronos weight load.
+
+    Kronos uses ``huggingface_hub`` + safetensors + torch — it does **not**
+    need ``transformers``.  Never ``import transformers`` here: that pulls
+    ``transformers.models.*`` vision stacks into ``sys.modules`` and makes
+    Streamlit's file watcher spam torchvision errors on every script rerun.
+    If another subsystem already imported transformers, quiet its logger only.
+    """
+    import sys
+
+    os.environ.setdefault("TRANSFORMERS_VERBOSITY", "error")
+    os.environ.setdefault("HF_HUB_DISABLE_PROGRESS_BARS", "1")
+    os.environ.setdefault("TOKENIZERS_PARALLELISM", "false")
+
+    try:
+        logging.getLogger("huggingface_hub").setLevel(logging.ERROR)
+        logging.getLogger("huggingface_hub.utils").setLevel(logging.ERROR)
+        logging.getLogger("huggingface_hub.utils._http").setLevel(logging.ERROR)
+    except Exception:
+        pass
+
+    # Quiet transformers ONLY if already imported — do not import it to quiet it.
+    if "transformers" in sys.modules:
+        try:
+            tf = sys.modules["transformers"]
+            set_err = getattr(getattr(tf, "logging", None), "set_verbosity_error", None)
+            if callable(set_err):
+                set_err()
+        except Exception:
+            pass
+        try:
+            logging.getLogger("transformers").setLevel(logging.ERROR)
+        except Exception:
+            pass
+
+    # Downgrade / suppress the unauthenticated-Hub warning in UI logs.
+    flt = _HfUnauthWarningFilter()
+    for name in ("huggingface_hub", "huggingface_hub.utils",
+                 "huggingface_hub.utils._http", "transformers"):
+        logging.getLogger(name).addFilter(flt)
+    # warnings.warn path used by some hub versions
+    try:
+        import warnings
+        warnings.filterwarnings(
+            "ignore",
+            message=r".*unauthenticated requests to the HF Hub.*",
+            category=UserWarning,
+        )
+        warnings.filterwarnings(
+            "ignore",
+            message=r".*Please set a HF_TOKEN.*",
+            category=UserWarning,
+        )
+    except Exception:
+        pass
+
+
+def _load_pretrained(cls, repo_id: str, **kwargs):
+    """``from_pretrained`` with local-cache-first, online fallback.
+
+    Never imports transformers — Kronos Mixins live on huggingface_hub.
+    """
+    # Prefer local snapshot when available / already requested.
+    try:
+        kw_local = dict(kwargs)
+        kw_local["local_files_only"] = True
+        return cls.from_pretrained(repo_id, **kw_local)
+    except Exception:
+        pass
+    kw_net = dict(kwargs)
+    kw_net.pop("local_files_only", None)
+    return cls.from_pretrained(repo_id, **kw_net)
+
+
+def _from_pretrained_kwargs(repo_id: str, token: str | None) -> dict:
+    """Build kwargs for ``*.from_pretrained``: optional token + local cache prefer."""
+    kw: dict = {}
+    if token:
+        kw["token"] = token
+    # Prefer offline / local when cache is warm (or user already set HF_HUB_OFFLINE).
+    offline = (os.environ.get("HF_HUB_OFFLINE", "") or "").strip().lower() in {
+        "1", "true", "yes", "on",
+    }
+    if offline or _hub_repo_cached(repo_id):
+        kw["local_files_only"] = True
+    return kw
 
 
 # ── Result dataclass ─────────────────────────────────────────────────────────
@@ -154,26 +318,45 @@ class KronosService:
         except Exception:
             return False
 
+    @staticmethod
+    def _probe_torchvision() -> bool:
+        """find_spec only — never import torchvision (or transformers vision)."""
+        try:
+            return importlib.util.find_spec("torchvision") is not None
+        except Exception:
+            return False
+
     # ── Status / availability ────────────────────────────────────────────
 
     def status(self) -> dict:
         """Cheap state snapshot — NEVER loads the model or hits the network."""
         try:
+            token = _resolve_hf_token()
             return {
                 "torch_available": self._probe_torch(),
                 "package_available": self._probe_package(),
+                "torchvision_available": self._probe_torchvision(),
                 "model_loaded": self._predictor is not None,
                 "device": self._resolved_device or self.device,
                 "model_id": self.model_id,
                 "tokenizer_id": self.tokenizer_id,
                 "error": self._load_error,
+                "hf_token_set": bool(token),
+                "hf_cache_warm": (
+                    _hub_repo_cached(self.model_id)
+                    and _hub_repo_cached(self.tokenizer_id)
+                ),
+                "hf_auth_caption": HF_HUB_AUTH_CAPTION,
             }
         except Exception as exc:  # absolute no-raise guarantee
             return {
                 "torch_available": False, "package_available": False,
+                "torchvision_available": False,
                 "model_loaded": False, "device": self.device,
                 "model_id": self.model_id, "tokenizer_id": self.tokenizer_id,
                 "error": str(exc),
+                "hf_token_set": False, "hf_cache_warm": False,
+                "hf_auth_caption": HF_HUB_AUTH_CAPTION,
             }
 
     def available(self) -> bool:
@@ -219,13 +402,19 @@ class KronosService:
             return False
 
         try:
+            _quiet_hub_logging()
             import torch  # lazy heavy import
             from engine.kronos import (  # lazy vendored import
                 Kronos, KronosPredictor, KronosTokenizer,
             )
 
-            tokenizer = KronosTokenizer.from_pretrained(self.tokenizer_id)
-            model = Kronos.from_pretrained(self.model_id)
+            token = _resolve_hf_token()
+            tok_kw = _from_pretrained_kwargs(self.tokenizer_id, token)
+            model_kw = _from_pretrained_kwargs(self.model_id, token)
+
+            tokenizer = _load_pretrained(
+                KronosTokenizer, self.tokenizer_id, **tok_kw)
+            model = _load_pretrained(Kronos, self.model_id, **model_kw)
 
             device = self.device
             if device.lower() in ("", "auto"):
@@ -563,8 +752,12 @@ if __name__ == "__main__":
     # Self-test: safe to run with zero optional deps installed.
     print("ZERO Kronos Service")
     svc = get_kronos_service()
-    print(f"  status:    {svc.status()}")
+    st = svc.status()
+    print(f"  status:    {st}")
     print(f"  available: {svc.available()}")
+    print(f"  hf_token_set: {st.get('hf_token_set')}  "
+          f"hf_cache_warm: {st.get('hf_cache_warm')}")
+    print(f"  caption:   {hf_hub_auth_caption()}")
 
     _rng = np.random.default_rng(7)
     _n = 64

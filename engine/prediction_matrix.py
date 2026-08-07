@@ -1,4 +1,5 @@
-from data.global_feeds import get_us_market_summary
+# Heavy data feeds are imported lazily inside generators (avoids KeyError /
+# partial-init races when Streamlit reloads concurrent ``data.*`` imports).
 from data.gift_nifty import get_gift_nifty_price
 from data.adr_tracker import get_adr_delta
 from data.options_chain import fetch_nse_option_chain, process_option_chain
@@ -15,6 +16,12 @@ from config import (
     NEWS_MATRIX_TTL_FLOOR_SECONDS,
     NEWS_OVERLAY_CACHE_CAP,
 )
+
+
+def _get_us_market_summary():
+    """Lazy wrapper — keeps ``data.global_feeds`` off the import-time graph."""
+    from data.global_feeds import get_us_market_summary
+    return get_us_market_summary()
 
 # Mapping from index display name to historical data key
 INDEX_HIST_KEYS = {
@@ -474,18 +481,49 @@ def _generate_single_index_prediction(index_name, us_summary, gift_price, adr_da
         from engine.tsfm_predictor import get_forecaster
         if _hist_df is None:
             _hist_df = get_historical_data(hist_key)
-        if _hist_df is not None:
+        if _hist_df is not None and not getattr(_hist_df, "empty", True):
             _tsfm_fc = get_forecaster().forecast_ohlc(
                 _hist_df, horizon=1,
                 covariates={'gift_premium': gift_premium, 'vix': vix,
                             'pcr': pcr, 'sentiment': sentiment_score})
-            res['tsfm_forecast'] = _tsfm_fc
-            if _tsfm_fc.get('status') == 'forecasted':
-                res['tsfm_blend'] = get_forecaster().compare_vs_point(_tsfm_fc, res)
+            if not isinstance(_tsfm_fc, dict):
+                _tsfm_fc = {
+                    "status": "error",
+                    "error": "tsfm returned non-dict result",
+                    "backend": None,
+                    "close": {"p10": None, "p50": None, "p90": None},
+                }
+            else:
+                _tsfm_fc = dict(_tsfm_fc)
+            # Tag every index so UI/debug never confuse NIFTY vs BANKNIFTY vs SENSEX.
+            _tsfm_fc["symbol"] = index_name
+            _tsfm_fc["hist_key"] = hist_key
+            res["tsfm_forecast"] = _tsfm_fc
+            if _tsfm_fc.get("status") == "forecasted":
+                res["tsfm_blend"] = get_forecaster().compare_vs_point(_tsfm_fc, res)
+            else:
+                res["tsfm_blend"] = None
         else:
-            res['tsfm_forecast'] = None
-    except Exception:
-        res['tsfm_forecast'] = None
+            # Surface a structured miss — never silently omit the card for one index.
+            res["tsfm_forecast"] = {
+                "status": "error",
+                "error": f"no historical data for {hist_key}",
+                "backend": None,
+                "symbol": index_name,
+                "hist_key": hist_key,
+                "close": {"p10": None, "p50": None, "p90": None},
+            }
+            res["tsfm_blend"] = None
+    except Exception as _tsfm_exc:
+        res["tsfm_forecast"] = {
+            "status": "error",
+            "error": str(_tsfm_exc) or _tsfm_exc.__class__.__name__,
+            "backend": None,
+            "symbol": index_name,
+            "hist_key": hist_key,
+            "close": {"p10": None, "p50": None, "p90": None},
+        }
+        res["tsfm_blend"] = None
 
     # ------------------------------------------------------------------
     # Agent Debate Layer (TradingAgents-style bull/bear → PM verdict)
@@ -517,6 +555,7 @@ except Exception:  # importable for CLI / tests / offline without Streamlit
     def _cache600(fn):
         return fn
 
+
 def _generate_prediction_matrix_raw(news_overlay=None):
     """
     Compiles all data and runs the predictive algorithm independently for
@@ -532,7 +571,7 @@ def _generate_prediction_matrix_raw(news_overlay=None):
         }
     """
     # 1. Fetch shared core data (fetched once, used for all indices)
-    us_summary = get_us_market_summary()
+    us_summary = _get_us_market_summary()
     _gift = get_gift_nifty_price()
     # get_gift_nifty_price() returns (price, is_stale: bool) per its contract.
     gift_price = _gift[0] if isinstance(_gift, tuple) else _gift

@@ -60,7 +60,7 @@ FONT_COLOR = "#ffffff"
 GREEN = "#00ff88"          # ZERO buy / up
 RED = "#E50914"            # ZERO sell / down
 GOLD = "#D4AF37"           # ZERO accent — forecast "up" candles
-AMBER = "#FF8F00"          # forecast "down" candles (distinct from RED)
+YELLOW = "#FFD600"          # forecast "down" candles (distinct from RED)
 MUTED = "#888"             # secondary text / ticks
 GRID = "rgba(255,255,255,0.06)"
 AXIS_LINE = "#333"
@@ -71,6 +71,19 @@ GOLD_A = "rgba(212,175,55,0.50)"     # muted-gold forecast volume
 BAND_FILL = "rgba(212,175,55,0.16)"  # uncertainty band fill
 PATH_LINE = "rgba(212,175,55,0.25)"  # spaghetti sample paths
 DIVIDER = "rgba(255,255,255,0.45)"   # NOW divider line
+
+# Streamlit ``st.plotly_chart(..., config=...)`` — keep interactive (never
+# staticPlot / never hide the modebar). Zoom, pan, box/lasso, scroll-zoom,
+# hover, and reset live on the Plotly modebar; scroll wheel zooms in-place.
+KRONOS_PLOTLY_CONFIG = dict(
+    scrollZoom=True,
+    displayModeBar=True,
+    displaylogo=False,
+    responsive=True,
+    # Defaults already include zoom2d / pan2d / select2d / lasso2d /
+    # zoomIn2d / zoomOut2d / autoScale2d / resetScale2d — leave them on.
+    modeBarButtonsToRemove=["toImage"],  # keep chrome lean; export rarely used here
+)
 
 _OHLC_ALIASES = {
     "timestamp": "timestamps", "date": "timestamps", "datetime": "timestamps",
@@ -93,8 +106,14 @@ def _hoverlabel():
     )
 
 
-def _apply_dark_layout(fig, title="", height=520, legend_top=True):
-    """Apply the ZERO terminal layout (same bg / grid / font as ui/charts.py)."""
+def _apply_dark_layout(fig, title="", height=520, legend_top=True, uirevision=None):
+    """Apply the ZERO terminal layout (same bg / grid / font as ui/charts.py).
+
+    Interactivity: ``dragmode='pan'`` (TradingView-style; modebar toggles to
+    box/lasso zoom), unified hover, gold/muted spike lines, and a stable
+    ``uirevision`` so Streamlit reruns do not wipe the user's zoom/pan.
+    Rangeslider stays off — the modebar owns zoom/pan/reset.
+    """
     fig.update_layout(
         title=dict(
             text=title,
@@ -116,18 +135,37 @@ def _apply_dark_layout(fig, title="", height=520, legend_top=True):
             bgcolor="rgba(0,0,0,0)",
             font=dict(size=10, color=MUTED),
         ) if legend_top else None,
+        # Pan by default; modebar exposes zoom / box / lasso / reset.
         dragmode="pan",
+        # Preserve viewport across Streamlit reruns when the series identity
+        # is unchanged (symbol / chart family). Fresh data still redraws.
+        uirevision=uirevision if uirevision is not None else (title or "kronos"),
+        spikedistance=-1,
+        hoverdistance=20,
     )
     fig.update_xaxes(
         rangeslider_visible=False,
         showgrid=True, gridcolor=GRID,
         zeroline=False, linecolor=AXIS_LINE, showline=True,
         tickfont=dict(color=MUTED, size=10),
+        showspikes=True,
+        spikemode="across",
+        spikesnap="cursor",
+        spikecolor=GOLD,
+        spikethickness=1,
+        spikedash="dot",
     )
     fig.update_yaxes(
         showgrid=True, gridcolor=GRID,
         zeroline=False, linecolor=AXIS_LINE, showline=True,
         tickfont=dict(color=MUTED, size=10),
+        showspikes=True,
+        spikemode="across",
+        spikesnap="cursor",
+        spikecolor=MUTED,
+        spikethickness=1,
+        spikedash="dot",
+        fixedrange=False,  # allow vertical zoom/pan (trading-chart feel)
     )
     return fig
 
@@ -428,7 +466,7 @@ def kronos_forecast_chart(hist_df, pred_df, sample_paths=None,
                 whiskerwidth=0.6,
             ), row=1, col=1)
 
-        # --- forecast candles (gold/amber pair) ----------------------------
+        # --- forecast candles (gold/yellow pair) ----------------------------
         if pred is not None:
             fig.add_trace(go.Candlestick(
                 x=list(pred_x),
@@ -436,7 +474,7 @@ def kronos_forecast_chart(hist_df, pred_df, sample_paths=None,
                 low=pred["low"], close=pred["close"],
                 name="KRONOS FORECAST",
                 increasing=dict(line=dict(color=GOLD, width=1), fillcolor=GOLD),
-                decreasing=dict(line=dict(color=AMBER, width=1), fillcolor=AMBER),
+                decreasing=dict(line=dict(color=YELLOW, width=1), fillcolor=YELLOW),
                 whiskerwidth=0.6, opacity=0.9,
             ), row=1, col=1)
 
@@ -477,6 +515,7 @@ def kronos_forecast_chart(hist_df, pred_df, sample_paths=None,
             fig,
             title=_title(symbol, interval, "KRONOS FORECAST"),
             height=560 if has_vol else 480,
+            uirevision=_title(symbol, interval, "KRONOS FORECAST") or "kronos-forecast",
         )
         fig.update_layout(bargap=0.15)
         if pred is None:
@@ -588,6 +627,7 @@ def kronos_close_paths_chart(hist_df, sample_paths, pred_timestamps=None, symbol
             fig,
             title=_title(symbol, "KRONOS CLOSE PATHS"),
             height=420,
+            uirevision=_title(symbol, "KRONOS CLOSE PATHS") or "kronos-paths",
         )
         if paths is None:
             fig.add_annotation(
@@ -705,7 +745,12 @@ def kronos_backtest_chart(result):
         if not fig.data:
             return _empty_fig("KRONOS — NO BACKTEST DATA")
 
-        _apply_dark_layout(fig, title=_title("KRONOS BACKTEST"), height=520)
+        _apply_dark_layout(
+            fig,
+            title=_title("KRONOS BACKTEST"),
+            height=520,
+            uirevision="kronos-backtest",
+        )
         # Restyle the subplot titles to the muted terminal caption look.
         for ann in fig.layout.annotations:
             if ann.text in ("PREDICTED VS ACTUAL CLOSE", "STRATEGY VS BUY & HOLD"):
@@ -730,7 +775,7 @@ def kronos_status_badge_html(status):
     Rules
     -----
     * ``model_loaded``     -> ONLINE  (ZERO green ``#00ff88``)
-    * ``torch_available``  -> STANDBY (amber/gold ``#D4AF37``)
+    * ``torch_available``  -> STANDBY (gold ``#D4AF37``)
     * otherwise            -> OFFLINE (ZERO red ``#E50914``)
 
     Returns
@@ -782,4 +827,5 @@ __all__ = [
     "kronos_close_paths_chart",
     "kronos_backtest_chart",
     "kronos_status_badge_html",
+    "KRONOS_PLOTLY_CONFIG",
 ]

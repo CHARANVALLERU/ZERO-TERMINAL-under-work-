@@ -658,8 +658,13 @@ def process_youtube_conversion(url, output_file=DEFAULT_OUTPUT, auto_ingest=True
 
         print(f"SUCCESS! Knowledge saved to Obsidian Vault: {obsidian_note_path}")
 
-        index_file = os.path.join(obsidian_yt_dir, "Index.md")
-        if os.path.exists(index_file):
+        try:
+            from engine.vault_sync import sync_youtube_note
+            sync_youtube_note(f"04_YouTube_Knowledge/{main_title}.md")
+        except Exception as ve:
+            print(f"vault_sync notice: {ve}")
+
+        index_file = os.path.join(obsidian_yt_dir, "Index.md")        if os.path.exists(index_file):
             try:
                 with open(index_file, "r", encoding="utf-8") as f:
                     idx_content = f.read()

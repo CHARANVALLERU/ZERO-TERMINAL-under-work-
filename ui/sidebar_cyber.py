@@ -19,7 +19,7 @@ _RED = "#E50914"
 _GOLD = "#D4AF37"
 _NEON = "#00ff88"
 _GREEN = "#00E676"
-_CYAN = "#00B0FF"
+_GOLD_ACCENT = "#D4AF37"
 _WHITE = "#fff"
 _MUTED = "#666"
 
@@ -109,7 +109,7 @@ def show_zero_digital_splash() -> None:
     width: 100%; overflow: hidden;
   }}
   .wordmark::before {{
-    color: {_CYAN}; clip-path: inset(0 0 55% 0);
+    color: {_GOLD_ACCENT}; clip-path: inset(0 0 55% 0);
     transform: translate(-2px, -1px); opacity: 0.85;
     animation: glitch-a 2.2s infinite linear alternate-reverse;
   }}
@@ -236,11 +236,11 @@ def digital_clock_component() -> None:
   }}
   #zero-clock-box {{
     background: linear-gradient(180deg, {_SURFACE} 0%, {_BLACK} 100%);
-    border: 1px solid rgba(0,176,255,0.28);
+    border: 1px solid rgba(212,175,55,0.28);
     border-left: 3px solid {_RED};
     padding: 12px 28px 14px;
     text-align: center;
-    box-shadow: inset 0 0 24px rgba(0,176,255,0.06), 0 0 18px rgba(229,9,20,0.12);
+    box-shadow: inset 0 0 24px rgba(212,175,55,0.06), 0 0 18px rgba(229,9,20,0.12);
     position: relative;
     min-width: 220px;
   }}
@@ -253,11 +253,11 @@ def digital_clock_component() -> None:
     font-family: 'Orbitron', sans-serif;
     font-weight: 900; font-size: 1.85rem; letter-spacing: 0.18em;
     color: {_WHITE}; margin-top: 10px;
-    text-shadow: 0 0 12px rgba(0,176,255,0.25);
+    text-shadow: 0 0 12px rgba(212,175,55,0.25);
   }}
   #clock .sec {{ color: {_RED}; text-shadow: 0 0 10px rgba(229,9,20,0.65); }}
   #date {{
-    color: {_CYAN}; font-size: 0.55rem; font-weight: 700;
+    color: {_GOLD_ACCENT}; font-size: 0.55rem; font-weight: 700;
     margin-top: 8px; letter-spacing: 0.18em; text-transform: uppercase;
   }}
   #zero-mkt-pill {{
@@ -427,7 +427,7 @@ def render_sidebar_brand_block() -> None:
   }}
   .zero-brand-strip::after {{
     content: ''; position: absolute; right: 0; top: 0; bottom: 0; width: 2px;
-    background: linear-gradient({_NEON}, {_CYAN}); opacity: 0.55;
+    background: linear-gradient({_NEON}, {_GOLD_ACCENT}); opacity: 0.55;
   }}
   .zero-brand-mark {{
     font-family: 'Orbitron', sans-serif; font-weight: 900;
@@ -487,7 +487,7 @@ def render_zero_agi_sidebar() -> None:
   [data-testid="stSidebar"] .zero-agi-gate {{ height: 0; overflow: hidden; margin: 0; padding: 0; }}
   [data-testid="stSidebar"] .element-container:has(.zero-agi-gate) + .element-container {{
     position: relative; border-radius: 8px; padding: 3px !important;
-    background: linear-gradient(135deg, {_NEON}, {_GREEN}, {_CYAN}, {_NEON});
+    background: linear-gradient(135deg, {_NEON}, {_GREEN}, {_GOLD_ACCENT}, {_NEON});
     background-size: 300% 300%;
     animation: agiRingHue 2.4s ease-in-out infinite, agiRingGlow 1.8s ease-in-out infinite;
   }}

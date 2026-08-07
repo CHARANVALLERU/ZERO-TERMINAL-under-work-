@@ -2,15 +2,17 @@
 Resilient market-news scraper with VADER sentiment.
 
 Sources (in order):
-  1. Moneycontrol markets RSS
-  2. Reuters India RSS
-  3. Economic Times markets RSS
-  4. Investing.com world-news (legacy fallback)
+  1. WorldMonitor (worldmonitor.app finance digest / page)
+  2. Moneycontrol markets RSS
+  3. Reuters India RSS
+  4. Economic Times markets RSS
+  5. Investing.com world-news (legacy fallback)
 
 Sentiment: VADER (vaderSentiment) for proper negation/intensifier handling,
 plus a domain-specific lexicon override for Indian-market terms. Returns
 a rich dict in the same shape the rest of the engine already consumes.
 """
+import os
 import re
 try:
     import feedparser
@@ -182,6 +184,103 @@ def fetch_forexfactory_news():
     return ff_items
 
 
+
+def _scrape_worldmonitor():
+    """Fetch finance headlines from worldmonitor.app.
+
+    Prefers the official digest API when WORLDMONITOR_API_KEY is set;
+    otherwise scrapes the public site HTML. Never raises — returns [].
+    """
+    items = []
+    seen = set()
+    key = (
+        os.getenv("WORLDMONITOR_API_KEY", "").strip()
+        or os.getenv("ZERO_WORLDMONITOR_KEY", "").strip()
+    )
+    # 1) Official finance digest (requires API key)
+    if key:
+        try:
+            import json
+            url = (
+                "https://api.worldmonitor.app/api/news/v1/list-feed-digest"
+                "?variant=finance"
+                "&jmespath=categories"
+            )
+            r = retry_fetch(
+                url,
+                headers={
+                    "User-Agent": USER_AGENT,
+                    "X-WorldMonitor-Key": key,
+                    "X-Api-Key": key,
+                    "Accept": "application/json",
+                },
+                timeout=10,
+            )
+            if r is not None and getattr(r, "status_code", 0) == 200:
+                payload = r.json() if hasattr(r, "json") else json.loads(r.content)
+                cats = payload.get("categories") if isinstance(payload, dict) else None
+                if isinstance(cats, dict):
+                    for bucket in cats.values():
+                        for it in (bucket.get("items") if isinstance(bucket, dict) else []) or []:
+                            if not isinstance(it, dict):
+                                continue
+                            title = (it.get("title") or "").strip()
+                            if not title or title in seen:
+                                continue
+                            seen.add(title)
+                            items.append({
+                                "title": title,
+                                "link": it.get("link") or "https://www.worldmonitor.app/",
+                                "source": "WorldMonitor",
+                                "published": str(it.get("publishedAt") or ""),
+                                "priority": 1,
+                            })
+                            if len(items) >= 12:
+                                break
+                        if len(items) >= 12:
+                            break
+        except Exception:
+            pass
+
+    # 2) Public page scrape fallback (no key)
+    if len(items) < 4:
+        try:
+            from bs4 import BeautifulSoup
+            r = retry_fetch(
+                "https://www.worldmonitor.app/",
+                headers={"User-Agent": USER_AGENT, "Accept": "text/html"},
+                timeout=10,
+            )
+            if r is not None and getattr(r, "status_code", 0) == 200:
+                soup = BeautifulSoup(r.text, "html.parser")
+                for a in soup.find_all("a", href=True):
+                    title = (a.get_text() or "").strip()
+                    href = a.get("href") or ""
+                    if not title or len(title) < 28 or title in seen:
+                        continue
+                    # Skip nav / chrome
+                    low = title.lower()
+                    if any(x in low for x in ("login", "docs", "pricing", "sign up", "api")):
+                        continue
+                    if href.startswith("/"):
+                        href = "https://www.worldmonitor.app" + href
+                    if not href.startswith("http"):
+                        continue
+                    seen.add(title)
+                    items.append({
+                        "title": title,
+                        "link": href,
+                        "source": "WorldMonitor",
+                        "published": "",
+                        "priority": 1,
+                    })
+                    if len(items) >= 12:
+                        break
+        except Exception:
+            pass
+    return items
+
+
 def _scrape_rss():
     if feedparser is None:
         return []
@@ -234,12 +333,13 @@ def _scrape_investing_html():
 
 
 def _live_scrape():
-    # ForexFactory is FIRST PRIORITY
+    # WorldMonitor + ForexFactory first, then RSS / Investing fallback
+    wm_news = _scrape_worldmonitor()
     ff_news = fetch_forexfactory_news()
     other_items = _scrape_rss()
     if not other_items:
         other_items = _scrape_investing_html()
-    return ff_news + other_items
+    return wm_news + ff_news + other_items
 
 
 

@@ -36,6 +36,8 @@ KRONOS_MODEL_ID     (NeoQuasar/Kronos-small)
 KRONOS_TOKENIZER_ID (NeoQuasar/Kronos-Tokenizer-base)
 KRONOS_MAX_CONTEXT  (512)
 KRONOS_SAMPLE_COUNT sampled paths for empirical quantiles, >=4 (8)
+HF_TOKEN / HUGGING_FACE_HUB_TOKEN  optional Hub auth (higher rate limits)
+HF_HUB_OFFLINE      if 1/true, force local_files_only (no network)
 
 Output schema of forecast_ohlc()
 --------------------------------
@@ -72,6 +74,7 @@ Optional pip packages (comment into requirements.txt when enabling):
 from __future__ import annotations
 
 import importlib.util
+import logging
 import os
 import sys
 
@@ -93,6 +96,10 @@ def _env_float(name: str, default: float) -> float:
         return float(os.environ.get(name, default))
     except (TypeError, ValueError):
         return default
+
+
+def _env_truthy(name: str) -> bool:
+    return os.environ.get(name, "").strip().lower() in {"1", "true", "yes", "on"}
 
 
 TSFM_BACKEND = os.environ.get("TSFM_BACKEND", "auto").strip().lower()
@@ -121,6 +128,7 @@ AUTO_BACKEND_PRIORITY = ("chronos2", "kronos", "timesfm")
 _MODEL_CACHE: dict = {}
 _LOAD_FAILED: set = set()
 _FORECASTER_CACHE: dict = {}
+_HF_LOGGING_QUIETED = False
 
 
 def _r(value, nd: int = 2):
@@ -131,6 +139,171 @@ def _r(value, nd: int = 2):
         return round(float(value), nd)
     except (TypeError, ValueError):
         return None
+
+
+# ── Hugging Face hub helpers (no hard deps — soft-touch if installed) ────────
+
+def _hf_token() -> str | None:
+    """Optional Hub auth from env (HF_TOKEN preferred, then HUGGING_FACE_HUB_TOKEN)."""
+    for key in ("HF_TOKEN", "HUGGING_FACE_HUB_TOKEN"):
+        tok = (os.environ.get(key) or "").strip()
+        if tok:
+            return tok
+    return None
+
+
+class _SuppressUnauthenticatedHFWarning(logging.Filter):
+    """Drop the noisy Hub 'unauthenticated requests' warning when no token."""
+
+    def filter(self, record: logging.LogRecord) -> bool:  # noqa: A003
+        try:
+            msg = record.getMessage()
+        except Exception:
+            return True
+        return "unauthenticated requests" not in msg.lower()
+
+
+def _quiet_hf_logging() -> None:
+    """Reduce transformers / huggingface_hub verbosity on model load (idempotent)."""
+    global _HF_LOGGING_QUIETED
+    if _HF_LOGGING_QUIETED:
+        return
+    _HF_LOGGING_QUIETED = True
+    # Prefer env defaults only when unset — don't override an explicit user choice.
+    os.environ.setdefault("TRANSFORMERS_VERBOSITY", "error")
+    os.environ.setdefault("HF_HUB_DISABLE_TELEMETRY", "1")
+    os.environ.setdefault("TOKENIZERS_PARALLELISM", "false")
+    try:
+        for name in ("transformers", "huggingface_hub", "httpx", "filelock"):
+            logging.getLogger(name).setLevel(logging.ERROR)
+        hub_log = logging.getLogger("huggingface_hub")
+        if not any(isinstance(f, _SuppressUnauthenticatedHFWarning) for f in hub_log.filters):
+            hub_log.addFilter(_SuppressUnauthenticatedHFWarning())
+    except Exception:
+        pass
+    try:
+        import transformers  # optional — pulled by Chronos / some Hub stacks
+        if hasattr(transformers, "logging") and hasattr(transformers.logging, "set_verbosity_error"):
+            transformers.logging.set_verbosity_error()
+    except Exception:
+        pass
+    try:
+        from huggingface_hub.utils import logging as _hf_logging  # type: ignore
+        if hasattr(_hf_logging, "set_verbosity_error"):
+            _hf_logging.set_verbosity_error()
+    except Exception:
+        pass
+
+
+def _hf_hub_cache_roots() -> list[str]:
+    roots: list[str] = []
+    hub_cache = (os.environ.get("HF_HUB_CACHE") or "").strip()
+    if hub_cache:
+        roots.append(hub_cache)
+    hf_home = (os.environ.get("HF_HOME") or "").strip()
+    if hf_home:
+        roots.append(os.path.join(hf_home, "hub"))
+    roots.append(os.path.join(os.path.expanduser("~"), ".cache", "huggingface", "hub"))
+    # De-dupe while preserving order.
+    seen: set[str] = set()
+    out: list[str] = []
+    for r in roots:
+        key = os.path.normcase(os.path.abspath(r))
+        if key not in seen:
+            seen.add(key)
+            out.append(r)
+    return out
+
+
+def _hf_model_cached(model_id: str) -> bool:
+    """True when *model_id* looks like a local dir or has a non-empty HF hub snapshot."""
+    if not model_id:
+        return False
+    if os.path.isdir(model_id):
+        try:
+            return any(os.scandir(model_id))
+        except OSError:
+            return False
+    # Hub repo ids are "org/name" → cache folder models--org--name/snapshots/<rev>/
+    folder = "models--" + model_id.replace("/", "--")
+    for root in _hf_hub_cache_roots():
+        snap_root = os.path.join(root, folder, "snapshots")
+        if not os.path.isdir(snap_root):
+            continue
+        try:
+            for entry in os.scandir(snap_root):
+                if entry.is_dir(follow_symlinks=True):
+                    try:
+                        if any(os.scandir(entry.path)):
+                            return True
+                    except OSError:
+                        continue
+        except OSError:
+            continue
+    return False
+
+
+def _hf_from_pretrained(loader, model_id: str, **extra):
+    """Call ``loader(model_id, ...)`` with optional token + local_files_only fallback.
+
+    * Respects HF_TOKEN / HUGGING_FACE_HUB_TOKEN when set.
+    * If the Hub cache already has *model_id* (or HF_HUB_OFFLINE), tries
+      ``local_files_only=True`` first to avoid re-hitting the network.
+    * Falls back to a normal (possibly networked) load unless offline is forced.
+    * Tolerates older kwargs (``use_auth_token``) via TypeError retry — no new deps.
+    * Suppresses huggingface_hub's ``print("Loading weights from local directory")``
+      spam (not a logger — a bare print in hub_mixin).
+    """
+    import contextlib
+    import io
+
+    _quiet_hf_logging()
+    kwargs = dict(extra)
+    token = _hf_token()
+    if token:
+        kwargs["token"] = token
+
+    def _call(*, local_files_only: bool):
+        call_kwargs = dict(kwargs)
+        if local_files_only:
+            call_kwargs["local_files_only"] = True
+        try:
+            return loader(model_id, **call_kwargs)
+        except TypeError as exc:
+            msg = str(exc).lower()
+            # Older huggingface_hub / transformers: use_auth_token instead of token.
+            if token and "token" in msg and "unexpected" in msg:
+                call_kwargs.pop("token", None)
+                call_kwargs["use_auth_token"] = token
+                try:
+                    return loader(model_id, **call_kwargs)
+                except TypeError as exc2:
+                    msg2 = str(exc2).lower()
+                    call_kwargs.pop("use_auth_token", None)
+                    if local_files_only and "local_files_only" in msg2:
+                        call_kwargs.pop("local_files_only", None)
+                        return loader(model_id, **call_kwargs)
+                    raise
+            if local_files_only and "local_files_only" in msg:
+                call_kwargs.pop("local_files_only", None)
+                return loader(model_id, **call_kwargs)
+            raise
+
+    def _run():
+        offline = _env_truthy("HF_HUB_OFFLINE")
+        prefer_local = offline or _hf_model_cached(model_id)
+        if prefer_local:
+            try:
+                return _call(local_files_only=True)
+            except Exception:
+                if offline:
+                    raise
+                # Cache incomplete / stale → allow network download below.
+        return _call(local_files_only=False)
+
+    # hub_mixin prints to stdout on local-dir loads; keep terminal/streamlit quiet.
+    with contextlib.redirect_stdout(io.StringIO()):
+        return _run()
 
 
 class TSFMForecaster:
@@ -198,7 +371,12 @@ class TSFMForecaster:
 
     def _load_chronos2(self):
         from chronos import Chronos2Pipeline  # lazy heavy import
-        return Chronos2Pipeline.from_pretrained(CHRONOS2_MODEL_ID, device_map=self.device)
+        # Quiet HF/transformers + optional token + prefer local cache.
+        return _hf_from_pretrained(
+            Chronos2Pipeline.from_pretrained,
+            CHRONOS2_MODEL_ID,
+            device_map=self.device,
+        )
 
     def _load_kronos(self):
         try:
@@ -209,8 +387,8 @@ class TSFMForecaster:
             if KRONOS_REPO_PATH and KRONOS_REPO_PATH not in sys.path:
                 sys.path.insert(0, KRONOS_REPO_PATH)
             from model import Kronos, KronosTokenizer, KronosPredictor  # type: ignore
-        tokenizer = KronosTokenizer.from_pretrained(KRONOS_TOKENIZER_ID)
-        model = Kronos.from_pretrained(KRONOS_MODEL_ID)
+        tokenizer = _hf_from_pretrained(KronosTokenizer.from_pretrained, KRONOS_TOKENIZER_ID)
+        model = _hf_from_pretrained(Kronos.from_pretrained, KRONOS_MODEL_ID)
         return KronosPredictor(model, tokenizer, device=self.device,
                                max_context=KRONOS_MAX_CONTEXT)
 
@@ -261,6 +439,28 @@ class TSFMForecaster:
 
     # ── Public forecast API ──────────────────────────────────────────────
 
+    def _candidate_backends(self) -> tuple[str, ...]:
+        """Ordered backends to attempt for this forecaster."""
+        if self.backend == "none":
+            return ()
+        if self.backend == "auto":
+            return AUTO_BACKEND_PRIORITY
+        return (self.backend,)
+
+    def _try_load_backend(self, backend: str) -> bool:
+        """Load one backend; True if usable. Records failures for skip-list."""
+        if backend in _LOAD_FAILED:
+            return False
+        if not self._probe(backend):
+            return False
+        try:
+            self._load(backend)
+            return True
+        except Exception as exc:
+            _LOAD_FAILED.add(backend)
+            self._last_error = f"{backend}: {exc}"
+            return False
+
     def forecast_ohlc(self, hist_df: pd.DataFrame, horizon: int = 1,
                       covariates: dict | None = None) -> dict:
         """Probabilistic OHLC envelope from the first available TSFM backend.
@@ -270,6 +470,10 @@ class TSFMForecaster:
         accepted.  covariates: optional dict of scalars or per-bar series
         (e.g. {'gift_premium': …, 'vix': …, 'pcr': …, 'sentiment': …}) used
         by the Chronos-2 covariate path.
+
+        In backend='auto', a mid-forecast failure (e.g. Chronos frequency
+        inference on holiday-gapped Indian indices) falls through to the next
+        candidate (kronos → timesfm) instead of hard-failing every index.
 
         Returns the schema documented in the module docstring; NEVER raises.
         """
@@ -284,39 +488,66 @@ class TSFMForecaster:
                 return self._result("error", None, horizon, n,
                                     error=f"insufficient context ({n} < {TSFM_MIN_CONTEXT})")
 
-            backend = self._ensure_backend()
-            if backend is None:
-                if self._last_error:
-                    return self._result("error", None, horizon, len(df), error=self._last_error)
+            candidates = self._candidate_backends()
+            if not candidates:
                 return self._result("unavailable", None, horizon, len(df))
 
-            ctx = self._context_slice(df, backend)
-            if backend == "chronos2":
-                q = self._forecast_chronos2(ctx, horizon, covariates)
-            elif backend == "kronos":
-                q = self._forecast_kronos(ctx, horizon)
-            else:
-                q = self._forecast_timesfm(ctx, horizon)
+            # Prefer a previously resolved backend first (warm path), then the
+            # rest of the auto chain. Pinned backends stay singleton.
+            ordered: list[str] = []
+            if self._resolved not in (None, "none") and self._resolved in candidates:
+                ordered.append(self._resolved)
+            for cand in candidates:
+                if cand not in ordered:
+                    ordered.append(cand)
 
-            close_q = q.get("close") or {}
-            p10, p50, p90 = close_q.get("p10"), close_q.get("p50"), close_q.get("p90")
-            high_p90, low_p10 = q.get("high_p90"), q.get("low_p10")
-            if high_p90 is None or low_p10 is None:
-                # HEURISTIC fallback for close-only backends (see _offset_band).
-                est_high, est_low = self._offset_band(ctx, p90, p10)
-                if high_p90 is None:
-                    high_p90 = est_high
-                if low_p10 is None:
-                    low_p10 = est_low
+            last_error = self._last_error
+            allow_fallback = self.backend == "auto"
+            for backend in ordered:
+                if not self._try_load_backend(backend):
+                    continue
+                try:
+                    ctx = self._context_slice(df, backend)
+                    if backend == "chronos2":
+                        q = self._forecast_chronos2(ctx, horizon, covariates)
+                    elif backend == "kronos":
+                        q = self._forecast_kronos(ctx, horizon)
+                    else:
+                        q = self._forecast_timesfm(ctx, horizon)
 
-            last_close = float(ctx["close"].iloc[-1])
-            return self._result(
-                "forecasted", backend, horizon, len(ctx),
-                close={"p10": _r(p10), "p50": _r(p50), "p90": _r(p90)},
-                high_p90=_r(high_p90), low_p10=_r(low_p10),
-                direction=self._direction(p50, last_close),
-                last_close=_r(last_close),
-            )
+                    close_q = q.get("close") or {}
+                    p10, p50, p90 = close_q.get("p10"), close_q.get("p50"), close_q.get("p90")
+                    if p50 is None and p10 is None and p90 is None:
+                        raise RuntimeError(f"{backend} returned empty quantiles")
+
+                    high_p90, low_p10 = q.get("high_p90"), q.get("low_p10")
+                    if high_p90 is None or low_p10 is None:
+                        # HEURISTIC fallback for close-only backends (see _offset_band).
+                        est_high, est_low = self._offset_band(ctx, p90, p10)
+                        if high_p90 is None:
+                            high_p90 = est_high
+                        if low_p10 is None:
+                            low_p10 = est_low
+
+                    last_close = float(ctx["close"].iloc[-1])
+                    self._resolved = backend
+                    return self._result(
+                        "forecasted", backend, horizon, len(ctx),
+                        close={"p10": _r(p10), "p50": _r(p50), "p90": _r(p90)},
+                        high_p90=_r(high_p90), low_p10=_r(low_p10),
+                        direction=self._direction(p50, last_close),
+                        last_close=_r(last_close),
+                    )
+                except Exception as exc:
+                    last_error = f"{backend}: {exc}"
+                    self._last_error = last_error
+                    if not allow_fallback:
+                        break
+                    continue
+
+            if last_error:
+                return self._result("error", None, horizon, len(df), error=last_error)
+            return self._result("unavailable", None, horizon, len(df))
         except Exception as exc:  # absolute no-raise guarantee
             backend = self._resolved if self._resolved not in (None, "none") else None
             return self._result("error", backend, horizon, 0, error=str(exc))
@@ -436,8 +667,13 @@ class TSFMForecaster:
             context_df[str(name)] = col
             future_df[str(name)] = fut
 
+        # Indian index calendars have holiday gaps; Chronos cannot infer freq
+        # from those timestamps ("Could not infer frequency for series zero").
+        # Business-day freq matches NSE/BSE session spacing and works for
+        # NIFTY / BANKNIFTY / SENSEX alike.
         kwargs = dict(prediction_length=horizon, quantile_levels=list(QUANTILE_LEVELS),
-                      id_column="id", timestamp_column="timestamp", target="target")
+                      id_column="id", timestamp_column="timestamp", target="target",
+                      freq="B")
         try:
             preds = pipe.predict_df(context_df, future_df=future_df, **kwargs)
         except Exception:

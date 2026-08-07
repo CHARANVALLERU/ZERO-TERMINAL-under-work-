@@ -1,5 +1,5 @@
 /* ZERO Trading Terminal — Cyber / Hacking Theme
-   Palette LOCKED: #000 / #0a0a0a | #E50914 | #D4AF37 | #00ff88/#00E676 | #00B0FF | #fff/#666/#888
+   Palette LOCKED: #000/#0a0a0a | #E50914 | #fff | #D4AF37 | #FFD600 | #00ff88/#00E676
    Fonts LOCKED: Orbitron (titles), Inter (body)
    Class names LOCKED — do not rename.
 */
@@ -7,16 +7,18 @@
 @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Inter:wght@300;400;600;800&display=swap');
 
 :root {
+  --zero-black: #000000;
+  --zero-red: #E50914;
+  --zero-white: #ffffff;
+  --zero-gold: #D4AF37;
+  --zero-yellow: #FFD600;
+  --zero-green: #00ff88;
   --zero-bg: #000000;
   --zero-bg-elev: #0a0a0a;
-  --zero-red: #E50914;
-  --zero-gold: #D4AF37;
   --zero-neon: #00ff88;
   --zero-neon-alt: #00E676;
-  --zero-cyan: #00B0FF;
-  --zero-white: #ffffff;
-  --zero-muted: #666666;
-  --zero-muted-2: #888888;
+  --zero-muted: rgba(255, 255, 255, 0.40);
+  --zero-muted-2: rgba(255, 255, 255, 0.55);
   --zero-border: #1a1a1a;
   --zero-font-display: 'Orbitron', sans-serif;
   --zero-font-body: 'Inter', sans-serif;
@@ -29,6 +31,18 @@ html { scroll-behavior: smooth; }
 html, body {
   -ms-overflow-style: none !important;
   scrollbar-width: none !important;
+}
+
+/* CRITICAL: keep Streamlit shell at viewport height.
+   Live tickers used to inject html,body{height:100%} via st.html into the
+   parent document, collapsing #root/.stApp to 0px (blank black page). */
+html, body,
+#root,
+.withScreencast,
+.stApp,
+[data-testid="stAppViewContainer"] {
+  height: 100% !important;
+  min-height: 100vh !important;
 }
 
 body,
@@ -46,11 +60,12 @@ body,
   background-image:
     radial-gradient(ellipse 80% 60% at 50% 0%, rgba(229, 9, 20, 0.08), transparent 55%),
     radial-gradient(ellipse 100% 100% at 50% 50%, transparent 40%, rgba(0, 0, 0, 0.75) 100%),
-    linear-gradient(rgba(0, 176, 255, 0.03) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(0, 176, 255, 0.03) 1px, transparent 1px);
+    linear-gradient(rgba(212, 175, 55, 0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(212, 175, 55, 0.03) 1px, transparent 1px);
   background-size: 100% 100%, 100% 100%, 48px 48px, 48px 48px;
   background-attachment: fixed;
   position: relative;
+  overflow: auto !important;
 }
 
 .stApp::before {
@@ -58,7 +73,7 @@ body,
   pointer-events: none;
   position: fixed;
   inset: 0;
-  z-index: 9998;
+  z-index: 1;
   background: repeating-linear-gradient(
     0deg,
     transparent,
@@ -75,8 +90,17 @@ body,
   pointer-events: none;
   position: fixed;
   inset: 0;
-  z-index: 9997;
+  z-index: 1;
   background: radial-gradient(ellipse at center, transparent 50%, rgba(0, 0, 0, 0.55) 100%);
+}
+
+/* Keep Streamlit content above decorative overlays */
+[data-testid="stAppViewContainer"],
+[data-testid="stHeader"],
+[data-testid="stSidebar"],
+[data-testid="stBottom"] {
+  position: relative;
+  z-index: 2;
 }
 
 @keyframes zero-scanline-drift {
@@ -271,9 +295,11 @@ body,
 .reveal-up,
 .digital-card,
 [data-reveal] {
-  opacity: 1;
+  /* Never use animation-fill-mode:both — it forces opacity:0 before the
+     first frame and Streamlit reruns remount nodes constantly. */
+  opacity: 1 !important;
   transform: none;
-  animation: slideUpFade 0.45s cubic-bezier(0.22, 0.61, 0.36, 1) both;
+  animation: slideUpFade 0.45s cubic-bezier(0.22, 0.61, 0.36, 1);
 }
 
 .reveal-delay-1 { animation-delay: 0.05s; }
@@ -311,7 +337,7 @@ body,
   opacity: 0.8;
 }
 .zero-glitch::before {
-  color: var(--zero-cyan);
+  color: var(--zero-gold);
   clip-path: inset(0 0 55% 0);
   transform: translate(-2px, 0);
   animation: glitch-a 2.4s infinite linear alternate-reverse;
@@ -395,8 +421,8 @@ body,
 
 .matrix-grid {
   background-image:
-    linear-gradient(rgba(0, 176, 255, 0.06) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(0, 176, 255, 0.06) 1px, transparent 1px);
+    linear-gradient(rgba(212, 175, 55, 0.06) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(212, 175, 55, 0.06) 1px, transparent 1px);
   background-size: 32px 32px;
 }
 
@@ -501,7 +527,7 @@ button[kind="secondary"]:hover,
   border: 1px solid #1a1a1a;
   border-radius: 4px;
   padding: 10px 12px;
-  box-shadow: 0 0 12px rgba(0, 176, 255, 0.06);
+  box-shadow: 0 0 12px rgba(212, 175, 55, 0.06);
 }
 [data-testid="stMetricLabel"] {
   color: var(--zero-muted) !important;

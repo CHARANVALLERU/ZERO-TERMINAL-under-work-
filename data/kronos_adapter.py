@@ -76,6 +76,13 @@ SUPPORTED_INTERVALS: Dict[str, Dict] = {
     '1d':  {'yf': '1d',  'pandas_freq': '1D',    'intraday': False, 'max_lookback_days': 3650},
 }
 
+# UI / upstream aliases → canonical SUPPORTED_INTERVALS keys.
+_INTERVAL_ALIASES: Dict[str, str] = {
+    '1h': '60m', '1H': '60m', '60min': '60m', '1hr': '60m',
+    '5min': '5m', '15min': '15m', '30min': '30m',
+    'd': '1d', 'day': '1d', 'daily': '1d', '1D': '1d',
+}
+
 _KLINE_COLS = ['timestamps', 'open', 'high', 'low', 'close', 'volume', 'amount']
 _OHLC_COLS = ['open', 'high', 'low', 'close']
 
@@ -87,13 +94,25 @@ _ZERO_KEY_BY_TICKER = {
     'USDINR=X': 'USDINR',
 }
 
+# Extra yfinance tickers to try when the primary symbol returns empty.
+# ^BSESN is intermittently empty on Yahoo; keep the canonical first.
+_TICKER_ALIASES: Dict[str, list] = {
+    '^BSESN': ['^BSESN'],
+    '^NSEI': ['^NSEI'],
+    '^NSEBANK': ['^NSEBANK'],
+}
+
 _INDIAN_INDEX_TICKERS = {'^NSEI', '^NSEBANK', '^BSESN', '^INDIAVIX'}
+
+# Last non-empty failure reason from fetch_kline_history (never raises).
+_LAST_FETCH_ERROR: str = ''
 
 __all__ = [
     'SUPPORTED_SYMBOLS', 'SUPPORTED_INTERVALS',
     'MAX_CONTEXT', 'MIN_BARS', 'DEFAULT_LOOKBACK',
     'fetch_kline_history', 'make_future_timestamps',
     'prepare_kronos_inputs', 'resample_kline',
+    'normalize_interval', 'get_last_fetch_error',
 ]
 
 
@@ -115,6 +134,40 @@ def _empty_ts_series() -> pd.Series:
     return pd.Series(pd.DatetimeIndex([]), name='timestamps')
 
 
+def get_last_fetch_error() -> str:
+    """Most recent fetch_kline_history failure reason ('' if last call succeeded)."""
+    return _LAST_FETCH_ERROR
+
+
+def normalize_interval(interval) -> Optional[str]:
+    """Map UI / alias / accidental metadata-dict values to a SUPPORTED_INTERVALS key.
+
+    The Kronos panel historically passed ``SUPPORTED_INTERVALS[label]`` (a
+    metadata dict) as the interval argument. Accept that shape, plus common
+    aliases like ``'1h'`` → ``'60m'``, so callers never silently get empty
+    history from an unhashable / unknown interval.
+    """
+    if interval is None:
+        return None
+    if isinstance(interval, dict):
+        yf = interval.get('yf') or interval.get('interval') or interval.get('key')
+        if isinstance(yf, str) and yf in SUPPORTED_INTERVALS:
+            return yf
+        for k, v in SUPPORTED_INTERVALS.items():
+            if v is interval or v == interval:
+                return k
+        return None
+    key = str(interval).strip()
+    if not key:
+        return None
+    if key in SUPPORTED_INTERVALS:
+        return key
+    aliased = _INTERVAL_ALIASES.get(key) or _INTERVAL_ALIASES.get(key.lower())
+    if aliased and aliased in SUPPORTED_INTERVALS:
+        return aliased
+    return None
+
+
 def _resolve_ticker(symbol: str) -> str:
     """Map a display name to its yfinance ticker; pass raw tickers through."""
     if not symbol:
@@ -123,9 +176,26 @@ def _resolve_ticker(symbol: str) -> str:
     for name, ticker in SUPPORTED_SYMBOLS.items():
         if sym.upper() == name.upper():
             return ticker
+    # Also accept ZERO historical keys (NIFTY / BANKNIFTY / SENSEX / USDINR).
+    try:
+        from config import TICKERS as _ZERO_TICKERS  # lazy
+        for zkey, zticker in (_ZERO_TICKERS or {}).items():
+            if sym.upper() == str(zkey).upper():
+                return str(zticker)
+    except Exception:
+        pass
     if sym in SUPPORTED_SYMBOLS.values():
         return sym
     return sym  # assume caller passed a raw yfinance ticker
+
+
+def _ticker_candidates(ticker: str) -> list:
+    """Primary ticker plus any configured aliases (deduped, order preserved)."""
+    out = []
+    for t in [ticker] + list(_TICKER_ALIASES.get(ticker, [])):
+        if t and t not in out:
+            out.append(t)
+    return out
 
 
 def _is_indian_market(ticker: str) -> bool:
@@ -264,6 +334,30 @@ def _fetch_from_zero_provider(ticker: str, lookback: int) -> Optional[pd.DataFra
         return None
 
 
+def _yf_download_once(yf, ticker: str, spec: Dict, days: int) -> Optional[pd.DataFrame]:
+    """One yfinance pull via download(), then Ticker.history() if empty."""
+    period = f"{days}d"
+    interval = spec['yf']
+    try:
+        raw = yf.download(
+            ticker, period=period, interval=interval,
+            progress=False, auto_adjust=True, threads=False,
+        )
+        if raw is not None and not getattr(raw, 'empty', True):
+            return raw
+    except Exception as e:
+        logger.debug("yfinance download failed for %s (%s): %s", ticker, interval, e)
+    try:
+        hist = yf.Ticker(ticker).history(
+            period=period, interval=interval, auto_adjust=True,
+        )
+        if hist is not None and not getattr(hist, 'empty', True):
+            return hist
+    except Exception as e:
+        logger.debug("yfinance history failed for %s (%s): %s", ticker, interval, e)
+    return None
+
+
 def _fetch_from_yfinance(ticker: str, spec: Dict, lookback: int) -> Optional[pd.DataFrame]:
     try:
         import yfinance as yf  # lazy import: keep offline paths importable
@@ -271,17 +365,19 @@ def _fetch_from_yfinance(ticker: str, spec: Dict, lookback: int) -> Optional[pd.
         logger.debug("yfinance not installed; cannot fetch %s", ticker)
         return None
     days = _estimate_fetch_days(spec, lookback, ticker)
-    try:
-        return yf.download(
-            ticker,
-            period=f"{days}d",
-            interval=spec['yf'],
-            progress=False,
-            auto_adjust=True,
-        )
-    except Exception as e:
-        logger.debug("yfinance download failed for %s (%s): %s", ticker, spec['yf'], e)
-        return None
+    # Try progressively shorter periods for intraday (Yahoo silently empties
+    # when the requested window exceeds retention).
+    day_attempts = [days]
+    if spec.get('intraday'):
+        for d in (59, 30, 14, 7, 5):
+            if d < days and d not in day_attempts:
+                day_attempts.append(d)
+    for cand in _ticker_candidates(ticker):
+        for d in day_attempts:
+            raw = _yf_download_once(yf, cand, spec, d)
+            if raw is not None and not getattr(raw, 'empty', True):
+                return raw
+    return None
 
 
 # ── Public API ────────────────────────────────────────────────────────────
@@ -290,7 +386,8 @@ def fetch_kline_history(symbol: str, interval: str = '1d', lookback: int = DEFAU
 
     Args:
         symbol: display name from SUPPORTED_SYMBOLS or a raw yfinance ticker.
-        interval: one of SUPPORTED_INTERVALS ('5m','15m','30m','60m','1d').
+        interval: one of SUPPORTED_INTERVALS ('5m','15m','30m','60m','1d'),
+            or a known alias / accidental metadata dict (normalized).
         lookback: number of most-recent bars to keep.
 
     Returns:
@@ -298,35 +395,59 @@ def fetch_kline_history(symbol: str, interval: str = '1d', lookback: int = DEFAU
         'volume','amount'], timezone-naive timestamps, RangeIndex.
         Empty DataFrame (same schema) on any failure.
     """
+    global _LAST_FETCH_ERROR
+    _LAST_FETCH_ERROR = ''
     try:
-        spec = SUPPORTED_INTERVALS.get(interval)
-        if spec is None:
-            logger.debug("fetch_kline_history: unsupported interval %r", interval)
+        interval_key = normalize_interval(interval)
+        if interval_key is None:
+            _LAST_FETCH_ERROR = (
+                f"unsupported interval {interval!r} "
+                f"(expected one of {sorted(SUPPORTED_INTERVALS)})"
+            )
+            logger.debug("fetch_kline_history: %s", _LAST_FETCH_ERROR)
             return _empty_kline()
+        spec = SUPPORTED_INTERVALS[interval_key]
         try:
             lookback = max(1, int(lookback))
         except Exception:
             lookback = DEFAULT_LOOKBACK
         ticker = _resolve_ticker(symbol)
         if not ticker:
+            _LAST_FETCH_ERROR = 'empty symbol'
             logger.debug("fetch_kline_history: empty symbol")
             return _empty_kline()
 
         raw = None
-        if interval == '1d':  # ZERO's own provider first (daily only)
+        # Layered fetch: ZERO historical/cache (daily indices) → yfinance
+        # (with shorter-period retries + Ticker.history fallback).
+        if interval_key == '1d':
             raw = _fetch_from_zero_provider(ticker, lookback)
         if raw is None or getattr(raw, 'empty', True):
             raw = _fetch_from_yfinance(ticker, spec, lookback)
+        # Daily: if yfinance somehow won empty but ZERO wasn't tried yet
+        # (non-index symbols), ZERO still won't help; for indices, retry ZERO
+        # after yfinance failure in case the first path was skipped.
+        if (raw is None or getattr(raw, 'empty', True)) and interval_key == '1d':
+            raw = _fetch_from_zero_provider(ticker, lookback)
         if raw is None or getattr(raw, 'empty', True):
-            logger.debug("fetch_kline_history: no data for %s @ %s", ticker, interval)
+            _LAST_FETCH_ERROR = (
+                f"no data for {ticker} @ {interval_key} "
+                f"(ZERO provider + yfinance returned empty)"
+            )
+            logger.debug("fetch_kline_history: %s", _LAST_FETCH_ERROR)
             return _empty_kline()
 
         df = _normalize_ohlcv(raw, ticker)
         if df.empty:
+            _LAST_FETCH_ERROR = (
+                f"could not normalize OHLCV for {ticker} @ {interval_key}"
+            )
             return _empty_kline()
+        _LAST_FETCH_ERROR = ''
         return df.tail(lookback).reset_index(drop=True)
     except Exception as e:
-        logger.debug("fetch_kline_history failed for %r: %s", symbol, e)
+        _LAST_FETCH_ERROR = f"fetch_kline_history failed for {symbol!r}: {e}"
+        logger.debug("%s", _LAST_FETCH_ERROR)
         return _empty_kline()
 
 
@@ -344,7 +465,8 @@ def make_future_timestamps(last_ts, pred_len: int, interval: str, symbol: str = 
     Returns a tz-naive pd.Series named 'timestamps' (empty Series on failure).
     """
     try:
-        spec = SUPPORTED_INTERVALS.get(interval)
+        interval_key = normalize_interval(interval)
+        spec = SUPPORTED_INTERVALS.get(interval_key) if interval_key else None
         pred_len = int(pred_len)
         if spec is None or pred_len <= 0:
             return _empty_ts_series()
@@ -423,8 +545,10 @@ def prepare_kronos_inputs(df: pd.DataFrame, lookback: int, pred_len: int,
     try:
         if df is None or not isinstance(df, pd.DataFrame) or df.empty:
             return {'error': 'no historical data available'}
-        if interval not in SUPPORTED_INTERVALS:
+        interval_key = normalize_interval(interval)
+        if interval_key is None:
             return {'error': f'unsupported interval: {interval!r}'}
+        interval = interval_key
         try:
             lookback, pred_len = int(lookback), int(pred_len)
         except Exception:
@@ -498,7 +622,8 @@ def resample_kline(df: pd.DataFrame, target_interval: str) -> pd.DataFrame:
     Returns the canonical K-line frame; empty DataFrame on failure.
     """
     try:
-        spec = SUPPORTED_INTERVALS.get(target_interval)
+        target_key = normalize_interval(target_interval)
+        spec = SUPPORTED_INTERVALS.get(target_key) if target_key else None
         if spec is None or df is None or not isinstance(df, pd.DataFrame) or df.empty:
             return _empty_kline()
 

@@ -1,10 +1,22 @@
-# Python cache
+# Python cache / bytecode
 __pycache__/
-*.pyc
+*.py[cod]
 *.pyo
 *.pyd
+.pytest_cache/
 
-# Runtime/session files
+# Virtualenv
+.venv/
+venv/
+ENV/
+
+# Secrets / local env
+.env
+.env.local
+*.pem
+algory license key.txt
+
+# Runtime / session / ephemeral DB state
 db/cache/
 db/last_good/
 db/feedback_log.json
@@ -12,6 +24,31 @@ db/.zero_session.json
 db/news_seen.json
 db/*.log
 db/*.db
+db/aite/
+db/kronos_predictions/
+db/vault_sync_queue.json
+db/aite_build_progress.json
+db/agent_decisions.jsonl
+db/india_vix_last.json
+
+# Local session flags
+.zero_session.json
+
+# Logs / smoke artifacts
+*.log
+.streamlit_smoke.log
+.streamlit_smoke.log.err
+_badge_inspect.txt
+
+# Git recovery / corrupt backups (keep outside repo)
+.git_corrupt_*/
+.git_corrupt_*
 
 # Obsidian daily logs (auto-generated)
 obsidian_vault/01_Daily_Logs/
+
+# OS / editor
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/

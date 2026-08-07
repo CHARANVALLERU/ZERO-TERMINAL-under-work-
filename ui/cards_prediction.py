@@ -9,7 +9,7 @@ import random
 
 import streamlit as st
 
-# Locked palette: #000 #0a0a0a #E50914 #D4AF37 #00ff88 #00E676 #00B0FF #fff #666
+# Locked palette: #000 #0a0a0a #E50914 #ffffff #D4AF37 #FFD600 #00ff88
 
 
 def _safe(data: dict, key: str, default="—"):
@@ -25,7 +25,7 @@ def _fmt_conf(conf) -> str:
     return "--"
 
 
-def _band_bar(lo, hi, accent="#00B0FF"):
+def _band_bar(lo, hi, accent="#FFD600"):
     """Thin neon conformal range bar; empty string when bounds missing."""
     if lo is None or hi is None:
         return ""
@@ -50,9 +50,7 @@ def _band_bar(lo, hi, accent="#00B0FF"):
         <span class="label-grey" style="font-size:0.58rem;">{flo:g} – {fhi:g}</span>
       </div>
       <div style="position:relative;height:3px;background:#0a0a0a;border:1px solid #222;overflow:hidden;">
-        <div style="position:absolute;left:{left}%;width:{span}%;height:100%;
-          background:linear-gradient(90deg,transparent,{accent},{accent},transparent);
-          box-shadow:0 0 8px {accent};"></div>
+        <div style="position:absolute;left:{left}%;width:{span}%;height:100%;background:linear-gradient(90deg,transparent,{accent},{accent},transparent);box-shadow:0 0 8px {accent};"></div>
       </div>
     </div>"""
 
@@ -61,12 +59,12 @@ def _corner_brackets() -> str:
     """Absolute HUD corner brackets (SVG-free CSS boxes)."""
     c = "#E50914"
     common = "position:absolute;width:14px;height:14px;pointer-events:none;"
-    return f"""
-    <div style="{common}top:0;left:0;border-top:2px solid {c};border-left:2px solid {c};"></div>
-    <div style="{common}top:0;right:0;border-top:2px solid {c};border-right:2px solid {c};"></div>
-    <div style="{common}bottom:0;left:0;border-bottom:2px solid {c};border-left:2px solid {c};"></div>
-    <div style="{common}bottom:0;right:0;border-bottom:2px solid {c};border-right:2px solid {c};"></div>
-    """
+    return (
+        f'<div style="{common}top:0;left:0;border-top:2px solid {c};border-left:2px solid {c};"></div>'
+        f'<div style="{common}top:0;right:0;border-top:2px solid {c};border-right:2px solid {c};"></div>'
+        f'<div style="{common}bottom:0;left:0;border-bottom:2px solid {c};border-left:2px solid {c};"></div>'
+        f'<div style="{common}bottom:0;right:0;border-bottom:2px solid {c};border-right:2px solid {c};"></div>'
+    )
 
 
 def predicted_info_card(title, data):
@@ -89,14 +87,15 @@ def predicted_info_card(title, data):
     pred_low = _safe(data, "pred_low")
     movement = data.get("movement_side", "NEUTRAL") or "NEUTRAL"
 
-    st.markdown(
+    # st.html renders nested HUD markup reliably (markdown often escapes it).
+    st.html(
         f"""
 <style>
 @keyframes predReveal {{
   from {{ opacity:0; transform:translateY(8px); }}
   to   {{ opacity:1; transform:translateY(0); }}
 }}
-[data-reveal] {{ opacity:1; animation:predReveal .45s ease-out both; }}
+[data-reveal] {{ opacity:1 !important; animation:predReveal .45s ease-out; }}
 [data-reveal="1"] {{ animation-delay:.05s; }}
 [data-reveal="2"] {{ animation-delay:.15s; }}
 [data-reveal="3"] {{ animation-delay:.25s; }}
@@ -105,40 +104,28 @@ def predicted_info_card(title, data):
   [data-reveal] {{ animation:none !important; opacity:1 !important; transform:none !important; }}
 }}
 </style>
-<div class="digital-card" style="position:relative;background:#0a0a0a;border:1px solid #1a1a1a;
-  padding:18px 20px 20px;overflow:hidden;">
+<div class="digital-card" style="position:relative;background:#0a0a0a;border:1px solid #1a1a1a;padding:18px 20px 20px;overflow:hidden;">
   {_corner_brackets()}
-  <div style="position:absolute;top:0;left:0;right:0;height:2px;
-    background:linear-gradient(90deg,#E50914,#D4AF37,#00ff88,#00B0FF);"></div>
-
+  <div style="position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,#E50914,#D4AF37,#FFD600,#00ff88);"></div>
   <div data-reveal="1" style="display:flex;justify-content:space-between;align-items:center;">
-    <div class="label-grey" style="letter-spacing:2px;text-transform:uppercase;font-size:0.72rem;">
-      {title} Prediction Vector
-    </div>
+    <div class="label-grey" style="letter-spacing:2px;text-transform:uppercase;font-size:0.72rem;">{title} Prediction Vector</div>
     <div style="text-align:right;">
-      <span style="color:{badge_color};font-weight:800;font-size:0.7rem;letter-spacing:1.5px;
-        text-shadow:{glow};border:1px solid {badge_color};padding:2px 8px;
-        background:rgba(0,0,0,0.4);">{model_badge}</span>
+      <span style="color:{badge_color};font-weight:800;font-size:0.7rem;letter-spacing:1.5px;text-shadow:{glow};border:1px solid {badge_color};padding:2px 8px;background:rgba(0,0,0,0.4);">{model_badge}</span>
       <span class="label-grey" style="font-size:0.7rem;">&nbsp;·&nbsp;CONF {conf_txt}</span>
     </div>
   </div>
-
   <div data-reveal="2" style="display:flex;justify-content:space-between;align-items:flex-start;margin-top:16px;">
     <div>
       <p class="label-grey">Quantum Opening</p>
       <p class="value-white">{pred_open}</p>
-      {_band_bar(data.get("open_lo"), data.get("open_hi"), "#00B0FF")}
+      {_band_bar(data.get("open_lo"), data.get("open_hi"), "#D4AF37")}
     </div>
     <div style="text-align:right;">
       <p class="label-grey">Trajectory</p>
-      <p class="status-red" style="font-size:1.1rem;letter-spacing:2px;text-shadow:0 0 10px rgba(229,9,20,0.5);">
-        {movement}
-      </p>
+      <p class="status-red" style="font-size:1.1rem;letter-spacing:2px;text-shadow:0 0 10px rgba(229,9,20,0.5);">{movement}</p>
     </div>
   </div>
-
-  <div data-reveal="3" style="display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-top:28px;
-    border-top:1px solid #111;padding-top:18px;">
+  <div data-reveal="3" style="display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-top:28px;border-top:1px solid #111;padding-top:18px;">
     <div>
       <p class="label-grey">Predicted High</p>
       <p style="color:#fff;font-weight:700;font-size:1.3rem;">{pred_high}</p>
@@ -151,8 +138,7 @@ def predicted_info_card(title, data):
     </div>
   </div>
 </div>
-""",
-        unsafe_allow_html=True,
+"""
     )
 
 
@@ -236,7 +222,7 @@ html,body{{width:100%;height:100%;background:#000;font-family:'Courier New',mono
   border:1px solid #1a1a1a;padding:14px 16px 12px;position:relative;overflow:hidden;height:190px;
 }}
 .lp-card::before{{content:'';position:absolute;top:0;left:0;right:0;height:2px;
-  background:linear-gradient(90deg,#E50914,#D4AF37,#00ff88,#00B0FF);}}
+  background:linear-gradient(90deg,#E50914,#D4AF37,#FFD600,#00ff88);}}
 .lp-br{{position:absolute;width:12px;height:12px;pointer-events:none;}}
 .lp-br.tl{{top:0;left:0;border-top:2px solid #E50914;border-left:2px solid #E50914;}}
 .lp-br.tr{{top:0;right:0;border-top:2px solid #E50914;border-right:2px solid #E50914;}}
@@ -394,8 +380,9 @@ html,body{{width:100%;height:100%;background:#000;font-family:'Courier New',mono
 </body>
 </html>"""
 
-    # JS poll loop requires st.html (markdown strips scripts).
-    st.html(ticker_html, unsafe_allow_javascript=True)
+    # Isolate in an iframe so html/body CSS cannot collapse the Streamlit shell.
+    # (st.html injects into the parent document and caused a blank black page.)
+    st.iframe(ticker_html, height=200, width="stretch")
 
 
 def order_flow_table(data):

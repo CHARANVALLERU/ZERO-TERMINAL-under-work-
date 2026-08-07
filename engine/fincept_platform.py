@@ -77,7 +77,7 @@ class ResearchDashboardEngine:
             color  = "#D4AF37"
         elif composite > 0.2:
             rating = "REDUCE"
-            color  = "#ff9800"
+            color  = "#D4AF37"
         else:
             rating = "SELL"
             color  = "#E50914"

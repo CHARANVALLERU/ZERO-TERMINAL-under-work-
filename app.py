@@ -1,3 +1,7 @@
+# Early boot: env defaults + patch Streamlit watcher away from transformers/torch
+# (must run before any import that can pull HF into sys.modules).
+import ui.streamlit_boot  # noqa: F401
+
 import streamlit as st
 import pandas as pd
 import time
@@ -18,10 +22,17 @@ from ui.v11_components import (
     render_backtest_stats_panel,
 )
 # ── KRONOS K-LINE FOUNDATION MODEL panel (vendored from open-source Kronos) ──
+# Panel UI only; engine.kronos / transformers load lazily inside button handlers.
 try:
     from ui.kronos_panel import render_kronos_terminal_panel
 except Exception:
     render_kronos_terminal_panel = None
+
+# ── ZERO AITE — Automated Intelligent Trading Environment panel ──────────────
+try:
+    from ui.aite import render_aite_panel
+except Exception:
+    render_aite_panel = None
 from engine.learning_service import log_daily_feedback, get_feedback_logs, calculate_engine_accuracy, fetch_daily_actuals, update_feedback_logs, update_unfulfilled_feedback_logs, auto_train_engine
 from ui.charts import ohlc_range_chart, sentiment_gauge_chart
 from ui.news_feed import (
@@ -61,15 +72,15 @@ except ImportError:
     inject_terminal_micro_interactions = None
     render_section_header = None
 
+# Boot splash owned by ui.components.show_zero_digital_splash (ZER white / O red, no shake).
+cyber_splash = show_zero_digital_splash
 try:
     from ui.sidebar_cyber import (
-        show_zero_digital_splash as cyber_splash,
         digital_clock_component as cyber_clock,
         render_zero_agi_sidebar as cyber_agi_sidebar,
         render_sidebar_brand_block,
     )
 except ImportError:
-    cyber_splash = show_zero_digital_splash
     cyber_clock = digital_clock_component
     cyber_agi_sidebar = render_zero_agi_sidebar
     render_sidebar_brand_block = None
@@ -119,6 +130,20 @@ except ImportError:
 try:
     from engine.live_price_server import start_price_server
     start_price_server()
+except Exception:
+    pass
+
+# ── ZERO AITE daemon (non-blocking background thread; never blocks Streamlit) ─
+try:
+    from engine.aite.daemon import start_daemon as _aite_start_daemon
+    _aite_start_daemon()
+except Exception:
+    pass
+
+# ── Dual-vault backup sweeper (ZERO → SECOND ZERO after ≥24h; non-blocking) ──
+try:
+    from engine.vault_sync import start_backup_sweeper as _vault_start_sweeper
+    _vault_start_sweeper()
 except Exception:
     pass
 # ──────────────────────────────────────────────────────────────────────────────
@@ -666,7 +691,7 @@ cyber_ff(st.session_state.get('news_feed') or m.get('latest_news'))
 st.markdown("<div style='margin-bottom: 20px;'></div>", unsafe_allow_html=True)
 
 # Six-Page System (Tabs)
-tab1, tab2, tab3, tab6, tab_trading, tab_kronos, tab4, tab5 = st.tabs(["NIFTY 50", "BANKNIFTY", "SENSEX", "GLOBAL NEWS", "TRADING TERMINAL", "KRONOS ENGINE", "LEARNING LAB", "PREDICTION HISTORY"])
+tab1, tab2, tab3, tab6, tab_trading, tab_kronos, tab_aite, tab4, tab5 = st.tabs(["NIFTY 50", "BANKNIFTY", "SENSEX", "GLOBAL NEWS", "TRADING TERMINAL", "KRONOS ENGINE", "ZERO AITE", "LEARNING LAB", "PREDICTION HISTORY"])
 
 # UI: remember active tab across auto-refreshes; badge unread breaking items.
 persist_active_tab()
@@ -726,9 +751,9 @@ def render_market_page(symbol, data, key_prefix):
     if data.get('agent_debate'):
         cyber_debate(data.get('agent_debate'))
 
-    # V1.1: TSFM ensemble forecast card
-    if data.get('tsfm_forecast'):
-        render_tsfm_forecast_card(data.get('tsfm_forecast'))
+    # V1.1: TSFM ensemble forecast card — always render on every index tab
+    # (NIFTY 50 / BANKNIFTY / SENSEX). Missing/error payloads degrade in-card.
+    render_tsfm_forecast_card(data.get('tsfm_forecast'))
 
     # ── New: Fincept Quant Team Thesis + Inter-Market + Greeks + Nautilus Orders ──
     # Rendered in a 2-col layout for space efficiency
@@ -1170,8 +1195,8 @@ with tab_trading:
                     top_name = list(suite.keys())[0]
                     top = suite[top_name]
                     st.markdown(f"""
-<div style="background:rgba(0,0,0,0.4);border:1px solid rgba(0,176,255,0.2);border-radius:8px;padding:12px;margin-top:10px;">
-  <div style="font-family:'Orbitron',sans-serif;font-size:0.65rem;color:#00B0FF;margin-bottom:8px;">
+<div style="background:rgba(0,0,0,0.4);border:1px solid rgba(212,175,55,0.2);border-radius:8px;padding:12px;margin-top:10px;">
+  <div style="font-family:'Orbitron',sans-serif;font-size:0.65rem;color:#D4AF37;margin-bottom:8px;">
     🏆 TOP STRATEGY: {top_name}
   </div>
   <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;text-align:center;font-size:0.62rem;">
@@ -1193,6 +1218,13 @@ with tab_kronos:
         render_kronos_terminal_panel()
     else:
         st.caption("Kronos K-line foundation model panel unavailable (ui/kronos_panel.py failed to import).")
+
+with tab_aite:
+    # ── ZERO AITE TAB — Automated Intelligent Trading Environment ─────────────
+    if render_aite_panel is not None:
+        render_aite_panel()
+    else:
+        st.caption("ZERO AITE panel unavailable (ui.aite.render_aite_panel failed to import).")
 
 with tab4:
 

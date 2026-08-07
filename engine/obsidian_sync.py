@@ -17,6 +17,10 @@ def ensure_vault_structure():
         os.path.join(OBSIDIAN_VAULT_PATH, "02_Mental_Models"),
         os.path.join(OBSIDIAN_VAULT_PATH, "03_Cognitive_Biases"),
         os.path.join(OBSIDIAN_VAULT_PATH, "04_YouTube_Knowledge"),
+        os.path.join(OBSIDIAN_VAULT_PATH, "04_Quantitative_Strategies"),
+        os.path.join(OBSIDIAN_VAULT_PATH, "05_AI_Memory"),
+        os.path.join(OBSIDIAN_VAULT_PATH, "06_System_Architecture"),
+        os.path.join(OBSIDIAN_VAULT_PATH, "07_AITE_Logs"),
         os.path.join(OBSIDIAN_VAULT_PATH, "Templates"),
     ]
     for d in dirs:
@@ -233,6 +237,11 @@ def sync_forecast_to_obsidian(matrix: dict, date_str: str = None) -> bool:
             with open(note_path, "w", encoding="utf-8") as f:
                 f.write(content)
             logger.info(f"Created new Obsidian daily note: {note_path}")
+            try:
+                from engine.vault_sync import sync_daily_note
+                sync_daily_note(date_str, kind="daily_forecast")
+            except Exception as ve:
+                logger.warning(f"vault_sync after daily create failed: {ve}")
             return True
         except Exception as e:
             logger.error(f"Failed to create daily log note from template: {e}")
@@ -262,6 +271,11 @@ def sync_forecast_to_obsidian(matrix: dict, date_str: str = None) -> bool:
             with open(note_path, "w", encoding="utf-8") as f:
                 f.write(content)
             logger.info(f"Updated Obsidian daily note: {note_path}")
+            try:
+                from engine.vault_sync import sync_daily_note
+                sync_daily_note(date_str, kind="daily_forecast")
+            except Exception as ve:
+                logger.warning(f"vault_sync after daily update failed: {ve}")
             return True
         except Exception as e:
             logger.error(f"Failed to update daily log note: {e}")
@@ -394,6 +408,11 @@ def inject_voice_log(date_str: str, audio_path: str) -> bool:
             f.write(content)
             
         logger.info(f"Injected voice note and updated biases in Obsidian note: {note_path}")
+        try:
+            from engine.vault_sync import sync_daily_note
+            sync_daily_note(date_str, kind="voice_log")
+        except Exception as ve:
+            logger.warning(f"vault_sync after voice log failed: {ve}")
         return True
     except Exception as e:
         logger.error(f"Failed to inject voice log: {e}")

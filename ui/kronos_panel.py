@@ -47,6 +47,11 @@ _FALLBACK_SYMBOLS = {
 _FALLBACK_INTERVALS = {"1d": "1d", "1h": "1h", "30m": "30m", "15m": "15m", "5m": "5m"}
 
 _INSTALL_HINT = "pip install torch einops huggingface_hub safetensors"
+_TORCHVISION_HINT = (
+    "torchvision optional — without it Streamlit may log non-fatal "
+    "transformers vision-module noise after other backends load; "
+    "Kronos forecasts still work. Quiet with: pip install torchvision"
+)
 
 
 # ── Lazy sibling-module accessors (never raise) ─────────────────────────────
@@ -221,6 +226,28 @@ def _service_state(status: Dict[str, Any]) -> str:
     return "OFFLINE"
 
 
+def _torchvision_missing(status: Dict[str, Any]) -> bool:
+    """True when torchvision is absent (non-fatal for Kronos)."""
+    if "torchvision_available" in status:
+        return not bool(status.get("torchvision_available"))
+    try:
+        import importlib.util
+        return importlib.util.find_spec("torchvision") is None
+    except Exception:
+        return True
+
+
+def _render_load_side_notes(status: Dict[str, Any], state: str) -> None:
+    """HF auth caption + non-fatal torchvision note (status strip only)."""
+    if status.get("error"):
+        st.caption(f"Engine note: {status.get('error')}")
+    caption = status.get("hf_auth_caption")
+    if caption and state == "STANDBY" and not status.get("hf_token_set"):
+        st.caption(str(caption))
+    if state in ("STANDBY", "ONLINE") and _torchvision_missing(status):
+        st.caption(_TORCHVISION_HINT)
+
+
 def _fallback_status_badge(state: str, status: Dict[str, Any]) -> str:
     """House-styled status pill used when ui.kronos_charts is unavailable."""
     color = {"ONLINE": "#00E676", "STANDBY": "#D4AF37", "OFFLINE": "#E50914"}.get(state, "#666")
@@ -273,6 +300,55 @@ def _fallback_forecast_chart(hist_df: Any, pred_df: Any, symbol: str):
 
 # ── Section renderers ───────────────────────────────────────────────────────
 
+def _resolve_interval_code(interval_label: str, intervals: Dict[str, Any]) -> str:
+    """Map the Interval selectbox value to a fetchable interval code.
+
+    ``data.kronos_adapter.SUPPORTED_INTERVALS`` maps code → metadata dict
+    (``{'yf': '1d', ...}``). Older panel code passed that dict straight into
+    ``fetch_kline_history``, which made every forecast/backtest return empty
+    history. Prefer the selectbox key; only follow string values (fallback
+    catalogs map label → code).
+    """
+    label = str(interval_label or "").strip()
+    raw = intervals.get(label, label) if isinstance(intervals, dict) else label
+    if isinstance(raw, dict):
+        yf = raw.get("yf") or raw.get("interval")
+        if isinstance(yf, str) and yf.strip():
+            return yf.strip()
+        return label
+    if isinstance(raw, str) and raw.strip():
+        return raw.strip()
+    return label
+
+
+def _pred_display_frame(pred_df: Any) -> Optional[pd.DataFrame]:
+    """Kronos-webui style prediction table: timestamps + OHLCV(A)."""
+    if pred_df is None or not isinstance(pred_df, pd.DataFrame) or len(pred_df) == 0:
+        return None
+    try:
+        out = pred_df.copy()
+        if "timestamps" not in out.columns:
+            if isinstance(out.index, pd.DatetimeIndex) or out.index.name in (
+                "timestamps", "timestamp", "date", "datetime", None,
+            ):
+                out = out.reset_index()
+                first = str(out.columns[0])
+                if first.lower() in ("timestamps", "timestamp", "date", "datetime", "index"):
+                    out = out.rename(columns={out.columns[0]: "timestamps"})
+        cols = [c for c in ("timestamps", "open", "high", "low", "close", "volume", "amount")
+                if c in out.columns]
+        if not cols:
+            return out
+        show = out[cols].copy()
+        for c in cols:
+            if c == "timestamps":
+                continue
+            show[c] = pd.to_numeric(show[c], errors="coerce")
+        return show
+    except Exception:
+        return None
+
+
 def _render_status_strip() -> None:
     """ONLINE / STANDBY / OFFLINE strip + LOAD MODEL / install hint actions."""
     service = _get_service()
@@ -299,33 +375,38 @@ def _render_status_strip() -> None:
     s1, s2 = st.columns([2.2, 1])
     with s1:
         st.markdown(badge_html, unsafe_allow_html=True)
-        if status.get("error"):
-            st.caption(f"Engine note: {status.get('error')}")
+        _render_load_side_notes(status, state)
     with s2:
         if state == "STANDBY":
             if st.button("⚡ LOAD MODEL", key="kronos_load_model", width='stretch'):
                 ok, err = False, None
                 with st.spinner("Loading Kronos weights (first run downloads from Hugging Face)..."):
                     try:
+                        # Idempotent singleton — skips Hub/transformers if already loaded.
                         ok = bool(service.load())
                     except Exception as exc:
                         err = str(exc)
-                if ok:
-                    st.success("Kronos model loaded — status flipping to ONLINE.")
+                post = _safe_status(service)
+                if ok and _service_state(post) == "ONLINE":
+                    st.success(
+                        f"Kronos ONLINE — {post.get('model_id') or 'model'} on "
+                        f"{post.get('device') or '?'} (weights kept in process singleton)."
+                    )
                     st.rerun()
                 elif err:
                     st.error(f"Model load failed: {err}")
                 else:
-                    st.error("Model load did not complete — check engine logs.")
+                    detail = post.get("error") or "load did not complete"
+                    st.error(f"Model load did not reach ONLINE — {detail}")
         elif state == "OFFLINE":
             st.markdown("<p class='label-grey'>PyTorch stack missing — enable with:</p>",
                         unsafe_allow_html=True)
             st.code(_INSTALL_HINT, language="bash")
             st.caption("The terminal keeps running without it; Kronos simply stays offline.")
-        else:  # ONLINE
+        else:  # ONLINE — no re-load; predictor lives on the module singleton
             st.markdown(
                 f"<p class='label-grey'>MODEL {status.get('model_id') or '—'}<br/>"
-                f"DEVICE {status.get('device') or '—'}</p>",
+                f"DEVICE {status.get('device') or '—'} · ONLINE</p>",
                 unsafe_allow_html=True,
             )
 
@@ -383,11 +464,22 @@ def _render_controls() -> Dict[str, Any]:
 
     override = (override or "").strip()
     ticker = override or symbols.get(symbol_name) or symbol_name
+    interval_code = _resolve_interval_code(interval_label, intervals)
+    # Prefer adapter.normalize_interval when available (aliases / defense).
+    if adapter is not None:
+        try:
+            norm = getattr(adapter, "normalize_interval", None)
+            if callable(norm):
+                resolved = norm(interval_code) or norm(interval_label)
+                if resolved:
+                    interval_code = resolved
+        except Exception:
+            pass
     return {
         "symbol_name": override if override else symbol_name,
         "ticker": ticker,
         "interval_label": interval_label,
-        "interval": intervals.get(interval_label, interval_label),
+        "interval": interval_code,
         "lookback": int(lookback),
         "pred_len": int(pred_len),
         "T": float(temperature),
@@ -446,21 +538,32 @@ def _run_forecast(controls: Dict[str, Any]) -> None:
         return
 
     ticker = controls["ticker"]
+    interval = controls["interval"]
     with st.spinner(f"KRONOS // sampling {controls['pred_len']} future K-lines for "
-                    f"{ticker} ({controls['interval_label']})..."):
+                    f"{ticker} ({interval})..."):
         try:
-            hist_df = adapter.fetch_kline_history(ticker, controls["interval"], controls["lookback"])
+            hist_df = adapter.fetch_kline_history(ticker, interval, controls["lookback"])
         except Exception as exc:
             st.error(f"History fetch failed for {ticker}: {exc}")
             return
         if hist_df is None or len(hist_df) == 0:
-            st.info(f"No K-line history returned for {ticker} @ {controls['interval_label']}.")
+            detail = ""
+            try:
+                err_fn = getattr(adapter, "get_last_fetch_error", None)
+                if callable(err_fn):
+                    detail = (err_fn() or "").strip()
+            except Exception:
+                detail = ""
+            msg = f"No K-line history returned for {ticker} @ {interval}."
+            if detail:
+                msg = f"{msg} ({detail})"
+            st.info(msg)
             return
 
         try:
             prep = adapter.prepare_kronos_inputs(
                 hist_df, controls["lookback"], controls["pred_len"],
-                controls["interval"], ticker,
+                interval, ticker,
             )
         except Exception as exc:
             st.error(f"Kronos input preparation failed: {exc}")
@@ -469,6 +572,20 @@ def _run_forecast(controls: Dict[str, Any]) -> None:
             reason = prep.get("error") if isinstance(prep, dict) else "unexpected adapter result"
             st.info(f"Kronos input preparation: {reason}")
             return
+
+        # STANDBY → auto-load once so the first forecast doesn't just bounce.
+        status = _safe_status(service)
+        if _service_state(status) == "STANDBY":
+            with st.spinner("Loading Kronos weights (first run downloads from Hugging Face)..."):
+                try:
+                    service.load()
+                except Exception as exc:
+                    st.error(f"Model load failed: {exc}")
+                    return
+            if _service_state(_safe_status(service)) != "ONLINE":
+                err = _safe_status(service).get("error") or "load did not complete"
+                st.info(f"Kronos model unavailable — use LOAD MODEL in the status strip. ({err})")
+                return
 
         try:
             result = service.forecast(
@@ -558,8 +675,13 @@ def _render_results() -> None:
         except Exception:
             fig = None
     if fig is not None:
-        st.plotly_chart(fig, width='stretch', key="kronos_forecast_chart_fig",
-                        config={"displayModeBar": False})
+        _pcfg = getattr(charts, "KRONOS_PLOTLY_CONFIG", None) if charts else None
+        st.plotly_chart(
+            fig, width='stretch', key="kronos_forecast_chart_fig",
+            config=_pcfg or dict(
+                scrollZoom=True, displayModeBar=True, displaylogo=False,
+            ),
+        )
 
     chg = last.get("change_pct")
     m1, m2, m3, m4 = st.columns(4)
@@ -584,6 +706,12 @@ def _render_results() -> None:
     if save_note:
         st.caption(f"💾 {save_note}")
 
+    # Kronos-webui style predicted OHLC table (open/high/low/close/volume/amount).
+    pred_table = _pred_display_frame(pred_df)
+    if pred_table is not None:
+        with st.expander("📋 Predicted K-lines (OHLCV)", expanded=True):
+            st.dataframe(pred_table, hide_index=True, width='stretch')
+
     sample_paths = last.get("sample_paths")
     if _has_paths(sample_paths):
         with st.expander("🌫️ Probabilistic paths", expanded=False):
@@ -607,8 +735,13 @@ def _render_results() -> None:
                 st.info("Chart module pending (ui.kronos_charts unavailable) — "
                         "path fan chart not rendered.")
             if pfig is not None:
-                st.plotly_chart(pfig, width='stretch', key="kronos_paths_chart_fig",
-                                config={"displayModeBar": False})
+                _pcfg = getattr(charts, "KRONOS_PLOTLY_CONFIG", None) if charts else None
+                st.plotly_chart(
+                    pfig, width='stretch', key="kronos_paths_chart_fig",
+                    config=_pcfg or dict(
+                        scrollZoom=True, displayModeBar=True, displaylogo=False,
+                    ),
+                )
             q1, q2, q3 = st.columns(3)
             q1.metric("Close P10", _fmt_price(last.get("close_p10_last")))
             q2.metric("Close P50", _fmt_price(last.get("close_p50_last")))
@@ -624,21 +757,62 @@ def _run_backtest(controls: Dict[str, Any], n_windows: int, bt_pred_len: int) ->
     if adapter is None:
         st.info("Data adapter module pending (data.kronos_adapter unavailable).")
         return
+    service = _get_service()
+    if service is None:
+        st.info("Cannot run backtest — engine module pending (engine.kronos_service unavailable).")
+        return
 
+    state = _service_state(_safe_status(service))
+    if state == "OFFLINE":
+        st.info(f"Kronos is OFFLINE — install the model stack first: `{_INSTALL_HINT}`.")
+        return
+    if state == "STANDBY":
+        with st.spinner("Loading Kronos weights for backtest..."):
+            try:
+                ok = bool(service.load())
+            except Exception as exc:
+                st.error(f"Model load failed: {exc}")
+                return
+        if not ok or _service_state(_safe_status(service)) != "ONLINE":
+            err = _safe_status(service).get("error") or "load did not complete"
+            st.info(f"Kronos model unavailable — use LOAD MODEL in the status strip. ({err})")
+            return
+
+    ticker = controls["ticker"]
+    interval = controls["interval"]
     bars_needed = controls["lookback"] + n_windows * bt_pred_len + bt_pred_len
-    with st.spinner(f"KRONOS // walking {n_windows} historical windows on {controls['ticker']}..."):
+    with st.spinner(f"KRONOS // walking {n_windows} historical windows on "
+                    f"{ticker} @ {interval}..."):
         try:
-            df = adapter.fetch_kline_history(controls["ticker"], controls["interval"], bars_needed)
+            df = adapter.fetch_kline_history(ticker, interval, bars_needed)
         except Exception as exc:
-            st.error(f"History fetch failed for {controls['ticker']}: {exc}")
+            st.error(f"History fetch failed for {ticker}: {exc}")
             return
         if df is None or len(df) == 0:
-            st.info(f"No K-line history returned for {controls['ticker']}.")
+            detail = ""
+            try:
+                err_fn = getattr(adapter, "get_last_fetch_error", None)
+                if callable(err_fn):
+                    detail = (err_fn() or "").strip()
+            except Exception:
+                detail = ""
+            msg = f"No K-line history returned for {ticker} @ {interval}."
+            if detail:
+                msg = f"{msg} ({detail})"
+            st.info(msg)
             return
         try:
+            # Tag the frame so reports/charts show the symbol.
+            try:
+                df = df.copy()
+                df.attrs["symbol"] = controls.get("symbol_name") or ticker
+                df.attrs["ticker"] = ticker
+            except Exception:
+                pass
             result = run_bt(
                 df, pred_len=bt_pred_len, window=controls["lookback"], n_windows=n_windows,
                 T=controls["T"], top_p=controls["top_p"], sample_count=3,
+                service=service,
             )
         except Exception as exc:
             st.error(f"Kronos backtest failed: {exc}")
@@ -648,6 +822,18 @@ def _run_backtest(controls: Dict[str, Any], n_windows: int, bt_pred_len: int) ->
         st.info("Backtest returned an unexpected result — engine.kronos_backtest may still be landing.")
         return
     st.session_state["kronos_backtest_result"] = result
+    status = str(result.get("status") or "").lower()
+    if status not in ("ok", "success", "completed", "done"):
+        why = result.get("error") or result.get("reason") or "see engine logs"
+        st.warning(f"Backtest finished with status={result.get('status')}: {why}")
+    else:
+        m = result.get("metrics") or {}
+        st.success(
+            f"Backtest complete — {m.get('n_windows_evaluated', '?')}/"
+            f"{m.get('n_windows_requested', n_windows)} windows · "
+            f"hit-rate {_metric_pct_str(m, 'direction_hit_rate_pct', 'hit_rate')} · "
+            f"MAPE {_metric_pct_str(m, 'close_mape_pct', 'mape')}"
+        )
 
 
 def _render_backtest_section(controls: Dict[str, Any]) -> None:
@@ -669,7 +855,10 @@ def _render_backtest_section(controls: Dict[str, Any]) -> None:
 
         status = str(result.get("status") or "ok").lower()
         if status not in ("ok", "success", "completed", "done"):
-            st.info(f"Backtest status: {result.get('status')} — {result.get('error') or 'see engine logs'}")
+            why = result.get("error") or result.get("reason") or "see engine logs"
+            st.info(f"Backtest status: {result.get('status')} — {why}")
+            if status in ("unavailable",):
+                st.caption("Load the Kronos model from the status strip (LOAD MODEL), then re-run.")
             return
 
         metrics = result.get("metrics") or {}
@@ -684,6 +873,14 @@ def _render_backtest_section(controls: Dict[str, Any]) -> None:
                   _metric_pct_str(metrics, "envelope_coverage_pct",
                                   "coverage", "interval_coverage", "coverage_p10_p90"))
 
+        s1, s2, s3 = st.columns(3)
+        s1.metric("Strategy return",
+                  _metric_pct_str(metrics, "strategy_total_return_pct"))
+        s2.metric("Buy & hold",
+                  _metric_pct_str(metrics, "benchmark_total_return_pct"))
+        s3.metric("Max drawdown",
+                  _metric_pct_str(metrics, "strategy_max_drawdown_pct"))
+
         charts = _get_charts()
         bt_fig = None
         if charts is not None:
@@ -696,8 +893,21 @@ def _render_backtest_section(controls: Dict[str, Any]) -> None:
         else:
             st.info("Chart module pending (ui.kronos_charts unavailable) — backtest chart not rendered.")
         if bt_fig is not None:
-            st.plotly_chart(bt_fig, width='stretch', key="kronos_bt_chart_fig",
-                            config={"displayModeBar": False})
+            _pcfg = getattr(charts, "KRONOS_PLOTLY_CONFIG", None) if charts else None
+            st.plotly_chart(
+                bt_fig, width='stretch', key="kronos_bt_chart_fig",
+                config=_pcfg or dict(
+                    scrollZoom=True, displayModeBar=True, displaylogo=False,
+                ),
+            )
+
+        windows = result.get("windows") or []
+        if windows:
+            with st.expander("Per-window backtest detail", expanded=False):
+                try:
+                    st.dataframe(pd.DataFrame(windows), hide_index=True, width='stretch')
+                except Exception:
+                    st.json(windows[:20])
 
 
 def _render_history_record(rec: Dict[str, Any]) -> None:

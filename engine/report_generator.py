@@ -626,15 +626,29 @@ def write_memo_to_vault(
     """Write the memo to ``<vault_dir>/<YYYY-MM-DD>-ZERO-Memo.md``.
 
     Creates the directory if needed and overwrites any existing same-day memo
-    (idempotent). Returns the path written.
+    (idempotent). Returns the path written. Also registers the file with the
+    dual-vault sync queue (immediate ZERO → 24h SECOND ZERO).
     """
     vault_dir = vault_dir or DEFAULT_VAULT_DIR
+    # Prefer absolute primary vault Daily Logs when caller used the default
+    # relative path so Streamlit / CLI cwd does not matter.
+    try:
+        if vault_dir in (DEFAULT_VAULT_DIR, 'obsidian_vault/01_Daily_Logs'):
+            from config import OBSIDIAN_VAULT_PATH
+            vault_dir = os.path.join(OBSIDIAN_VAULT_PATH, '01_Daily_Logs')
+    except Exception:
+        pass
     os.makedirs(vault_dir, exist_ok=True)
     date_part = str(trade_date).strip() or datetime.date.today().isoformat()
     path = os.path.join(vault_dir, f'{date_part}-{MEMO_FILE_SUFFIX}.md')
     with open(path, 'w', encoding='utf-8') as handle:
         handle.write(str(markdown))
     logger.info('ZERO daily IC memo written: %s', path)
+    try:
+        from engine.vault_sync import sync_ic_memo
+        sync_ic_memo(path, trade_date=date_part)
+    except Exception as ve:
+        logger.warning('vault_sync after IC memo failed: %s', ve)
     return path
 
 

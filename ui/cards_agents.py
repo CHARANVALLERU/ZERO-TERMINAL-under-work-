@@ -11,6 +11,8 @@ from typing import Any
 
 import streamlit as st
 
+from ui.badge_styles import inject_badge_css, zero_badge, zero_badge_row
+
 # Locked palette
 _BG = "#000"
 _PANEL = "#0a0a0a"
@@ -18,7 +20,7 @@ _RED = "#E50914"
 _GOLD = "#D4AF37"
 _GREEN = "#00ff88"
 _GREEN2 = "#00E676"
-_CYAN = "#00B0FF"
+_GOLD_ACCENT = "#D4AF37"
 _WHITE = "#fff"
 _GREY = "#666"
 
@@ -43,6 +45,10 @@ def _inject_cyber_css() -> None:
     if _CSS_INJECTED:
         return
     _CSS_INJECTED = True
+    try:
+        inject_badge_css()
+    except Exception:
+        pass
     st.markdown(
         f"""
 <style>
@@ -69,7 +75,7 @@ def _inject_cyber_css() -> None:
 .za-hud::after {{ bottom: 0; right: 0; border-left: 0; border-top: 0; }}
 .za-hud .za-corner-tr, .za-hud .za-corner-bl {{
   position: absolute; width: 14px; height: 14px;
-  border: 1px solid {_CYAN}; pointer-events: none; z-index: 2;
+  border: 1px solid {_GOLD_ACCENT}; pointer-events: none; z-index: 2;
 }}
 .za-hud .za-corner-tr {{ top: 0; right: 0; border-left: 0; border-bottom: 0; }}
 .za-hud .za-corner-bl {{ bottom: 0; left: 0; border-right: 0; border-top: 0; }}
@@ -131,15 +137,15 @@ def _inject_cyber_css() -> None:
   50% {{ box-shadow: 0 0 12px 2px rgba(229,9,20,0.55); }}
 }}
 @keyframes zaHolo {{
-  0% {{ filter: hue-rotate(0deg) brightness(1); text-shadow: 0 0 8px rgba(212,175,55,0.4); }}
-  50% {{ filter: hue-rotate(25deg) brightness(1.15); text-shadow: 0 0 16px rgba(0,176,255,0.55); }}
-  100% {{ filter: hue-rotate(0deg) brightness(1); text-shadow: 0 0 8px rgba(212,175,55,0.4); }}
+  0% {{ text-shadow: 0 0 8px rgba(212,175,55,0.4); }}
+  50% {{ filter: brightness(1.15); text-shadow: 0 0 16px rgba(212,175,55,0.55); }}
+  100% {{ text-shadow: 0 0 8px rgba(212,175,55,0.4); }}
 }}
 .za-holo-stamp {{
   display: inline-block; font-family: 'Orbitron', sans-serif; font-weight: 900;
   font-size: 1.05rem; letter-spacing: 2px; padding: 6px 14px;
   border: 2px solid {_GOLD}; color: {_GOLD};
-  background: linear-gradient(135deg, rgba(212,175,55,0.12), rgba(0,176,255,0.08));
+  background: linear-gradient(135deg, rgba(212,175,55,0.12), rgba(212,175,55,0.08));
   transform: rotate(-4deg); animation: zaHolo 3.2s ease-in-out infinite;
 }}
 .za-risk-pulse {{
@@ -178,7 +184,7 @@ def _inject_cyber_css() -> None:
 .sp-buy {{ background: rgba(0,255,136,0.12); color: {_GREEN}; border: 1px solid {_GREEN}; }}
 .sp-target {{ background: rgba(212,175,55,0.12); color: {_GOLD}; border: 1px solid {_GOLD}; }}
 .sp-stop {{ background: rgba(229,9,20,0.12); color: {_RED}; border: 1px solid {_RED}; }}
-.sp-size {{ background: rgba(0,176,255,0.12); color: {_CYAN}; border: 1px solid {_CYAN}; }}
+.sp-size {{ background: rgba(212,175,55,0.12); color: {_GOLD_ACCENT}; border: 1px solid {_GOLD_ACCENT}; }}
 .sp-val {{
   color: {_WHITE}; font-size: 1.05rem; font-weight: 900;
   font-family: 'Orbitron', sans-serif; margin-bottom: 4px;
@@ -273,7 +279,7 @@ def render_trading_agents_panel(agent_consensus: dict | None = None):
     <p class="label-grey">ROLES: FUNDAMENTAL · TECHNICAL · SENTIMENT · RISK MANAGER</p>
   </div>
   <div style="text-align:right;">
-    <div class="za-holo-stamp" style="border-color:{v_color};color:{v_color};">{_esc(verdict)}</div>
+    {zero_badge(verdict)}
     <div class="label-grey" style="margin-top:6px;">Confidence: <b style="color:{_WHITE};">{_esc(conf)}%</b></div>
   </div>
 </div>
@@ -311,7 +317,7 @@ def render_quantdinge_strategy_card(quant_strategy: dict | None = None):
     act_color = (
         _GREEN2
         if "BUY" in str(action)
-        else (_RED if "SELL" in str(action) else _CYAN)
+        else (_RED if "SELL" in str(action) else _GOLD_ACCENT)
     )
 
     entry_type = quant_strategy.get("nautilus_entry_order_type", "DAY LIMIT")
@@ -320,12 +326,12 @@ def render_quantdinge_strategy_card(quant_strategy: dict | None = None):
     pcr_val = quant_strategy.get("pcr", 1.0)
 
     inner = f"""
-<div style="display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid rgba(0,176,255,0.2);padding-bottom:8px;margin-bottom:12px;flex-wrap:wrap;gap:8px;">
+<div style="display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid rgba(212,175,55,0.2);padding-bottom:8px;margin-bottom:12px;flex-wrap:wrap;gap:8px;">
   <div>
-    <p class="gold-title" style="color:{_CYAN};margin:0;">⚡ QUANTDINGER ENGINE · {_esc(idx)} STRATEGY</p>
+    <p class="gold-title" style="color:{_GOLD_ACCENT};margin:0;">⚡ QUANTDINGER ENGINE · {_esc(idx)} STRATEGY</p>
     <p class="label-grey">Regime: <b style="color:{_WHITE};">{_esc(regime)}</b></p>
   </div>
-  <div class="za-holo-stamp" style="border-color:{act_color};color:{act_color};transform:rotate(3deg);">{_esc(action)}</div>
+  {zero_badge_row(regime, action)}
 </div>
 <div style="font-size:0.85rem;font-weight:800;color:{_WHITE};margin-bottom:6px;font-family:'Orbitron',sans-serif;">🎯 {_esc(strat_name)}</div>
 <p class="label-grey" style="text-transform:none;letter-spacing:0;color:#aaa;margin-bottom:12px;">{_esc(desc)}</p>
@@ -348,7 +354,7 @@ def render_quantdinge_strategy_card(quant_strategy: dict | None = None):
   </div>
 </div>
 <div style="background:{_BG};padding:8px 12px;margin-top:8px;font-size:0.6rem;color:#aaa;">
-  <b style="color:{_CYAN};">Entry Order:</b> {_esc(entry_type)} &nbsp;·&nbsp;
+  <b style="color:{_GOLD_ACCENT};">Entry Order:</b> {_esc(entry_type)} &nbsp;·&nbsp;
   <b style="color:{_GOLD};">Bracket:</b> {_esc(bracket)}<br>
   <b style="color:{_GREY};">PCR {_esc(pcr_val)}</b> — {_esc(uw_note)}
 </div>
@@ -462,7 +468,7 @@ def render_agent_debate_panel(debate_data: dict | None) -> None:
     <p class="label-grey">Model: {_esc(model)} {model_tag}</p>
   </div>
   <div style="text-align:right;">
-    <div class="za-holo-stamp" style="border-color:{act_color};color:{act_color};">{_esc(action)}</div>
+    {zero_badge(action)}
     <div class="label-grey" style="margin-top:6px;">Conviction {conviction * 100:.0f}%</div>
   </div>
 </div>
@@ -625,7 +631,7 @@ def render_trading_strategy_bubbles(matrix=None, news_feed=None):
         <div class="sp-val">{stop_loss:,.1f}</div>
         <div class="sp-desc">Strict intraday exit trigger ({stop_loss_pts:.0f} pts below spot). A 15-min candle close below invalidates the bullish thesis.</div>
       </div>
-      <div class="strat-card" style="border-left:3px solid {_CYAN};margin:0;">
+      <div class="strat-card" style="border-left:3px solid {_GOLD_ACCENT};margin:0;">
         <span class="safe-point-badge sp-size">⚖️ REC. POSITION SIZE & CASH</span>
         <div class="sp-val">{rec_size_pct}</div>
         <div class="sp-desc">Allocate max {rec_size_pct} capital per trade. Keep <b>{cash_buffer_pct}%</b> cash buffer for unexpected headline spikes.</div>

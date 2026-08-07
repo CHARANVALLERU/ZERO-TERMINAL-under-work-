@@ -1,6 +1,14 @@
 @echo off
 cd /d "%~dp0"
 
+:: --- Runtime env defaults (no secrets required) ---
+set "TOKENIZERS_PARALLELISM=false"
+set "HF_HUB_DISABLE_TELEMETRY=1"
+set "STREAMLIT_SERVER_FILE_WATCHER_TYPE=poll"
+:: Optional: uncomment and set your Hugging Face token for higher Hub rate limits
+:: set "HF_TOKEN=hf_your_token_here"
+:: If HF_TOKEN is already in your user/system environment, it is passed through automatically.
+
 if exist .venv goto ACTIVATED
 echo Creating Python Virtual Environment (.venv)...
 python -m venv .venv

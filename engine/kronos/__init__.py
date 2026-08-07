@@ -8,6 +8,10 @@ Only import paths were changed relative to upstream: the absolute
 replaced with the relative ``from .module import *``. The code is otherwise
 functionally identical to upstream ``model/``.
 
+Load stack: ``huggingface_hub.PyTorchModelHubMixin`` + safetensors + torch.
+Does **not** import ``transformers`` / vision processors — keep it that way
+so Streamlit's file watcher never walks ``transformers.models.*`` for Kronos.
+
 Public exports: ``Kronos``, ``KronosTokenizer``, ``KronosPredictor``
 (plus the upstream ``model_dict`` / ``get_model_class`` helpers).
 """

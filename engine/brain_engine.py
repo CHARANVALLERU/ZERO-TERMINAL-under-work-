@@ -210,6 +210,14 @@ class BrainEngine:
 
         self._update_hot(entry)
         self._save()
+        # Mirror into Obsidian ZERO vault + dual-vault queue (best-effort).
+        # Changelog only for interactive user teaches — bulk YouTube uses
+        # sync_youtube_note once per file to avoid ZERO.md spam.
+        try:
+            from engine.vault_sync import sync_brain_entry
+            sync_brain_entry(entry, changelog=(source == "user"))
+        except Exception:
+            pass
         return entry
 
     def ingest_markdown_file(self, md_filepath: str, source: str = "youtube") -> list[dict]:
@@ -263,6 +271,13 @@ class BrainEngine:
         try:
             from config import OBSIDIAN_VAULT_PATH
             self._update_obsidian_graph_links(note_title, OBSIDIAN_VAULT_PATH, md_filepath)
+        except Exception:
+            pass
+
+        # Dual-vault: register YouTube note for ZERO changelog + 24h SECOND ZERO
+        try:
+            from engine.vault_sync import sync_youtube_note
+            sync_youtube_note(f"04_YouTube_Knowledge/{note_title}.md")
         except Exception:
             pass
 

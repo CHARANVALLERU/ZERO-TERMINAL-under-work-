@@ -15,7 +15,7 @@ _RED = "#E50914"
 _GOLD = "#D4AF37"
 _GREEN = "#00ff88"
 _GREEN2 = "#00E676"
-_CYAN = "#00B0FF"
+_GOLD_ACCENT = "#D4AF37"
 _WHITE = "#fff"
 _MUTED = "#666"
 
@@ -59,8 +59,8 @@ def render_terminal_hero() -> None:
     0deg,
     transparent,
     transparent 2px,
-    {_CYAN}08 2px,
-    {_CYAN}08 3px
+    {_GOLD_ACCENT}08 2px,
+    {_GOLD_ACCENT}08 3px
   );
   animation: zt-scan 2.4s linear infinite;
   pointer-events: none;
@@ -83,7 +83,7 @@ def render_terminal_hero() -> None:
   font-family: {_FONT};
   font-size: 0.68rem;
   letter-spacing: 2.5px;
-  color: {_CYAN};
+  color: {_GOLD_ACCENT};
   margin: 8px 0 12px;
   position: relative;
   z-index: 1;
@@ -102,7 +102,7 @@ def render_terminal_hero() -> None:
 .zt-scan-strip {{
   height: 2px;
   margin: 0 0 12px;
-  background: linear-gradient(90deg, transparent, {_GREEN}, {_GOLD}, {_CYAN}, transparent);
+  background: linear-gradient(90deg, transparent, {_GREEN}, {_GOLD}, {_GOLD_ACCENT}, transparent);
   position: relative;
   z-index: 1;
 }}
@@ -138,8 +138,8 @@ def render_terminal_hero() -> None:
   animation: zt-pulse 1.4s ease-in-out infinite;
 }}
 .zt-chip.local {{
-  color: {_CYAN};
-  border-color: {_CYAN}66;
+  color: {_GOLD_ACCENT};
+  border-color: {_GOLD_ACCENT}66;
 }}
 .zt-chip.armed {{
   color: {_GOLD};
@@ -221,7 +221,7 @@ def render_control_deck_divider(label: str = "V1.1 CONTROL DECK") -> None:
     border:1px solid {_GOLD}55;padding:4px 14px;
     background:{_SURFACE};
   ">{safe}</span>
-  <span style="flex:1;height:1px;background:linear-gradient(90deg,{_CYAN},transparent);"></span>
+  <span style="flex:1;height:1px;background:linear-gradient(90deg,{_GOLD_ACCENT},transparent);"></span>
 </div>
 """,
         unsafe_allow_html=True,
@@ -243,7 +243,7 @@ div[data-testid="stExpander"] {{
 }}
 div[data-testid="stExpander"]:hover {{
   border-color: {_GOLD}99 !important;
-  box-shadow: 0 0 12px {_GOLD}22, inset 0 0 20px {_CYAN}08 !important;
+  box-shadow: 0 0 12px {_GOLD}22, inset 0 0 20px {_GOLD_ACCENT}08 !important;
 }}
 div[data-testid="stExpander"] details summary {{
   font-family: {_FONT} !important;
